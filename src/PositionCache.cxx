@@ -12,7 +12,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -310,8 +309,8 @@ ScreenLine::ScreenLine(
 ScreenLine::~ScreenLine() {
 }
 
-std::string_view ScreenLine::Text() const {
-	return std::string_view(&ll->chars[start], len);
+const char *ScreenLine::Text() const {
+	return &ll->chars[start];
 }
 
 size_t ScreenLine::Length() const {
@@ -618,7 +617,7 @@ TextSegment BreakFinder::Next() {
 					static_cast<int>(lineRange.end - nextBreak));
 			else if (encodingFamily == EncodingFamily::dbcs)
 				charWidth = pdoc->DBCSDrawBytes(
-					std::string_view(&ll->chars[nextBreak], lineRange.end - nextBreak));
+					&ll->chars[nextBreak], static_cast<int>(lineRange.end - nextBreak));
 			const Representation *repr = preprs->RepresentationFromCharacter(&ll->chars[nextBreak], charWidth);
 			if (((nextBreak > 0) && (ll->styles[nextBreak] != ll->styles[nextBreak - 1])) ||
 					repr ||
@@ -801,7 +800,7 @@ void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, uns
 		XYPOSITION xStartSegment = 0;
 		while (startSegment < len) {
 			const unsigned int lenSegment = pdoc->SafeSegment(s + startSegment, len - startSegment, BreakFinder::lengthEachSubdivision);
-			surface->MeasureWidths(fontStyle, std::string_view(s + startSegment, lenSegment), positions + startSegment);
+			surface->MeasureWidths(fontStyle, s + startSegment, lenSegment, positions + startSegment);
 			for (unsigned int inSeg = 0; inSeg < lenSegment; inSeg++) {
 				positions[startSegment + inSeg] += xStartSegment;
 			}
@@ -809,7 +808,7 @@ void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, uns
 			startSegment += lenSegment;
 		}
 	} else {
-		surface->MeasureWidths(fontStyle, std::string_view(s, len), positions);
+		surface->MeasureWidths(fontStyle, s, len, positions);
 	}
 	if (probe < pces.size()) {
 		// Store into cache

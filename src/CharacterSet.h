@@ -185,7 +185,7 @@ constexpr bool isoperator(int ch) noexcept {
 // Simple case functions for ASCII supersets.
 
 template <typename T>
-constexpr T MakeUpperCase(T ch) noexcept {
+inline T MakeUpperCase(T ch) noexcept {
 	if (ch < 'a' || ch > 'z')
 		return ch;
 	else
@@ -193,7 +193,7 @@ constexpr T MakeUpperCase(T ch) noexcept {
 }
 
 template <typename T>
-constexpr T MakeLowerCase(T ch) noexcept {
+inline T MakeLowerCase(T ch) noexcept {
 	if (ch < 'A' || ch > 'Z')
 		return ch;
 	else

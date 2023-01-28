@@ -8,7 +8,6 @@
 #include <cmath>
 
 #include <stdexcept>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -258,7 +257,7 @@ void Indicator::Draw(Surface *surface, const PRectangle &rc, const PRectangle &r
 				Point(ix + pixelHeight, iy + pixelHeight),	// Right
 				Point(ix, iy)								// Top
 			};
-			surface->Polygon(pts, std::size(pts), sacDraw.fore, sacDraw.fore);
+			surface->Polygon(pts, Sci::size(pts), sacDraw.fore, sacDraw.fore);
 		}
 		break;
 

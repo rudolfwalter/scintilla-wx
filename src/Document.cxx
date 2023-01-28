@@ -14,7 +14,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <forward_list>
 #include <algorithm>
@@ -98,7 +97,7 @@ void ActionDuration::AddSample(size_t numberActions, double durationOfActions) n
 	constexpr double alpha = 0.25;
 
 	const double durationOne = durationOfActions / numberActions;
-	duration = std::clamp(alpha * durationOne + (1.0 - alpha) * duration,
+	duration = Sci::clamp(alpha * durationOne + (1.0 - alpha) * duration,
 		minDuration, maxDuration);
 }
 
@@ -613,7 +612,7 @@ void Document::GetHighlightDelimiters(HighlightDelimiter &highlightDelimiter, Sc
 }
 
 Sci::Position Document::ClampPositionIntoDocument(Sci::Position pos) const noexcept {
-	return std::clamp<Sci::Position>(pos, 0, LengthNoExcept());
+	return Sci::clamp<Sci::Position>(pos, 0, LengthNoExcept());
 }
 
 bool Document::IsCrLf(Sci::Position pos) const noexcept {
@@ -1113,9 +1112,9 @@ bool Document::IsDBCSTrailByteInvalid(char ch) const noexcept {
 	return false;
 }
 
-int Document::DBCSDrawBytes(std::string_view text) const noexcept {
-	if (text.length() <= 1) {
-		return static_cast<int>(text.length());
+int Document::DBCSDrawBytes(const char *text, int len) const noexcept {
+	if (len <= 1) {
+		return len;
 	}
 	if (IsDBCSLeadByteNoExcept(text[0])) {
 		return IsDBCSTrailByteInvalid(text[1]) ? 1 : 2;
