@@ -33,11 +33,11 @@ LineMarker::LineMarker(const LineMarker &other) {
 	backSelected = other.backSelected;
 	alpha = other.alpha;
 	if (other.pxpm)
-		pxpm = std::make_unique<XPM>(*other.pxpm);
+		pxpm = Sci::make_unique<XPM>(*other.pxpm);
 	else
 		pxpm = nullptr;
 	if (other.image)
-		image = std::make_unique<RGBAImage>(*other.image);
+		image = Sci::make_unique<RGBAImage>(*other.image);
 	else
 		image = nullptr;
 	customDraw = other.customDraw;
@@ -52,11 +52,11 @@ LineMarker &LineMarker::operator=(const LineMarker &other) {
 		backSelected = other.backSelected;
 		alpha = other.alpha;
 		if (other.pxpm)
-			pxpm = std::make_unique<XPM>(*other.pxpm);
+			pxpm = Sci::make_unique<XPM>(*other.pxpm);
 		else
 			pxpm = nullptr;
 		if (other.image)
-			image = std::make_unique<RGBAImage>(*other.image);
+			image = Sci::make_unique<RGBAImage>(*other.image);
 		else
 			image = nullptr;
 		customDraw = other.customDraw;
@@ -65,17 +65,17 @@ LineMarker &LineMarker::operator=(const LineMarker &other) {
 }
 
 void LineMarker::SetXPM(const char *textForm) {
-	pxpm = std::make_unique<XPM>(textForm);
+	pxpm = Sci::make_unique<XPM>(textForm);
 	markType = SC_MARK_PIXMAP;
 }
 
 void LineMarker::SetXPM(const char *const *linesForm) {
-	pxpm = std::make_unique<XPM>(linesForm);
+	pxpm = Sci::make_unique<XPM>(linesForm);
 	markType = SC_MARK_PIXMAP;
 }
 
 void LineMarker::SetRGBAImage(Point sizeRGBAImage, float scale, const unsigned char *pixelsRGBAImage) {
-	image = std::make_unique<RGBAImage>(static_cast<int>(sizeRGBAImage.x), static_cast<int>(sizeRGBAImage.y), scale, pixelsRGBAImage);
+	image = Sci::make_unique<RGBAImage>(static_cast<int>(sizeRGBAImage.x), static_cast<int>(sizeRGBAImage.y), scale, pixelsRGBAImage);
 	markType = SC_MARK_RGBAIMAGE;
 }
 

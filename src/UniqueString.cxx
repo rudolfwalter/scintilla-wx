@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "UniqueString.h"
+#include "Compat.h"
 
 namespace Scintilla {
 
@@ -21,7 +22,7 @@ UniqueString UniqueStringCopy(const char *text) {
 		return UniqueString();
 	}
 	const std::string sv(text);
-	std::unique_ptr<char[]> upcNew = std::make_unique<char[]>(sv.length() + 1);
+	std::unique_ptr<char[]> upcNew = Sci::make_unique<char[]>(sv.length() + 1);
 	sv.copy(upcNew.get(), sv.length());
 	return UniqueString(upcNew.release());
 }

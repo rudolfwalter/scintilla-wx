@@ -14,7 +14,7 @@ struct Chunk {
 	size_t start;
 	size_t end;
 	constexpr Chunk(size_t start_=0, size_t end_=0) noexcept : start(start_), end(end_) {
-		assert(start <= end);
+		//assert(start <= end);
 	}
 	size_t Length() const noexcept;
 };

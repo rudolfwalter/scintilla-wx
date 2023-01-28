@@ -120,7 +120,7 @@ constexpr bool IsADigit(int ch) noexcept {
 	return (ch >= '0') && (ch <= '9');
 }
 
-constexpr bool IsADigit(int ch, int base) noexcept {
+inline bool IsADigit(int ch, int base) noexcept {
 	if (base <= 10) {
 		return (ch >= '0') && (ch < '0' + base);
 	} else {
@@ -169,7 +169,7 @@ constexpr bool iswordstart(int ch) noexcept {
 	return IsAlphaNumeric(ch) || ch == '_';
 }
 
-constexpr bool isoperator(int ch) noexcept {
+inline bool isoperator(int ch) noexcept {
 	if (IsAlphaNumeric(ch))
 		return false;
 	if (ch == '%' || ch == '^' || ch == '&' || ch == '*' ||

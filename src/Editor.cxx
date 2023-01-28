@@ -64,7 +64,7 @@ namespace {
 	return whether this modification represents an operation that
 	may reasonably be deferred (not done now OR [possibly] at all)
 */
-constexpr bool CanDeferToLastStep(const DocModification &mh) noexcept {
+inline bool CanDeferToLastStep(const DocModification &mh) noexcept {
 	if (mh.modificationType & (SC_MOD_BEFOREINSERT | SC_MOD_BEFOREDELETE))
 		return true;	// CAN skip
 	if (!(mh.modificationType & (SC_PERFORMED_UNDO | SC_PERFORMED_REDO)))
@@ -2542,7 +2542,7 @@ void Editor::CheckModificationForWrap(DocModification mh) {
 namespace {
 
 // Move a position so it is still after the same character as before the insertion.
-constexpr Sci::Position MovePositionForInsertion(Sci::Position position, Sci::Position startInsertion, Sci::Position length) noexcept {
+inline Sci::Position MovePositionForInsertion(Sci::Position position, Sci::Position startInsertion, Sci::Position length) noexcept {
 	if (position > startInsertion) {
 		return position + length;
 	}
@@ -2551,7 +2551,7 @@ constexpr Sci::Position MovePositionForInsertion(Sci::Position position, Sci::Po
 
 // Move a position so it is still after the same character as before the deletion if that
 // character is still present else after the previous surviving character.
-constexpr Sci::Position MovePositionForDeletion(Sci::Position position, Sci::Position startDeletion, Sci::Position length) noexcept {
+inline Sci::Position MovePositionForDeletion(Sci::Position position, Sci::Position startDeletion, Sci::Position length) noexcept {
 	if (position > startDeletion) {
 		const Sci::Position endDeletion = startDeletion + length;
 		if (position > endDeletion) {
@@ -3263,7 +3263,7 @@ constexpr short LowShortFromWParam(uptr_t x) {
 	return static_cast<short>(x & 0xffff);
 }
 
-constexpr unsigned int WithExtends(unsigned int iMessage) noexcept {
+inline unsigned int WithExtends(unsigned int iMessage) noexcept {
 	switch (iMessage) {
 	case SCI_CHARLEFT: return SCI_CHARLEFTEXTEND;
 	case SCI_CHARRIGHT: return SCI_CHARRIGHTEXTEND;
@@ -3290,7 +3290,7 @@ constexpr unsigned int WithExtends(unsigned int iMessage) noexcept {
 	}
 }
 
-constexpr int NaturalDirection(unsigned int iMessage) noexcept {
+inline int NaturalDirection(unsigned int iMessage) noexcept {
 	switch (iMessage) {
 	case SCI_CHARLEFT:
 	case SCI_CHARLEFTEXTEND:
@@ -3321,7 +3321,7 @@ constexpr int NaturalDirection(unsigned int iMessage) noexcept {
 	}
 }
 
-constexpr bool IsRectExtend(unsigned int iMessage, bool isRectMoveExtends) noexcept {
+inline bool IsRectExtend(unsigned int iMessage, bool isRectMoveExtends) noexcept {
 	switch (iMessage) {
 	case SCI_CHARLEFTRECTEXTEND:
 	case SCI_CHARRIGHTRECTEXTEND:

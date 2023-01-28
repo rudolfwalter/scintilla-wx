@@ -131,12 +131,12 @@ Document::Document(int options) :
 
 	matchesValid = false;
 
-	perLineData[ldMarkers] = std::make_unique<LineMarkers>();
-	perLineData[ldLevels] = std::make_unique<LineLevels>();
-	perLineData[ldState] = std::make_unique<LineState>();
-	perLineData[ldMargin] = std::make_unique<LineAnnotation>();
-	perLineData[ldAnnotation] = std::make_unique<LineAnnotation>();
-	perLineData[ldEOLAnnotation] = std::make_unique<LineAnnotation>();
+	perLineData[ldMarkers] = Sci::make_unique<LineMarkers>();
+	perLineData[ldLevels] = Sci::make_unique<LineLevels>();
+	perLineData[ldState] = Sci::make_unique<LineState>();
+	perLineData[ldMargin] = Sci::make_unique<LineAnnotation>();
+	perLineData[ldAnnotation] = Sci::make_unique<LineAnnotation>();
+	perLineData[ldEOLAnnotation] = Sci::make_unique<LineAnnotation>();
 
 	decorations = DecorationListCreate(IsLarge());
 

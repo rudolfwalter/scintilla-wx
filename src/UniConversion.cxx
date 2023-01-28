@@ -112,7 +112,7 @@ size_t UTF16Length(std::string const& svu8) noexcept {
 constexpr unsigned char TrailByteValue(unsigned char c) {
 	// The top 2 bits are 0b10 to indicate a trail byte.
 	// The lower 6 bits contain the value.
-	return c & 0b0011'1111;
+	return c & 0x3F; // 0b0011'1111
 }
 
 size_t UTF16FromUTF8(std::string const& svu8, wchar_t *tbuf, size_t tlen) {

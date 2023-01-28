@@ -596,7 +596,7 @@ void LexState::SetInstance(ILexer5 *instance_) {
 
 LexState *ScintillaBase::DocumentLexState() {
 	if (!pdoc->GetLexInterface()) {
-		pdoc->SetLexInterface(std::make_unique<LexState>(pdoc));
+		pdoc->SetLexInterface(Sci::make_unique<LexState>(pdoc));
 	}
 	return dynamic_cast<LexState *>(pdoc->GetLexInterface());
 }

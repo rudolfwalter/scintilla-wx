@@ -259,7 +259,7 @@ public:
 		return GetAlpha() / componentMaximum;
 	}
 
-	constexpr ColourAlpha MixedWith(ColourAlpha other) const noexcept {
+	ColourAlpha MixedWith(ColourAlpha other) const noexcept {
 		const unsigned int red = (GetRed() + other.GetRed()) / 2;
 		const unsigned int green = (GetGreen() + other.GetGreen()) / 2;
 		const unsigned int blue = (GetBlue() + other.GetBlue()) / 2;
