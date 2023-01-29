@@ -54,7 +54,7 @@ protected:
 	void Initialise() override {}
 	void Finalise() override;
 
-	[[deprecated]]
+	//[[deprecated]]
 	// This method is deprecated, use InsertCharacter instead. The treatAsDBCS parameter is no longer used.
 	virtual void AddCharUTF(const char *s, unsigned int len, bool treatAsDBCS=false);
 

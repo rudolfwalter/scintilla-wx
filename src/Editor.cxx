@@ -7773,7 +7773,7 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 		return modEventMask;
 
 	case SCI_SETCOMMANDEVENTS:
-		commandEvents = static_cast<bool>(wParam);
+		commandEvents = static_cast<int>(wParam) != 0;
 		return 0;
 
 	case SCI_GETCOMMANDEVENTS:
