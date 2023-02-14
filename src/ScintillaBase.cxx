@@ -12,7 +12,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -70,20 +69,20 @@ void ScintillaBase::Finalise() {
 }
 
 void ScintillaBase::AddCharUTF(const char *s, unsigned int len, bool /*treatAsDBCS*/) {
-	InsertCharacter(std::string_view(s, len), CharacterSource::directInput);
+	InsertCharacter(s, len, CharacterSource::directInput);
 }
 
-void ScintillaBase::InsertCharacter(std::string_view sv, CharacterSource charSource) {
-	const bool isFillUp = ac.Active() && ac.IsFillUpChar(sv[0]);
+void ScintillaBase::InsertCharacter(const char *s, unsigned int len, CharacterSource charSource) {
+	const bool isFillUp = ac.Active() && ac.IsFillUpChar(s[0]);
 	if (!isFillUp) {
-		Editor::InsertCharacter(sv, charSource);
+		Editor::InsertCharacter(s, len, charSource);
 	}
 	if (ac.Active()) {
-		AutoCompleteCharacterAdded(sv[0]);
+		AutoCompleteCharacterAdded(s[0]);
 		// For fill ups add the character after the autocompletion has
 		// triggered so containers see the key so can display a calltip.
 		if (isFillUp) {
-			Editor::InsertCharacter(sv, charSource);
+			Editor::InsertCharacter(s, len, charSource);
 		}
 	}
 }
@@ -597,7 +596,7 @@ void LexState::SetInstance(ILexer5 *instance_) {
 
 LexState *ScintillaBase::DocumentLexState() {
 	if (!pdoc->GetLexInterface()) {
-		pdoc->SetLexInterface(std::make_unique<LexState>(pdoc));
+		pdoc->SetLexInterface(Sci::make_unique<LexState>(pdoc));
 	}
 	return dynamic_cast<LexState *>(pdoc->GetLexInterface());
 }

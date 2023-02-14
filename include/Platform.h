@@ -27,6 +27,8 @@
 #define PLAT_TK 0
 #define PLAT_HAIKU 0
 
+#include "Compat.h"
+
 #if defined(FOX)
 #undef PLAT_FOX
 #define PLAT_FOX 1
@@ -257,7 +259,7 @@ public:
 		return GetAlpha() / componentMaximum;
 	}
 
-	constexpr ColourAlpha MixedWith(ColourAlpha other) const noexcept {
+	ColourAlpha MixedWith(ColourAlpha other) const noexcept {
 		const unsigned int red = (GetRed() + other.GetRed()) / 2;
 		const unsigned int green = (GetGreen() + other.GetGreen()) / 2;
 		const unsigned int blue = (GetBlue() + other.GetBlue()) / 2;
@@ -336,7 +338,7 @@ public:
 
 class IScreenLine {
 public:
-	virtual std::string_view Text() const = 0;
+	virtual const char *Text() const = 0;
 	virtual size_t Length() const = 0;
 	virtual size_t RepresentationCount() const = 0;
 	virtual XYPOSITION Width() const = 0;
@@ -400,11 +402,11 @@ public:
 
 	virtual std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) = 0;
 
-	virtual void DrawTextNoClip(PRectangle rc, Font &font_, XYPOSITION ybase, std::string_view text, ColourDesired fore, ColourDesired back) = 0;
-	virtual void DrawTextClipped(PRectangle rc, Font &font_, XYPOSITION ybase, std::string_view text, ColourDesired fore, ColourDesired back) = 0;
-	virtual void DrawTextTransparent(PRectangle rc, Font &font_, XYPOSITION ybase, std::string_view text, ColourDesired fore) = 0;
-	virtual void MeasureWidths(Font &font_, std::string_view text, XYPOSITION *positions) = 0;
-	virtual XYPOSITION WidthText(Font &font_, std::string_view text) = 0;
+	virtual void DrawTextNoClip(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore, ColourDesired back) = 0;
+	virtual void DrawTextClipped(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore, ColourDesired back) = 0;
+	virtual void DrawTextTransparent(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore) = 0;
+	virtual void MeasureWidths(Font &font_, const char *s, int len, XYPOSITION *positions) = 0;
+	virtual XYPOSITION WidthText(Font &font_, const char *s, int len) = 0;
 	virtual XYPOSITION Ascent(Font &font_)=0;
 	virtual XYPOSITION Descent(Font &font_)=0;
 	virtual XYPOSITION InternalLeading(Font &font_)=0;

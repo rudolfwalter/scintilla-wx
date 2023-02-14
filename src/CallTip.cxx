@@ -14,7 +14,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <algorithm>
 #include <memory>
@@ -108,14 +107,14 @@ void DrawArrow(Scintilla::Surface *surface, const PRectangle &rc, bool upArrow, 
 			Point::FromInts(centreX + halfWidth, centreY + quarterWidth),
 			Point::FromInts(centreX, centreY - halfWidth + quarterWidth),
 		};
-		surface->Polygon(pts, std::size(pts), colourBG, colourBG);
+		surface->Polygon(pts, Sci::size(pts), colourBG, colourBG);
 	} else {            // Down arrow
 		Point pts[] = {
 			Point::FromInts(centreX - halfWidth, centreY - quarterWidth),
 			Point::FromInts(centreX + halfWidth, centreY - quarterWidth),
 			Point::FromInts(centreX, centreY + halfWidth - quarterWidth),
 		};
-		surface->Polygon(pts, std::size(pts), colourBG, colourBG);
+		surface->Polygon(pts, Sci::size(pts), colourBG, colourBG);
 	}
 }
 
@@ -123,10 +122,9 @@ void DrawArrow(Scintilla::Surface *surface, const PRectangle &rc, bool upArrow, 
 
 // Draw a section of the call tip that does not include \n in one colour.
 // The text may include tabs or arrow characters.
-int CallTip::DrawChunk(Surface *surface, int x, std::string_view sv,
+int CallTip::DrawChunk(Surface *surface, int x, const char *s, size_t len,
 	int ytext, PRectangle rcClient, bool asHighlight, bool draw) {
-
-	if (sv.empty()) {
+	if (len == 0) {
 		return x;
 	}
 
@@ -134,24 +132,24 @@ int CallTip::DrawChunk(Surface *surface, int x, std::string_view sv,
 	// single arrows or single tab characters (if tabSize > 0).
 	// Start with single element 0 to simplify append checks.
 	std::vector<size_t> ends(1);
-	for (size_t i=0; i<sv.length(); i++) {
-		if (IsArrowCharacter(sv[i]) || IsTabCharacter(sv[i])) {
+	for (size_t i=0; i<len; i++) {
+		if (IsArrowCharacter(s[i]) || IsTabCharacter(s[i])) {
 			if (ends.back() != i)
 				ends.push_back(i);
 			ends.push_back(i+1);
 		}
 	}
-	if (ends.back() != sv.length())
-		ends.push_back(sv.length());
+	if (ends.back() != len)
+		ends.push_back(len);
 	ends.erase(ends.begin());	// Remove initial 0.
 
 	size_t startSeg = 0;
 	for (const size_t endSeg : ends) {
 		assert(endSeg > 0);
 		int xEnd;
-		if (IsArrowCharacter(sv[startSeg])) {
+		if (IsArrowCharacter(s[startSeg])) {
 			xEnd = x + widthArrow;
-			const bool upArrow = sv[startSeg] == '\001';
+			const bool upArrow = s[startSeg] == '\001';
 			rcClient.left = static_cast<XYPOSITION>(x);
 			rcClient.right = static_cast<XYPOSITION>(xEnd);
 			if (draw) {
@@ -163,16 +161,17 @@ int CallTip::DrawChunk(Surface *surface, int x, std::string_view sv,
 			} else {
 				rectDown = rcClient;
 			}
-		} else if (IsTabCharacter(sv[startSeg])) {
+		} else if (IsTabCharacter(s[startSeg])) {
 			xEnd = NextTabPos(x);
 		} else {
-			const std::string_view segText = sv.substr(startSeg, endSeg - startSeg);
-			xEnd = x + static_cast<int>(std::lround(surface->WidthText(font, segText)));
+			const char *segText = s + startSeg;
+			xEnd = x + static_cast<int>(std::lround(surface->WidthText(font, segText, (int)(endSeg - startSeg))));
 			if (draw) {
 				rcClient.left = static_cast<XYPOSITION>(x);
 				rcClient.right = static_cast<XYPOSITION>(xEnd);
 				surface->DrawTextTransparent(rcClient, font, static_cast<XYPOSITION>(ytext),
-									segText, asHighlight ? colourSel : colourUnSel);
+									segText, (int)(endSeg - startSeg),
+				                             asHighlight ? colourSel : colourUnSel);
 			}
 		}
 		x = xEnd;
@@ -194,20 +193,25 @@ int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 	// Draw the definition in three parts: before highlight, highlighted, after highlight
 	int ytext = static_cast<int>(rcClient.top) + ascent + 1;
 	rcClient.bottom = ytext + surfaceWindow->Descent(font) + 1;
-	std::string_view remaining(val);
+	const char *remaining = val.c_str();
 	int maxWidth = 0;
 	size_t lineStart = 0;
-	while (!remaining.empty()) {
-		const std::string_view chunkVal = remaining.substr(0, remaining.find_first_of('\n'));
-		remaining.remove_prefix(chunkVal.length());
-		if (!remaining.empty()) {
-			remaining.remove_prefix(1);	// Skip \n
+	while (*remaining) {
+		const char *chunkVal = remaining;
+		const char *chunkEnd = strchr(remaining, '\n');
+		if (!chunkEnd) {
+			chunkEnd = chunkVal + strlen(chunkVal);
+		}
+		const size_t chunkLength = static_cast<size_t>(chunkEnd - chunkVal);
+		remaining += chunkLength;
+		if (*remaining) {
+			remaining++; // Skip \n
 		}
 
-		const Chunk chunkLine(lineStart, lineStart + chunkVal.length());
+		const Chunk chunkLine(lineStart, lineStart + chunkLength);
 		Chunk chunkHighlight(
-			std::clamp(highlight.start, chunkLine.start, chunkLine.end),
-			std::clamp(highlight.end, chunkLine.start, chunkLine.end)
+			Sci::clamp(highlight.start, chunkLine.start, chunkLine.end),
+			Sci::clamp(highlight.end, chunkLine.start, chunkLine.end)
 		);
 		chunkHighlight.start -= lineStart;
 		chunkHighlight.end -= lineStart;
@@ -216,20 +220,17 @@ int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 
 		int x = insetX;     // start each line at this inset
 
-		x = DrawChunk(surfaceWindow, x,
-			chunkVal.substr(0, chunkHighlight.start),
+		x = DrawChunk(surfaceWindow, x, chunkVal, chunkHighlight.start,
 			ytext, rcClient, false, draw);
-		x = DrawChunk(surfaceWindow, x,
-			chunkVal.substr(chunkHighlight.start, chunkHighlight.Length()),
+		x = DrawChunk(surfaceWindow, x, chunkVal + chunkHighlight.start, chunkHighlight.Length(),
 			ytext, rcClient, true, draw);
-		x = DrawChunk(surfaceWindow, x,
-			chunkVal.substr(chunkHighlight.end),
+		x = DrawChunk(surfaceWindow, x, chunkVal + chunkHighlight.end, chunkLength - chunkHighlight.end,
 			ytext, rcClient, false, draw);
 
 		ytext += lineHeight;
 		rcClient.bottom += lineHeight;
 		maxWidth = std::max(maxWidth, x);
-		lineStart += chunkVal.length() + 1;
+		lineStart += chunkLength + 1;
 	}
 	return maxWidth;
 }

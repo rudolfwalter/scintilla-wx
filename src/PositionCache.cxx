@@ -12,7 +12,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -80,11 +79,11 @@ LineLayout::~LineLayout() {
 void LineLayout::Resize(int maxLineLength_) {
 	if (maxLineLength_ > maxLineLength) {
 		Free();
-		chars = std::make_unique<char[]>(maxLineLength_ + 1);
-		styles = std::make_unique<unsigned char []>(maxLineLength_ + 1);
+		chars = Sci::make_unique<char[]>(maxLineLength_ + 1);
+		styles = Sci::make_unique<unsigned char []>(maxLineLength_ + 1);
 		// Extra position allocated as sometimes the Windows
 		// GetTextExtentExPoint API writes an extra element.
-		positions = std::make_unique<XYPOSITION []>(maxLineLength_ + 1 + 1);
+		positions = Sci::make_unique<XYPOSITION []>(maxLineLength_ + 1 + 1);
 		if (bidiData) {
 			bidiData->Resize(maxLineLength_);
 		}
@@ -95,7 +94,7 @@ void LineLayout::Resize(int maxLineLength_) {
 
 void LineLayout::EnsureBidiData() {
 	if (!bidiData) {
-		bidiData = std::make_unique<BidiData>();
+		bidiData = Sci::make_unique<BidiData>();
 		bidiData->Resize(maxLineLength);
 	}
 }
@@ -174,7 +173,7 @@ int LineLayout::SubLineFromPosition(int posInLine, PointEnd pe) const noexcept {
 void LineLayout::SetLineStart(int line, int start) {
 	if ((line >= lenLineStarts) && (line != 0)) {
 		const int newMaxLines = line + 20;
-		std::unique_ptr<int[]> newLineStarts = std::make_unique<int[]>(newMaxLines);
+		std::unique_ptr<int[]> newLineStarts = Sci::make_unique<int[]>(newMaxLines);
 		for (int i = 0; i < newMaxLines; i++) {
 			if (i < lenLineStarts)
 				newLineStarts[i] = lineStarts[i];
@@ -310,8 +309,8 @@ ScreenLine::ScreenLine(
 ScreenLine::~ScreenLine() {
 }
 
-std::string_view ScreenLine::Text() const {
-	return std::string_view(&ll->chars[start], len);
+const char *ScreenLine::Text() const {
+	return &ll->chars[start];
 }
 
 size_t ScreenLine::Length() const {
@@ -449,7 +448,7 @@ LineLayout *LineLayoutCache::Retrieve(Sci::Line lineNumber, Sci::Line lineCaret,
 				}
 			}
 			if (!cache[pos]) {
-				cache[pos] = std::make_unique<LineLayout>(maxChars);
+				cache[pos] = Sci::make_unique<LineLayout>(maxChars);
 			}
 			cache[pos]->lineNumber = lineNumber;
 			cache[pos]->inCache = true;
@@ -618,7 +617,7 @@ TextSegment BreakFinder::Next() {
 					static_cast<int>(lineRange.end - nextBreak));
 			else if (encodingFamily == EncodingFamily::dbcs)
 				charWidth = pdoc->DBCSDrawBytes(
-					std::string_view(&ll->chars[nextBreak], lineRange.end - nextBreak));
+					&ll->chars[nextBreak], static_cast<int>(lineRange.end - nextBreak));
 			const Representation *repr = preprs->RepresentationFromCharacter(&ll->chars[nextBreak], charWidth);
 			if (((nextBreak > 0) && (ll->styles[nextBreak] != ll->styles[nextBreak - 1])) ||
 					repr ||
@@ -678,7 +677,7 @@ PositionCacheEntry::PositionCacheEntry(const PositionCacheEntry &other) :
 	styleNumber(other.styleNumber), len(other.styleNumber), clock(other.styleNumber), positions(nullptr) {
 	if (other.positions) {
 		const size_t lenData = len + (len / sizeof(XYPOSITION)) + 1;
-		positions = std::make_unique<XYPOSITION[]>(lenData);
+		positions = Sci::make_unique<XYPOSITION[]>(lenData);
 		memcpy(positions.get(), other.positions.get(), lenData * sizeof(XYPOSITION));
 	}
 }
@@ -690,7 +689,7 @@ void PositionCacheEntry::Set(unsigned int styleNumber_, const char *s_,
 	len = len_;
 	clock = clock_;
 	if (s_ && positions_) {
-		positions = std::make_unique<XYPOSITION[]>(len + (len / sizeof(XYPOSITION)) + 1);
+		positions = Sci::make_unique<XYPOSITION[]>(len + (len / sizeof(XYPOSITION)) + 1);
 		for (unsigned int i=0; i<len; i++) {
 			positions[i] = positions_[i];
 		}
@@ -801,7 +800,7 @@ void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, uns
 		XYPOSITION xStartSegment = 0;
 		while (startSegment < len) {
 			const unsigned int lenSegment = pdoc->SafeSegment(s + startSegment, len - startSegment, BreakFinder::lengthEachSubdivision);
-			surface->MeasureWidths(fontStyle, std::string_view(s + startSegment, lenSegment), positions + startSegment);
+			surface->MeasureWidths(fontStyle, s + startSegment, lenSegment, positions + startSegment);
 			for (unsigned int inSeg = 0; inSeg < lenSegment; inSeg++) {
 				positions[startSegment + inSeg] += xStartSegment;
 			}
@@ -809,7 +808,7 @@ void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, uns
 			startSegment += lenSegment;
 		}
 	} else {
-		surface->MeasureWidths(fontStyle, std::string_view(s, len), positions);
+		surface->MeasureWidths(fontStyle, s, len, positions);
 	}
 	if (probe < pces.size()) {
 		// Store into cache

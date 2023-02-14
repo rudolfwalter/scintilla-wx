@@ -401,7 +401,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	Sci::Position RealizeVirtualSpace(Sci::Position position, Sci::Position virtualSpace);
 	SelectionPosition RealizeVirtualSpace(const SelectionPosition &position);
 	void AddChar(char ch);
-	virtual void InsertCharacter(std::string_view sv, CharacterSource charSource);
+	virtual void InsertCharacter(const char *s, unsigned int len, CharacterSource charSource);
 	void ClearBeforeTentativeStart();
 	void InsertPaste(const char *text, Sci::Position len);
 	enum PasteShape { pasteStream=0, pasteRectangular = 1, pasteLine = 2 };
@@ -530,7 +530,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	Sci::Position PositionAfterMaxStyling(Sci::Position posMax, bool scrolling) const;
 	void StartIdleStyling(bool truncatedLastStyling);
 	void StyleAreaBounded(PRectangle rcArea, bool scrolling);
-	constexpr bool SynchronousStylingToVisible() const noexcept {
+	inline bool SynchronousStylingToVisible() const noexcept {
 		return (idleStyling == SC_IDLESTYLING_NONE) || (idleStyling == SC_IDLESTYLING_AFTERVISIBLE);
 	}
 	void IdleStyling();

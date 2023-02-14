@@ -9,7 +9,6 @@
 #include <cstring>
 
 #include <stdexcept>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -84,9 +83,6 @@ XPM::XPM(const char *textForm) {
 
 XPM::XPM(const char *const *linesForm) {
 	Init(linesForm);
-}
-
-XPM::~XPM() {
 }
 
 void XPM::Init(const char *textForm) {
@@ -244,9 +240,6 @@ RGBAImage::RGBAImage(const XPM &xpm) {
 	}
 }
 
-RGBAImage::~RGBAImage() {
-}
-
 int RGBAImage::CountBytes() const noexcept {
 	return width * height * 4;
 }
@@ -280,10 +273,6 @@ void RGBAImage::BGRAFromRGBA(unsigned char *pixelsBGRA, const unsigned char *pix
 }
 
 RGBAImageSet::RGBAImageSet() : height(-1), width(-1) {
-}
-
-RGBAImageSet::~RGBAImageSet() {
-	Clear();
 }
 
 /// Remove all images.

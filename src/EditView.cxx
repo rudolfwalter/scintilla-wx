@@ -14,7 +14,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <forward_list>
@@ -90,8 +89,8 @@ static int WidthStyledText(Surface *surface, const ViewStyle &vs, int styleOffse
 		while ((endSegment + 1 < len) && (styles[endSegment + 1] == style))
 			endSegment++;
 		FontAlias fontText = vs.styles[style + styleOffset].font;
-		const std::string_view sv(text + start, endSegment - start + 1);
-		width += static_cast<int>(surface->WidthText(fontText, sv));
+		width += static_cast<int>(surface->WidthText(fontText, text + start,
+			static_cast<int>(endSegment - start + 1)));
 		start = endSegment + 1;
 	}
 	return width;
@@ -107,8 +106,8 @@ int WidestLineWidth(Surface *surface, const ViewStyle &vs, int styleOffset, cons
 			widthSubLine = WidthStyledText(surface, vs, styleOffset, st.text + start, st.styles + start, lenLine);
 		} else {
 			FontAlias fontText = vs.styles[styleOffset + st.style].font;
-			const std::string_view text(st.text + start, lenLine);
-			widthSubLine = static_cast<int>(surface->WidthText(fontText, text));
+			widthSubLine = static_cast<int>(surface->WidthText(fontText,
+				st.text + start, static_cast<int>(lenLine)));
 		}
 		if (widthSubLine > widthMax)
 			widthMax = widthSubLine;
@@ -118,18 +117,18 @@ int WidestLineWidth(Surface *surface, const ViewStyle &vs, int styleOffset, cons
 }
 
 void DrawTextNoClipPhase(Surface *surface, PRectangle rc, const Style &style, XYPOSITION ybase,
-	std::string_view text, DrawPhase phase) {
+	const char *s, int len, DrawPhase phase) {
 	FontAlias fontText = style.font;
 	if (phase & drawBack) {
 		if (phase & drawText) {
 			// Drawing both
-			surface->DrawTextNoClip(rc, fontText, ybase, text,
+			surface->DrawTextNoClip(rc, fontText, ybase, s, len,
 				style.fore, style.back);
 		} else {
 			surface->FillRectangle(rc, style.back);
 		}
 	} else if (phase & drawText) {
-		surface->DrawTextTransparent(rc, fontText, ybase, text, style.fore);
+		surface->DrawTextTransparent(rc, fontText, ybase, s, len, style.fore);
 	}
 }
 
@@ -146,21 +145,22 @@ void DrawStyledText(Surface *surface, const ViewStyle &vs, int styleOffset, PRec
 				end++;
 			style += styleOffset;
 			FontAlias fontText = vs.styles[style].font;
-			const std::string_view text(st.text + start + i, end - i + 1);
-			const int width = static_cast<int>(surface->WidthText(fontText, text));
+			const int width = static_cast<int>(surface->WidthText(fontText,
+				st.text + start + i, static_cast<int>(end - i + 1)));
 			PRectangle rcSegment = rcText;
 			rcSegment.left = static_cast<XYPOSITION>(x);
 			rcSegment.right = static_cast<XYPOSITION>(x + width + 1);
 			DrawTextNoClipPhase(surface, rcSegment, vs.styles[style],
-				rcText.top + vs.maxAscent, text, phase);
+				rcText.top + vs.maxAscent, st.text + start + i,
+				static_cast<int>(end - i + 1), phase);
 			x += width;
 			i = end + 1;
 		}
 	} else {
 		const size_t style = st.style + styleOffset;
 		DrawTextNoClipPhase(surface, rcText, vs.styles[style],
-			rcText.top + vs.maxAscent,
-			std::string_view(st.text + start, length), phase);
+			rcText.top + vs.maxAscent, st.text + start,
+			static_cast<int>(length), phase);
 	}
 }
 
@@ -221,7 +221,7 @@ bool EditView::ClearTabstops(Sci::Line line) noexcept {
 
 bool EditView::AddTabstop(Sci::Line line, int x) {
 	if (!ldTabstops) {
-		ldTabstops = std::make_unique<LineTabstops>();
+		ldTabstops = Sci::make_unique<LineTabstops>();
 	}
 	return ldTabstops && ldTabstops->AddTabstop(line, x);
 }
@@ -279,7 +279,7 @@ static const char *ControlCharacterString(unsigned char ch) noexcept {
 		"DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB",
 		"CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US"
 	};
-	if (ch < std::size(reps)) {
+	if (ch < Sci::size(reps)) {
 		return reps[ch];
 	} else {
 		return "BAD";
@@ -870,7 +870,7 @@ static void SimpleAlphaRectangle(Surface *surface, PRectangle rc, ColourDesired 
 }
 
 static void DrawTextBlob(Surface *surface, const ViewStyle &vsDraw, PRectangle rcSegment,
-	std::string_view text, ColourDesired textBack, ColourDesired textFore, bool fillBackground) {
+	const char *s, ColourDesired textBack, ColourDesired textFore, bool fillBackground) {
 	if (rcSegment.Empty())
 		return;
 	if (fillBackground) {
@@ -890,7 +890,7 @@ static void DrawTextBlob(Surface *surface, const ViewStyle &vsDraw, PRectangle r
 	rcChar.left++;
 	rcChar.right--;
 	surface->DrawTextClipped(rcChar, ctrlCharsFont,
-		rcSegment.top + vsDraw.maxAscent, text,
+		rcSegment.top + vsDraw.maxAscent, s, static_cast<int>(s ? strlen(s) : 0),
 		textBack, textFore);
 }
 
@@ -1200,9 +1200,10 @@ void EditView::DrawFoldDisplayText(Surface *surface, const EditModel &model, con
 		return;
 
 	PRectangle rcSegment = rcLine;
-	const std::string_view foldDisplayText(text);
+	const char *foldDisplayText = text;
+	const int lengthFoldDisplayText = static_cast<int>(strlen(foldDisplayText));
 	FontAlias fontText = vsDraw.styles[STYLE_FOLDDISPLAYTEXT].font;
-	const int widthFoldDisplayText = static_cast<int>(surface->WidthText(fontText, foldDisplayText));
+	const int widthFoldDisplayText = static_cast<int>(surface->WidthText(fontText, foldDisplayText, lengthFoldDisplayText));
 
 	int eolInSelection = 0;
 	int alpha = SC_ALPHA_NOALPHA;
@@ -1249,11 +1250,11 @@ void EditView::DrawFoldDisplayText(Surface *surface, const EditModel &model, con
 		if (phasesDraw != phasesOne) {
 			surface->DrawTextTransparent(rcSegment, fontText,
 				rcSegment.top + vsDraw.maxAscent, foldDisplayText,
-				textFore);
+				lengthFoldDisplayText, textFore);
 		} else {
 			surface->DrawTextNoClip(rcSegment, fontText,
 				rcSegment.top + vsDraw.maxAscent, foldDisplayText,
-				textFore, textBack);
+				lengthFoldDisplayText, textFore, textBack);
 		}
 	}
 
@@ -1295,12 +1296,11 @@ void EditView::DrawEOLAnnotationText(Surface *surface, const EditModel &model, c
 	if (!stEOLAnnotation.text || !ValidStyledText(vsDraw, vsDraw.eolAnnotationStyleOffset, stEOLAnnotation)) {
 		return;
 	}
-	const std::string_view eolAnnotationText(stEOLAnnotation.text, stEOLAnnotation.length);
 	const size_t style = stEOLAnnotation.style + vsDraw.eolAnnotationStyleOffset;
 
 	PRectangle rcSegment = rcLine;
 	FontAlias fontText = vsDraw.styles[style].font;
-	const int widthEOLAnnotationText = static_cast<int>(surface->WidthText(fontText, eolAnnotationText));
+	const int widthEOLAnnotationText = static_cast<int>(surface->WidthText(fontText, stEOLAnnotation.text, (int)stEOLAnnotation.length));
 
 	const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
 	const XYPOSITION virtualSpace = model.sel.VirtualSpaceFor(
@@ -1311,8 +1311,7 @@ void EditView::DrawEOLAnnotationText(Surface *surface, const EditModel &model, c
 
 	const char *textFoldDisplay = model.GetFoldDisplayText(line);
 	if (textFoldDisplay) {
-		const std::string_view foldDisplayText(textFoldDisplay);
-		rcSegment.left += (static_cast<int>(surface->WidthText(fontText, foldDisplayText)) + vsDraw.aveCharWidth);
+		rcSegment.left += (static_cast<int>(surface->WidthText(fontText, textFoldDisplay, static_cast<int>(strlen(textFoldDisplay)))) + vsDraw.aveCharWidth);
 	}
 	rcSegment.right = rcSegment.left + static_cast<XYPOSITION>(widthEOLAnnotationText);
 
@@ -1343,11 +1342,11 @@ void EditView::DrawEOLAnnotationText(Surface *surface, const EditModel &model, c
 	if (phase & drawText) {
 		if (phasesDraw != phasesOne) {
 			surface->DrawTextTransparent(rcSegment, fontText,
-			rcSegment.top + vsDraw.maxAscent, eolAnnotationText,
+			rcSegment.top + vsDraw.maxAscent, stEOLAnnotation.text, (int)stEOLAnnotation.length,
 			textFore);
 		} else {
 			surface->DrawTextNoClip(rcSegment, fontText,
-			rcSegment.top + vsDraw.maxAscent, eolAnnotationText,
+			rcSegment.top + vsDraw.maxAscent, stEOLAnnotation.text, (int)stEOLAnnotation.length,
 			textFore, textBack);
 		}
 	}
@@ -1493,9 +1492,9 @@ static void DrawBlockCaret(Surface *surface, const EditModel &model, const ViewS
 	// (inversed) for drawing the caret here.
 	const int styleMain = ll->styles[offsetFirstChar];
 	FontAlias fontText = vsDraw.styles[styleMain].font;
-	const std::string_view text(&ll->chars[offsetFirstChar], numCharsToDraw);
 	surface->DrawTextClipped(rcCaret, fontText,
-		rcCaret.top + vsDraw.maxAscent, text, vsDraw.styles[styleMain].back,
+		rcCaret.top + vsDraw.maxAscent, &ll->chars[offsetFirstChar],
+		static_cast<int>(numCharsToDraw), vsDraw.styles[styleMain].back,
 		caretColour);
 }
 
@@ -1964,22 +1963,24 @@ void EditView::DrawForeground(Surface *surface, const EditModel &model, const Vi
 						const char cc[2] = { static_cast<char>(vsDraw.controlCharSymbol), '\0' };
 						surface->DrawTextNoClip(rcSegment, ctrlCharsFont,
 							rcSegment.top + vsDraw.maxAscent,
-							cc, textBack, textFore);
+							cc, 1, textBack, textFore);
 					} else {
-						DrawTextBlob(surface, vsDraw, rcSegment, ts.representation->stringRep,
+						DrawTextBlob(surface, vsDraw, rcSegment, ts.representation->stringRep.c_str(),
 							textBack, textFore, phasesDraw == phasesOne);
 					}
 				}
 			} else {
 				// Normal text display
 				if (vsDraw.styles[styleMain].visible) {
-					const std::string_view text(&ll->chars[ts.start], i - ts.start + 1);
 					if (phasesDraw != phasesOne) {
 						surface->DrawTextTransparent(rcSegment, textFont,
-							rcSegment.top + vsDraw.maxAscent, text, textFore);
-					} else {
+							rcSegment.top + vsDraw.maxAscent, &ll->chars[ts.start],
+							static_cast<int>(i - ts.start + 1), textFore);
+					}
+					else {
 						surface->DrawTextNoClip(rcSegment, textFont,
-							rcSegment.top + vsDraw.maxAscent, text, textFore, textBack);
+							rcSegment.top + vsDraw.maxAscent, &ll->chars[ts.start],
+							static_cast<int>(i - ts.start + 1), textFore, textBack);
 					}
 				}
 				if (vsDraw.viewWhitespace != wsInvisible ||
@@ -2509,7 +2510,7 @@ Sci::Position EditView::FormatRange(bool draw, const Sci_RangeToFormat *pfr, Sur
 	int lineNumberWidth = 0;
 	if (lineNumberIndex >= 0) {
 		lineNumberWidth = static_cast<int>(surfaceMeasure->WidthText(vsPrint.styles[STYLE_LINENUMBER].font,
-			"99999" lineNumberPrintSpace));
+			"99999" lineNumberPrintSpace, 5 + static_cast<int>(strlen(lineNumberPrintSpace))));
 		vsPrint.ms[lineNumberIndex].width = lineNumberWidth;
 		vsPrint.Refresh(*surfaceMeasure, model.pdoc->tabInChars);	// Recalculate fixedColumnWidth
 	}
@@ -2588,10 +2589,10 @@ Sci::Position EditView::FormatRange(bool draw, const Sci_RangeToFormat *pfr, Sur
 			rcNumber.right = rcNumber.left + lineNumberWidth;
 			// Right justify
 			rcNumber.left = rcNumber.right - surfaceMeasure->WidthText(
-				vsPrint.styles[STYLE_LINENUMBER].font, number);
+				vsPrint.styles[STYLE_LINENUMBER].font, number.c_str(), static_cast<int>(number.length()));
 			surface->FlushCachedState();
 			surface->DrawTextNoClip(rcNumber, vsPrint.styles[STYLE_LINENUMBER].font,
-				static_cast<XYPOSITION>(ypos + vsPrint.maxAscent), number,
+				static_cast<XYPOSITION>(ypos + vsPrint.maxAscent), number.c_str(), static_cast<int>(number.length()),
 				vsPrint.styles[STYLE_LINENUMBER].fore,
 				vsPrint.styles[STYLE_LINENUMBER].back);
 		}
