@@ -212,6 +212,10 @@
 #include "CharClassify.h"
 #include "RESearch.h"
 
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
+#endif
+
 using namespace Scintilla;
 
 #define OKP     1
