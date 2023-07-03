@@ -212,7 +212,7 @@
 #include "CharClassify.h"
 #include "RESearch.h"
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
 #endif
 
