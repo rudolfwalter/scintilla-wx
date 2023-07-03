@@ -27,6 +27,10 @@
 #include "CellBuffer.h"
 #include "UniConversion.h"
 
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
+#endif
+
 namespace Scintilla {
 
 struct CountWidths {
