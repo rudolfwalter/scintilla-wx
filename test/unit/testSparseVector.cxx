@@ -1,4 +1,6 @@
-// Unit Tests for Scintilla internal data structures
+/** @file testSparseVector.cxx
+ ** Unit Tests for Scintilla internal data structures
+ **/
 
 #include <cstddef>
 #include <cassert>
@@ -7,10 +9,11 @@
 #include <stdexcept>
 #include <string_view>
 #include <vector>
+#include <optional>
 #include <algorithm>
 #include <memory>
 
-#include "Platform.h"
+#include "Debugging.h"
 
 #include "Position.h"
 #include "UniqueString.h"
@@ -20,13 +23,61 @@
 
 #include "catch.hpp"
 
-using namespace Scintilla;
+using namespace Scintilla::Internal;
 
 // Test SparseVector.
 
+using UniqueInt = std::unique_ptr<int>;
+
+TEST_CASE("CompileCopying SparseVector") {
+
+	// These are compile-time tests to check that basic copy and move
+	// operations are defined correctly.
+
+	SECTION("CopyingMoving") {
+		SparseVector<int> s;
+		SparseVector<int> s2;
+
+		// Copy constructor
+		const SparseVector<int> sa(s);
+		// Copy assignment
+		SparseVector<int> sb;
+		sb = s;
+
+		// Move constructor
+		const SparseVector<int> sc(std::move(s));
+		// Move assignment
+		SparseVector<int> sd;
+		sd = (std::move(s2));
+	}
+
+	SECTION("MoveOnly") {
+		SparseVector<UniqueInt> s;
+
+#if defined(SHOW_COPY_BUILD_FAILURES)
+		// Copy is not defined for std::unique_ptr
+		// Copy constructor fails
+		SparseVector<UniqueInt> sa(s);
+		// Copy assignment fails
+		SparseVector<UniqueInt> sb;
+		sb = s;
+#endif
+
+		// Move constructor
+		const SparseVector<UniqueInt> sc(std::move(s));
+		// Move assignment
+		SparseVector<UniqueInt> s2;
+		SparseVector<UniqueInt> sd;
+		sd = (std::move(s2));
+	}
+
+}
+
+namespace {
+
 // Helper to produce a string representation of a SparseVector<const char *>
 // to simplify checks.
-static std::string Representation(const SparseVector<UniqueString> &st) {
+std::string Representation(const SparseVector<UniqueString> &st) {
 	std::string ret;
 	for (int i = 0;i <= st.Length();i++) {
 		const char *value = st.ValueAt(i).get();
@@ -36,6 +87,8 @@ static std::string Representation(const SparseVector<UniqueString> &st) {
 			ret += "-";
 	}
 	return ret;
+}
+
 }
 
 TEST_CASE("SparseVector") {
@@ -176,6 +229,10 @@ TEST_CASE("SparseVector") {
 		REQUIRE(1 == st.Elements());
 		REQUIRE("------" == Representation(st));
 		st.Check();
+		st.SetValueAt(5, nullptr);
+		REQUIRE(1 == st.Elements());
+		REQUIRE("------" == Representation(st));
+		st.Check();
 	}
 
 	SECTION("CheckDeletionLeavesOrdered") {
@@ -203,6 +260,9 @@ TEST_CASE("SparseVector") {
 		st.SetValueAt(3, UniqueStringCopy("3"));
 		REQUIRE(5 == st.Elements());
 		REQUIRE("---34--7-9-" == Representation(st));
+		st.DeleteAll();
+		REQUIRE(1 == st.Elements());
+		REQUIRE("-" == Representation(st));
 		st.Check();
 	}
 
@@ -371,6 +431,21 @@ TEST_CASE("SparseTextInt") {
 		REQUIRE(3 == st.PositionOfElement(1));
 		REQUIRE(2 == st.IndexAfter(3));
 		REQUIRE(5 == st.PositionOfElement(2));
+		REQUIRE(2 == st.IndexAfter(4));
+	}
+
+	SECTION("PositionNext") {
+		st.InsertSpace(0, 5);
+		REQUIRE(1 == st.Elements());
+		REQUIRE(5 == st.PositionNext(-1));
+		REQUIRE(5 == st.PositionNext(0));
+		REQUIRE(6 == st.PositionNext(5));
+		st.SetValueAt(3, 3);
+		REQUIRE(2 == st.Elements());
+		REQUIRE(3 == st.PositionNext(-1));
+		REQUIRE(3 == st.PositionNext(0));
+		REQUIRE(5 == st.PositionNext(3));
+		REQUIRE(6 == st.PositionNext(5));
 	}
 }
 
@@ -402,7 +477,7 @@ TEST_CASE("SparseTextString") {
 	SECTION("SetAndMoveString") {
 		st.InsertSpace(0, 2);
 		REQUIRE(2u == st.Length());
-		std::string s24("24");
+		const std::string s24("24");
 		st.SetValueAt(0, s24);
 		REQUIRE("24" == s24);	// Not moved from
 		REQUIRE("" == st.ValueAt(-1));
@@ -410,7 +485,8 @@ TEST_CASE("SparseTextString") {
 		REQUIRE("" == st.ValueAt(1));
 		std::string s25("25");
 		st.SetValueAt(1, std::move(s25));
-		REQUIRE("" == s25);	// moved from
+		// Deliberate check of moved from: provokes warning from Visual C++ code analysis
+		REQUIRE("" == s25);
 		REQUIRE("25" == st.ValueAt(1));
 	}
 

@@ -9,14 +9,13 @@
 
 #include <stdexcept>
 #include <string>
+#include <string_view>
 
 #include "UniConversion.h"
 
-using namespace Scintilla;
+namespace Scintilla::Internal {
 
-namespace Scintilla {
-
-size_t UTF8Length(std::wstring const& wsv) noexcept {
+size_t UTF8Length(std::wstring_view wsv) noexcept {
 	size_t len = 0;
 	for (size_t i = 0; i < wsv.length() && wsv[i];) {
 		const unsigned int uch = wsv[i];
@@ -36,7 +35,7 @@ size_t UTF8Length(std::wstring const& wsv) noexcept {
 	return len;
 }
 
-size_t UTF8PositionFromUTF16Position(std::string const& u8Text, size_t positionUTF16) noexcept {
+size_t UTF8PositionFromUTF16Position(std::string_view u8Text, size_t positionUTF16) noexcept {
 	size_t positionUTF8 = 0;
 	for (size_t lengthUTF16 = 0; (positionUTF8 < u8Text.length()) && (lengthUTF16 < positionUTF16);) {
 		const unsigned char uch = u8Text[positionUTF8];
@@ -48,7 +47,7 @@ size_t UTF8PositionFromUTF16Position(std::string const& u8Text, size_t positionU
 	return positionUTF8;
 }
 
-void UTF8FromUTF16(std::wstring const& wsv, char *putf, size_t len) noexcept {
+void UTF8FromUTF16(std::wstring_view wsv, char *putf, size_t len) noexcept {
 	size_t k = 0;
 	for (size_t i = 0; i < wsv.length() && wsv[i];) {
 		const unsigned int uch = wsv[i];
@@ -97,7 +96,7 @@ void UTF8FromUTF32Character(int uch, char *putf) noexcept {
 	putf[k] = '\0';
 }
 
-size_t UTF16Length(std::string const& svu8) noexcept {
+size_t UTF16Length(std::string_view svu8) noexcept {
 	size_t ulen = 0;
 	for (size_t i = 0; i< svu8.length();) {
 		const unsigned char ch = svu8[i];
@@ -112,10 +111,10 @@ size_t UTF16Length(std::string const& svu8) noexcept {
 constexpr unsigned char TrailByteValue(unsigned char c) {
 	// The top 2 bits are 0b10 to indicate a trail byte.
 	// The lower 6 bits contain the value.
-	return c & 0x3F; // 0b0011'1111
+	return c & 0b0011'1111;
 }
 
-size_t UTF16FromUTF8(std::string const& svu8, wchar_t *tbuf, size_t tlen) {
+size_t UTF16FromUTF8(std::string_view svu8, wchar_t *tbuf, size_t tlen) {
 	size_t ui = 0;
 	for (size_t i = 0; i < svu8.length();) {
 		unsigned char ch = svu8[i];
@@ -174,7 +173,7 @@ size_t UTF16FromUTF8(std::string const& svu8, wchar_t *tbuf, size_t tlen) {
 	return ui;
 }
 
-size_t UTF32Length(std::string const& svu8) noexcept {
+size_t UTF32Length(std::string_view svu8) noexcept {
 	size_t ulen = 0;
 	for (size_t i = 0; i < svu8.length();) {
 		const unsigned char ch = svu8[i];
@@ -185,7 +184,7 @@ size_t UTF32Length(std::string const& svu8) noexcept {
 	return ulen;
 }
 
-size_t UTF32FromUTF8(std::string const& svu8, unsigned int *tbuf, size_t tlen) {
+size_t UTF32FromUTF8(std::string_view svu8, unsigned int *tbuf, size_t tlen) {
 	size_t ui = 0;
 	for (size_t i = 0; i < svu8.length();) {
 		unsigned char ch = svu8[i];
@@ -238,16 +237,16 @@ size_t UTF32FromUTF8(std::string const& svu8, unsigned int *tbuf, size_t tlen) {
 	return ui;
 }
 
-std::wstring WStringFromUTF8(std::string const& svu8) {
-	if (sizeof(wchar_t) == 2) {
+std::wstring WStringFromUTF8(std::string_view svu8) {
+	if constexpr (sizeof(wchar_t) == 2) {
 		const size_t len16 = UTF16Length(svu8);
 		std::wstring ws(len16, 0);
-		UTF16FromUTF8(svu8, &ws[0], len16);
+		UTF16FromUTF8(svu8, ws.data(), len16);
 		return ws;
 	} else {
 		const size_t len32 = UTF32Length(svu8);
 		std::wstring ws(len32, 0);
-		UTF32FromUTF8(svu8, reinterpret_cast<unsigned int *>(&ws[0]), len32);
+		UTF32FromUTF8(svu8, reinterpret_cast<unsigned int *>(ws.data()), len32);
 		return ws;
 	}
 }
@@ -256,11 +255,10 @@ unsigned int UTF16FromUTF32Character(unsigned int val, wchar_t *tbuf) noexcept {
 	if (val < SUPPLEMENTAL_PLANE_FIRST) {
 		tbuf[0] = static_cast<wchar_t>(val);
 		return 1;
-	} else {
-		tbuf[0] = static_cast<wchar_t>(((val - SUPPLEMENTAL_PLANE_FIRST) >> 10) + SURROGATE_LEAD_FIRST);
-		tbuf[1] = static_cast<wchar_t>((val & 0x3ff) + SURROGATE_TRAIL_FIRST);
-		return 2;
 	}
+	tbuf[0] = static_cast<wchar_t>(((val - SUPPLEMENTAL_PLANE_FIRST) >> 10) + SURROGATE_LEAD_FIRST);
+	tbuf[1] = static_cast<wchar_t>((val & 0x3ff) + SURROGATE_TRAIL_FIRST);
+	return 2;
 }
 
 const unsigned char UTF8BytesOfLead[256] = {
@@ -359,25 +357,28 @@ int UTF8Classify(const unsigned char *us, size_t len) noexcept {
 	return UTF8MaskInvalid | 1;
 }
 
-int UTF8DrawBytes(const unsigned char *us, int len) noexcept {
-	const int utf8StatusNext = UTF8Classify(us, len);
+int UTF8Classify(const char *s, size_t len) noexcept {
+	return UTF8Classify(reinterpret_cast<const unsigned char *>(s), len);
+}
+
+int UTF8DrawBytes(const char *s, size_t len) noexcept {
+	const int utf8StatusNext = UTF8Classify(s, len);
 	return (utf8StatusNext & UTF8MaskInvalid) ? 1 : (utf8StatusNext & UTF8MaskWidth);
 }
 
-bool UTF8IsValid(std::string const& svu8) noexcept {
-	const unsigned char *us = reinterpret_cast<const unsigned char *>(svu8.data());
+bool UTF8IsValid(std::string_view svu8) noexcept {
+	const char *s = svu8.data();
 	size_t remaining = svu8.length();
 	while (remaining > 0) {
-		const int utf8Status = UTF8Classify(us, remaining);
+		const int utf8Status = UTF8Classify(s, remaining);
 		if (utf8Status & UTF8MaskInvalid) {
 			return false;
-		} else {
-			const int lenChar = utf8Status & UTF8MaskWidth;
-			us += lenChar;
-			remaining -= lenChar;
 		}
+		const int lenChar = utf8Status & UTF8MaskWidth;
+		s += lenChar;
+		remaining -= lenChar;
 	}
-	return remaining == 0;
+	return true;
 }
 
 // Replace invalid bytes in UTF-8 with the replacement character
@@ -386,7 +387,7 @@ std::string FixInvalidUTF8(const std::string &text) {
 	const char *s = text.c_str();
 	size_t remaining = text.size();
 	while (remaining > 0) {
-		const int utf8Status = UTF8Classify(reinterpret_cast<const unsigned char *>(s), remaining);
+		const int utf8Status = UTF8Classify(s, remaining);
 		if (utf8Status & UTF8MaskInvalid) {
 			// Replacement character 0xFFFD = UTF8:"efbfbd".
 			result.append("\xef\xbf\xbd");

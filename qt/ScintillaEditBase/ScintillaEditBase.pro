@@ -6,13 +6,14 @@
 
 QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+equals(QT_MAJOR_VERSION, 6): QT += core5compat
 
 TARGET = ScintillaEditBase
 TEMPLATE = lib
 CONFIG += lib_bundle
 CONFIG += c++1z
 
-VERSION = 5.0.0
+VERSION = 5.5.3
 
 SOURCES += \
     PlatQt.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
     ../../src/ViewStyle.cxx \
     ../../src/UniqueString.cxx \
     ../../src/UniConversion.cxx \
+    ../../src/UndoHistory.cxx \
     ../../src/Style.cxx \
     ../../src/Selection.cxx \
     ../../src/ScintillaBase.cxx \
@@ -33,6 +35,7 @@ SOURCES += \
     ../../src/LineMarker.cxx \
     ../../src/KeyMap.cxx \
     ../../src/Indicator.cxx \
+    ../../src/Geometry.cxx \
     ../../src/EditView.cxx \
     ../../src/Editor.cxx \
     ../../src/EditModel.cxx \
@@ -41,8 +44,9 @@ SOURCES += \
     ../../src/DBCS.cxx \
     ../../src/ContractionState.cxx \
     ../../src/CharClassify.cxx \
-    ../../src/CharacterSet.cxx \
-    ../../src/CharacterCategory.cxx \
+    ../../src/CharacterType.cxx \
+    ../../src/CharacterCategoryMap.cxx \
+    ../../src/ChangeHistory.cxx \
     ../../src/CellBuffer.cxx \
     ../../src/CaseFolder.cxx \
     ../../src/CaseConvert.cxx \
@@ -55,6 +59,7 @@ HEADERS  += \
     ScintillaEditBase.h \
     ../../src/XPM.h \
     ../../src/ViewStyle.h \
+    ../../src/UndoHistory.h \
     ../../src/UniConversion.h \
     ../../src/Style.h \
     ../../src/SplitVector.h \
@@ -63,33 +68,34 @@ HEADERS  += \
     ../../src/RunStyles.h \
     ../../src/RESearch.h \
     ../../src/PositionCache.h \
+    ../../src/Platform.h \
     ../../src/PerLine.h \
     ../../src/Partitioning.h \
     ../../src/LineMarker.h \
     ../../src/KeyMap.h \
     ../../src/Indicator.h \
-    ../../src/FontQuality.h \
+    ../../src/Geometry.h \
     ../../src/Editor.h \
     ../../src/Document.h \
     ../../src/Decoration.h \
     ../../src/ContractionState.h \
     ../../src/CharClassify.h \
-    ../../src/CharacterSet.h \
-    ../../src/CharacterCategory.h \
+    ../../src/CharacterType.h \
+    ../../src/CharacterCategoryMap.h \
+    ../../src/ChangeHistory.h \
     ../../src/CellBuffer.h \
     ../../src/CaseFolder.h \
     ../../src/CaseConvert.h \
     ../../src/CallTip.h \
     ../../src/AutoComplete.h \
     ../../include/Scintilla.h \
-    ../../include/Platform.h \
     ../../include/ILexer.h
 
 OTHER_FILES +=
 
 INCLUDEPATH += ../../include ../../src
 
-DEFINES += SCINTILLA_QT=1 MAKING_LIBRARY=1 SCI_LEXER=1 _CRT_SECURE_NO_DEPRECATE=1
+DEFINES += SCINTILLA_QT=1 MAKING_LIBRARY=1
 CONFIG(release, debug|release) {
     DEFINES += NDEBUG=1
 }
