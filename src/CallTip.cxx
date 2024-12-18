@@ -14,11 +14,11 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
-#include <optional>
 #include <algorithm>
 #include <memory>
+
+#include "Compat.h"
 
 #include "ScintillaTypes.h"
 #include "ScintillaMessages.h"
@@ -139,7 +139,7 @@ void DrawArrow(Surface *surface, const PRectangle &rc, bool upArrow, ColourRGBA 
 
 // Draw a section of the call tip that does not include \n in one colour.
 // The text may include tabs or arrow characters.
-int CallTip::DrawChunk(Surface *surface, int x, std::string_view sv,
+int CallTip::DrawChunk(Surface *surface, int x, Compat::string_view sv,
 	int ytext, PRectangle rcClient, bool asHighlight, bool draw) {
 
 	if (sv.empty()) {
@@ -182,7 +182,7 @@ int CallTip::DrawChunk(Surface *surface, int x, std::string_view sv,
 		} else if (IsTabCharacter(sv[startSeg])) {
 			xEnd = NextTabPos(x);
 		} else {
-			const std::string_view segText = sv.substr(startSeg, endSeg - startSeg);
+			const Compat::string_view segText = sv.substr(startSeg, endSeg - startSeg);
 			xEnd = x + static_cast<int>(std::lround(surface->WidthText(font.get(), segText)));
 			if (draw) {
 				rcClient.left = static_cast<XYPOSITION>(x);
@@ -210,11 +210,11 @@ int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 	// Draw the definition in three parts: before highlight, highlighted, after highlight
 	int ytext = static_cast<int>(rcClient.top) + ascent + 1;
 	rcClient.bottom = ytext + surfaceWindow->Descent(font.get()) + 1;
-	std::string_view remaining(val);
+	Compat::string_view remaining(val);
 	int maxWidth = 0;
 	size_t lineStart = 0;
 	while (!remaining.empty()) {
-		const std::string_view chunkVal = remaining.substr(0, remaining.find_first_of('\n'));
+		const Compat::string_view chunkVal = remaining.substr(0, remaining.find_first_of('\n'));
 		remaining.remove_prefix(chunkVal.length());
 		if (!remaining.empty()) {
 			remaining.remove_prefix(1);	// Skip \n
@@ -222,8 +222,8 @@ int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 
 		const Chunk chunkLine(lineStart, lineStart + chunkVal.length());
 		Chunk chunkHighlight(
-			std::clamp(highlight.start, chunkLine.start, chunkLine.end),
-			std::clamp(highlight.end, chunkLine.start, chunkLine.end)
+			Compat::clamp(highlight.start, chunkLine.start, chunkLine.end),
+			Compat::clamp(highlight.end, chunkLine.start, chunkLine.end)
 		);
 		chunkHighlight.start -= lineStart;
 		chunkHighlight.end -= lineStart;

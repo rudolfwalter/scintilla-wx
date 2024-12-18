@@ -13,15 +13,15 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <set>
-#include <optional>
 #include <algorithm>
 #include <iterator>
 #include <memory>
 #include <mutex>
+
+#include "Compat.h"
 
 #include "ScintillaTypes.h"
 #include "ScintillaMessages.h"
@@ -412,8 +412,8 @@ ScreenLine::ScreenLine(
 ScreenLine::~ScreenLine() {
 }
 
-std::string_view ScreenLine::Text() const {
-	return std::string_view(&ll->chars[start], len);
+Compat::string_view ScreenLine::Text() const {
+	return Compat::string_view(&ll->chars[start], len);
 }
 
 size_t ScreenLine::Length() const {
@@ -488,7 +488,7 @@ constexpr bool GraphicASCII(char ch) noexcept {
 	return ch >= ' ' && ch <= '~';
 }
 
-bool AllGraphicASCII(std::string_view text) {
+bool AllGraphicASCII(Compat::string_view text) {
 	return std::all_of(text.cbegin(), text.cend(), GraphicASCII);
 }
 
@@ -650,7 +650,7 @@ std::shared_ptr<LineLayout> LineLayoutCache::Retrieve(Sci::Line lineNumber, Sci:
 namespace {
 
 // Simply pack the (maximum 4) character bytes into an int
-constexpr unsigned int KeyFromString(std::string_view charBytes) noexcept {
+constexpr unsigned int KeyFromString(Compat::string_view charBytes) noexcept {
 	PLATFORM_ASSERT(charBytes.length() <= 4);
 	unsigned int k=0;
 	for (const unsigned char uc : charBytes) {
@@ -677,7 +677,7 @@ const char *const repsC1[] = {
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 const char *ControlCharacterString(unsigned char ch) noexcept {
 	if (ch < std::size(repsC0)) {
@@ -695,9 +695,9 @@ void Hexits(char *hexits, int ch) noexcept {
 	hexits[3] = 0;
 }
 
-}
+}}
 
-void SpecialRepresentations::SetRepresentation(std::string_view charBytes, std::string_view value) {
+void SpecialRepresentations::SetRepresentation(Compat::string_view charBytes, Compat::string_view value) {
 	if ((charBytes.length() <= 4) && (value.length() <= Representation::maxLength)) {
 		const unsigned int key = KeyFromString(charBytes);
 		const bool inserted = mapReprs.insert_or_assign(key, Representation(value)).second;
@@ -715,7 +715,7 @@ void SpecialRepresentations::SetRepresentation(std::string_view charBytes, std::
 	}
 }
 
-void SpecialRepresentations::SetRepresentationAppearance(std::string_view charBytes, RepresentationAppearance appearance) {
+void SpecialRepresentations::SetRepresentationAppearance(Compat::string_view charBytes, RepresentationAppearance appearance) {
 	if (charBytes.length() <= 4) {
 		const unsigned int key = KeyFromString(charBytes);
 		const MapRepresentation::iterator it = mapReprs.find(key);
@@ -727,7 +727,7 @@ void SpecialRepresentations::SetRepresentationAppearance(std::string_view charBy
 	}
 }
 
-void SpecialRepresentations::SetRepresentationColour(std::string_view charBytes, ColourRGBA colour) {
+void SpecialRepresentations::SetRepresentationColour(Compat::string_view charBytes, ColourRGBA colour) {
 	if (charBytes.length() <= 4) {
 		const unsigned int key = KeyFromString(charBytes);
 		const MapRepresentation::iterator it = mapReprs.find(key);
@@ -740,7 +740,7 @@ void SpecialRepresentations::SetRepresentationColour(std::string_view charBytes,
 	}
 }
 
-void SpecialRepresentations::ClearRepresentation(std::string_view charBytes) {
+void SpecialRepresentations::ClearRepresentation(Compat::string_view charBytes) {
 	if (charBytes.length() <= 4) {
 		const unsigned int key = KeyFromString(charBytes);
 		const MapRepresentation::iterator it = mapReprs.find(key);
@@ -758,7 +758,7 @@ void SpecialRepresentations::ClearRepresentation(std::string_view charBytes) {
 	}
 }
 
-const Representation *SpecialRepresentations::GetRepresentation(std::string_view charBytes) const {
+const Representation *SpecialRepresentations::GetRepresentation(Compat::string_view charBytes) const {
 	const unsigned int key = KeyFromString(charBytes);
 	if (key > maxKey) {
 		return nullptr;
@@ -770,7 +770,7 @@ const Representation *SpecialRepresentations::GetRepresentation(std::string_view
 	return nullptr;
 }
 
-const Representation *SpecialRepresentations::RepresentationFromCharacter(std::string_view charBytes) const {
+const Representation *SpecialRepresentations::RepresentationFromCharacter(Compat::string_view charBytes) const {
 	if (charBytes.length() <= 4) {
 		const unsigned char ucStart = charBytes.empty() ? 0 : charBytes[0];
 		if (!startByteHasReprs[ucStart])
@@ -794,7 +794,7 @@ void SpecialRepresentations::SetDefaultRepresentations(int dbcsCodePage) {
 	// C0 control set
 	for (size_t j = 0; j < std::size(repsC0); j++) {
 		const char c[2] = { static_cast<char>(j), 0 };
-		SetRepresentation(std::string_view(c, 1), repsC0[j]);
+		SetRepresentation(Compat::string_view(c, 1), repsC0[j]);
 	}
 	SetRepresentation("\x7f", "DEL");
 
@@ -915,7 +915,7 @@ TextSegment BreakFinder::Next() {
 				if (encodingFamily == EncodingFamily::unicode) {
 					charWidth = UTF8DrawBytes(chars, lineRange.end - nextBreak);
 				} else {
-					charWidth = pdoc->DBCSDrawBytes(std::string_view(chars, lineRange.end - nextBreak));
+					charWidth = pdoc->DBCSDrawBytes(Compat::string_view(chars, lineRange.end - nextBreak));
 				}
 				for (int trail = 1; trail < charWidth; trail++) {
 					if (ll->styles[nextBreak] != ll->styles[nextBreak + trail]) {
@@ -939,7 +939,7 @@ TextSegment BreakFinder::Next() {
 				if (ch == '\r' && preprs->ContainsCrLf() && chars[1] == '\n') {
 					charWidth = 2;
 				}
-				repr = preprs->GetRepresentation(std::string_view(chars, charWidth));
+				repr = preprs->GetRepresentation(Compat::string_view(chars, charWidth));
 			}
 			if (((nextBreak > 0) && (ll->styles[nextBreak] != ll->styles[nextBreak - 1])) ||
 					repr ||
@@ -973,7 +973,7 @@ TextSegment BreakFinder::Next() {
 	const int remaining = nextBreak - startSegment;
 	int lengthSegment = remaining;
 	if (lengthSegment > lengthEachSubdivision) {
-		lengthSegment = static_cast<int>(pdoc->SafeSegment(std::string_view(&ll->chars[startSegment], lengthEachSubdivision)));
+		lengthSegment = static_cast<int>(pdoc->SafeSegment(Compat::string_view(&ll->chars[startSegment], lengthEachSubdivision)));
 	}
 	if (lengthSegment < remaining) {
 		subBreak += lengthSegment;
@@ -1002,10 +1002,10 @@ public:
 	void operator=(const PositionCacheEntry &) = delete;
 	void operator=(PositionCacheEntry &&) = delete;
 	~PositionCacheEntry();
-	void Set(unsigned int styleNumber_, bool unicode_, std::string_view sv, const XYPOSITION *positions_, uint16_t clock_);
+	void Set(unsigned int styleNumber_, bool unicode_, Compat::string_view sv, const XYPOSITION *positions_, uint16_t clock_);
 	void Clear() noexcept;
-	bool Retrieve(unsigned int styleNumber_, bool unicode_, std::string_view sv, XYPOSITION *positions_) const noexcept;
-	static size_t Hash(unsigned int styleNumber_, bool unicode_, std::string_view sv) noexcept;
+	bool Retrieve(unsigned int styleNumber_, bool unicode_, Compat::string_view sv, XYPOSITION *positions_) const noexcept;
+	static size_t Hash(unsigned int styleNumber_, bool unicode_, Compat::string_view sv) noexcept;
 	bool NewerThan(const PositionCacheEntry &other) const noexcept;
 	void ResetClock() noexcept;
 };
@@ -1028,7 +1028,7 @@ public:
 	void SetSize(size_t size_) override;
 	size_t GetSize() const noexcept override;
 	void MeasureWidths(Surface *surface, const ViewStyle &vstyle, unsigned int styleNumber,
-		bool unicode, std::string_view sv, XYPOSITION *positions, bool needsLocking) override;
+		bool unicode, Compat::string_view sv, XYPOSITION *positions, bool needsLocking) override;
 };
 
 PositionCacheEntry::PositionCacheEntry() noexcept :
@@ -1045,7 +1045,7 @@ PositionCacheEntry::PositionCacheEntry(const PositionCacheEntry &other) :
 	}
 }
 
-void PositionCacheEntry::Set(unsigned int styleNumber_, bool unicode_, std::string_view sv,
+void PositionCacheEntry::Set(unsigned int styleNumber_, bool unicode_, Compat::string_view sv,
 	const XYPOSITION *positions_, uint16_t clock_) {
 	Clear();
 	styleNumber = static_cast<uint16_t>(styleNumber_);
@@ -1072,7 +1072,7 @@ void PositionCacheEntry::Clear() noexcept {
 	clock = 0;
 }
 
-bool PositionCacheEntry::Retrieve(unsigned int styleNumber_, bool unicode_, std::string_view sv, XYPOSITION *positions_) const noexcept {
+bool PositionCacheEntry::Retrieve(unsigned int styleNumber_, bool unicode_, Compat::string_view sv, XYPOSITION *positions_) const noexcept {
 	if ((styleNumber == styleNumber_) && (unicode == unicode_) && (len == sv.length()) &&
 		(memcmp(&positions[len], sv.data(), sv.length())== 0)) {
 		for (unsigned int i=0; i<len; i++) {
@@ -1084,8 +1084,8 @@ bool PositionCacheEntry::Retrieve(unsigned int styleNumber_, bool unicode_, std:
 	}
 }
 
-size_t PositionCacheEntry::Hash(unsigned int styleNumber_, bool unicode_, std::string_view sv) noexcept {
-	const size_t h1 = std::hash<std::string_view>{}(sv);
+size_t PositionCacheEntry::Hash(unsigned int styleNumber_, bool unicode_, Compat::string_view sv) noexcept {
+	const size_t h1 = std::hash<Compat::string_view>{}(sv);
 	const size_t h2 = std::hash<unsigned int>{}(styleNumber_);
 	return h1 ^ (h2 << 1) ^ static_cast<size_t>(unicode_);
 }
@@ -1126,7 +1126,7 @@ size_t PositionCache::GetSize() const noexcept {
 }
 
 void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, unsigned int styleNumber,
-	bool unicode, std::string_view sv, XYPOSITION *positions, bool needsLocking) {
+	bool unicode, Compat::string_view sv, XYPOSITION *positions, bool needsLocking) {
 	const Style &style = vstyle.styles[styleNumber];
 	if (style.monospaceASCII) {
 		if (AllGraphicASCII(sv)) {

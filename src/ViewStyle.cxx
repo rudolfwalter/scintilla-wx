@@ -12,15 +12,15 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <array>
 #include <map>
 #include <set>
-#include <optional>
 #include <algorithm>
 #include <memory>
 #include <numeric>
+
+#include "Compat.h"
 
 #include "ScintillaTypes.h"
 
@@ -82,7 +82,7 @@ void FontRealised::Realise(Surface &surface, int zoomLevel, Technology technolog
 
 	if (fs.checkMonospaced) {
 		// "Ay" is normally strongly kerned and "fi" may be a ligature
-		constexpr std::string_view allASCIIGraphic("Ayfi"
+		constexpr Compat::string_view allASCIIGraphic("Ayfi"
 		// python: ''.join(chr(ch) for ch in range(32, 127))
 		" !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
 		std::array<XYPOSITION, allASCIIGraphic.length()> positions {};
@@ -525,7 +525,7 @@ void ViewStyle::CalcLargestMarkerHeight() noexcept {
 }
 
 int ViewStyle::GetFrameWidth() const noexcept {
-	return std::clamp(caretLine.frame, 1, lineHeight / 3);
+	return Compat::clamp(caretLine.frame, 1, lineHeight / 3);
 }
 
 bool ViewStyle::IsLineFrameOpaque(bool caretActive, bool lineContainsCaret) const {

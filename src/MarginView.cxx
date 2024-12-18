@@ -15,13 +15,13 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <set>
-#include <optional>
 #include <algorithm>
 #include <memory>
+
+#include "Compat.h"
 
 #include "ScintillaTypes.h"
 #include "ScintillaMessages.h"
@@ -59,7 +59,7 @@
 
 using namespace Scintilla;
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 void DrawWrapMarker(Surface *surface, PRectangle rcPlace,
 	bool isEndMarker, ColourRGBA wrapColour) {
@@ -521,5 +521,5 @@ void MarginView::PaintMargin(Surface *surface, Sci::Line topLine, PRectangle rc,
 	surface->FillRectangle(rcBlankMargin, vs.styles[StyleDefault].back);
 }
 
-}
+}}
 

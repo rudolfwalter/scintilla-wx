@@ -9,12 +9,12 @@
 #ifndef RESEARCH_H
 #define RESEARCH_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 class CharacterIndexer {
 public:
 	virtual char CharAt(Sci::Position index) const=0;
-	virtual Sci::Position MovePositionOutsideChar(Sci::Position pos, [[maybe_unused]] Sci::Position moveDir) const noexcept=0;
+	virtual Sci::Position MovePositionOutsideChar(Sci::Position pos, /*[[maybe_unused]]*/ Sci::Position moveDir) const noexcept=0;
 };
 
 class RESearch {
@@ -65,7 +65,7 @@ private:
 	}
 };
 
-}
+}}
 
 #endif
 

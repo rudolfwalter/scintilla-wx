@@ -10,12 +10,12 @@
 #include <cstring>
 
 #include <stdexcept>
-#include <string_view>
 #include <vector>
 #include <forward_list>
-#include <optional>
 #include <algorithm>
 #include <memory>
+
+#include "Compat.h"
 
 #include "ScintillaTypes.h"
 
@@ -348,7 +348,7 @@ namespace {
 
 constexpr int IndividualStyles = 0x100;
 
-size_t NumberLines(std::string_view sv) {
+size_t NumberLines(Compat::string_view sv) {
 	return std::count(sv.begin(), sv.end(), '\n') + 1;
 }
 

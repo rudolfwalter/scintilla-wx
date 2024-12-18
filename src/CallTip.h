@@ -8,7 +8,7 @@
 #ifndef CALLTIP_H
 #define CALLTIP_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 struct Chunk {
 	size_t start;
@@ -33,7 +33,7 @@ class CallTip {
 	bool useStyleCallTip;   // if true, StyleCallTip should be used
 	bool above;		// if true, display calltip above text
 
-	int DrawChunk(Surface *surface, int x, std::string_view sv,
+	int DrawChunk(Surface *surface, int x, Compat::string_view sv,
 		int ytext, PRectangle rcClient, bool asHighlight, bool draw);
 	int PaintContents(Surface *surfaceWindow, bool draw);
 	bool IsTabCharacter(char ch) const noexcept;
@@ -92,6 +92,6 @@ public:
 	void SetForeBack(ColourRGBA fore, ColourRGBA back) noexcept;
 };
 
-}
+}}
 
 #endif

@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <memory>
 
+#include "Compat.h"
+
 #include "ScintillaTypes.h"
 
 #include "Debugging.h"
@@ -26,7 +28,7 @@
 #include "SparseVector.h"
 #include "ChangeHistory.h"
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 void ChangeStack::Clear() noexcept {
 	steps.clear();
@@ -497,4 +499,4 @@ void ChangeHistory::Check() noexcept {
 	}
 }
 
-}
+}}

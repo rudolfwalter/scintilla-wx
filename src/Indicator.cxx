@@ -8,12 +8,12 @@
 #include <cmath>
 
 #include <stdexcept>
-#include <string_view>
 #include <vector>
 #include <map>
-#include <optional>
 #include <algorithm>
 #include <memory>
+
+#include "Compat.h"
 
 #include "ScintillaTypes.h"
 

@@ -10,6 +10,8 @@
 
 #include <algorithm>
 
+#include "Compat.h"
+
 #include "Geometry.h"
 
 namespace {
@@ -20,19 +22,19 @@ constexpr unsigned int Mixed(unsigned char a, unsigned char b, double proportion
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 PRectangle Clamp(PRectangle rc, Edge edge, XYPOSITION position) noexcept {
 	switch (edge) {
 	case Edge::left:
-		return PRectangle(std::clamp(position, rc.left, rc.right), rc.top, rc.right, rc.bottom);
+		return PRectangle(Compat::clamp(position, rc.left, rc.right), rc.top, rc.right, rc.bottom);
 	case Edge::top:
-		return PRectangle(rc.left, std::clamp(position, rc.top, rc.bottom), rc.right, rc.bottom);
+		return PRectangle(rc.left, Compat::clamp(position, rc.top, rc.bottom), rc.right, rc.bottom);
 	case Edge::right:
-		return PRectangle(rc.left, rc.top, std::clamp(position, rc.left, rc.right), rc.bottom);
+		return PRectangle(rc.left, rc.top, Compat::clamp(position, rc.left, rc.right), rc.bottom);
 	case Edge::bottom:
 	default:
-		return PRectangle(rc.left, rc.top, rc.right, std::clamp(position, rc.top, rc.bottom));
+		return PRectangle(rc.left, rc.top, rc.right, Compat::clamp(position, rc.top, rc.bottom));
 	}
 }
 
@@ -123,4 +125,4 @@ ColourRGBA ColourRGBA::MixedWith(ColourRGBA other, double proportion) const noex
 		Mixed(GetAlpha(), other.GetAlpha(), proportion));
 }
 
-}
+}}

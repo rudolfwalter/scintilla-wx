@@ -8,7 +8,7 @@
 #ifndef CHANGEHISTORY_H
 #define CHANGEHISTORY_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 constexpr int changeOriginal = 0;
 constexpr int changeRevertedOriginal = 1;
@@ -119,6 +119,6 @@ public:
 	void Check() noexcept;
 };
 
-}
+}}
 
 #endif

@@ -10,11 +10,11 @@
 #include <cstring>
 
 #include <stdexcept>
-#include <string_view>
 #include <vector>
-#include <optional>
 #include <algorithm>
 #include <memory>
+
+#include "Compat.h"
 
 #include "Debugging.h"
 
@@ -421,7 +421,7 @@ void ContractionState<LINE>::Check() const noexcept {
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 std::unique_ptr<IContractionState> ContractionStateCreate(bool largeDocument) {
 	if (largeDocument)
@@ -430,4 +430,4 @@ std::unique_ptr<IContractionState> ContractionStateCreate(bool largeDocument) {
 		return std::make_unique<ContractionState<int>>();
 }
 
-}
+}}

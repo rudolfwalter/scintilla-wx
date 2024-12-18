@@ -8,7 +8,8 @@
 #ifndef CELLBUFFER_H
 #define CELLBUFFER_H
 
-namespace Scintilla::Internal {
+
+namespace Scintilla { namespace Internal {
 
 // Interface to per-line data that wants to see each line insertion and deletion
 class PerLine {
@@ -192,7 +193,7 @@ public:
 	int UndoCurrent() const noexcept;
 	int UndoActionType(int action) const noexcept;
 	Sci::Position UndoActionPosition(int action) const noexcept;
-	std::string_view UndoActionText(int action) const noexcept;
+	Compat::string_view UndoActionText(int action) const noexcept;
 	void PushUndoActionType(int type, Sci::Position position);
 	void ChangeLastUndoActionText(size_t length, const char *text);
 
@@ -203,6 +204,6 @@ public:
 	[[nodiscard]] Sci::Position EditionNextDelete(Sci::Position pos) const noexcept;
 };
 
-}
+}}
 
 #endif

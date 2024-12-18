@@ -8,7 +8,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
  */
@@ -425,7 +425,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	Sci::Position RealizeVirtualSpace(Sci::Position position, Sci::Position virtualSpace);
 	SelectionPosition RealizeVirtualSpace(const SelectionPosition &position);
 	void AddChar(char ch);
-	virtual void InsertCharacter(std::string_view sv, Scintilla::CharacterSource charSource);
+	virtual void InsertCharacter(Compat::string_view sv, Scintilla::CharacterSource charSource);
 	void ClearSelectionRange(SelectionRange &range);
 	void ClearBeforeTentativeStart();
 	void InsertPaste(const char *text, Sci::Position len);
@@ -595,7 +595,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 
 	Sci::Position GetTag(char *tagValue, int tagNumber);
 	enum class ReplaceType {basic, patterns, minimal};
-	Sci::Position ReplaceTarget(ReplaceType replaceType, std::string_view text);
+	Sci::Position ReplaceTarget(ReplaceType replaceType, Compat::string_view text);
 
 	bool PositionIsHotspot(Sci::Position position) const noexcept;
 	bool PointIsHotspot(Point pt);
@@ -605,10 +605,10 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 
 	int CodePage() const noexcept;
 	virtual bool ValidCodePage(int /* codePage */) const { return true; }
-	virtual std::string UTF8FromEncoded(std::string_view encoded) const = 0;
-	virtual std::string EncodedFromUTF8(std::string_view utf8) const = 0;
+	virtual std::string UTF8FromEncoded(Compat::string_view encoded) const = 0;
+	virtual std::string EncodedFromUTF8(Compat::string_view utf8) const = 0;
 	virtual std::unique_ptr<Surface> CreateMeasurementSurface() const;
-	virtual std::unique_ptr<Surface> CreateDrawingSurface(SurfaceID sid, std::optional<Scintilla::Technology> technologyOpt = {}) const;
+	virtual std::unique_ptr<Surface> CreateDrawingSurface(SurfaceID sid, Compat::optional<Scintilla::Technology> technologyOpt = {}) const;
 
 	Sci::Line WrapCount(Sci::Line line);
 	void AddStyledText(const char *buffer, Sci::Position appendLength);
@@ -638,11 +638,11 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	static unsigned char *UCharPtrFromSPtr(Scintilla::sptr_t lParam) noexcept {
 		return static_cast<unsigned char *>(PtrFromSPtr(lParam));
 	}
-	static std::string_view ViewFromParams(Scintilla::sptr_t lParam, Scintilla::uptr_t wParam) noexcept {
+	static Compat::string_view ViewFromParams(Scintilla::sptr_t lParam, Scintilla::uptr_t wParam) noexcept {
 		if (SPtrFromUPtr(wParam) == -1) {
-			return std::string_view(CharPtrFromSPtr(lParam));
+			return Compat::string_view(CharPtrFromSPtr(lParam));
 		}
-		return std::string_view(CharPtrFromSPtr(lParam), wParam);
+		return Compat::string_view(CharPtrFromSPtr(lParam), wParam);
 	}
 	static void *PtrFromUPtr(Scintilla::uptr_t wParam) noexcept {
 		return reinterpret_cast<void *>(wParam);
@@ -664,16 +664,16 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 		return Point(static_cast<XYPOSITION>(wParam) - vs.ExternalMarginWidth(), static_cast<XYPOSITION>(lParam));
 	}
 
-	static constexpr std::optional<FoldLevel> OptionalFoldLevel(Scintilla::sptr_t lParam) {
+	static /*constexpr*/ Compat::optional<FoldLevel> OptionalFoldLevel(Scintilla::sptr_t lParam) {
 		if (lParam >= 0) {
 			return static_cast<FoldLevel>(lParam);
 		}
-		return std::nullopt;
+		return Compat::nullopt;
 	}
 
 	static Scintilla::sptr_t StringResult(Scintilla::sptr_t lParam, const char *val) noexcept;
 	static Scintilla::sptr_t BytesResult(Scintilla::sptr_t lParam, const unsigned char *val, size_t len) noexcept;
-	static Scintilla::sptr_t BytesResult(Scintilla::sptr_t lParam, std::string_view sv) noexcept;
+	static Scintilla::sptr_t BytesResult(Scintilla::sptr_t lParam, Compat::string_view sv) noexcept;
 
 	// Set a variable controlling appearance to a value and invalidates the display
 	// if a change was made. Avoids extra text and the possibility of mistyping.
@@ -712,7 +712,7 @@ public:
 	AutoSurface(const Editor *ed) :
 		surf(ed->CreateMeasurementSurface())  {
 	}
-	AutoSurface(SurfaceID sid, const Editor *ed, std::optional<Scintilla::Technology> technology = {}) :
+	AutoSurface(SurfaceID sid, const Editor *ed, Compat::optional<Scintilla::Technology> technology = {}) :
 		surf(ed->CreateDrawingSurface(sid, technology)) {
 	}
 	// Deleted so AutoSurface objects can not be copied.
@@ -730,6 +730,6 @@ public:
 	}
 };
 
-}
+}}
 
 #endif

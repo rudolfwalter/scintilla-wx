@@ -10,7 +10,7 @@
 #ifndef CHARACTERCATEGORYMAP_H
 #define CHARACTERCATEGORYMAP_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 enum CharacterCategory {
 	ccLu, ccLl, ccLt, ccLm, ccLo,
@@ -47,6 +47,6 @@ public:
 	void Optimize(int countCharacters);
 };
 
-}
+}}
 
 #endif

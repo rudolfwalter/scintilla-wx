@@ -16,11 +16,11 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
-#include <optional>
 #include <algorithm>
 #include <memory>
+
+#include "Compat.h"
 
 #include "ScintillaTypes.h"
 
@@ -35,7 +35,7 @@
 #include "CellBuffer.h"
 #include "UndoHistory.h"
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 template <typename T>
 void VectorTruncate(std::vector<T> &v, size_t length) noexcept {
@@ -487,7 +487,7 @@ Sci::Position UndoHistory::Length(int action) const noexcept {
 	return actions.Length(action);
 }
 
-std::string_view UndoHistory::Text(int action) noexcept {
+Compat::string_view UndoHistory::Text(int action) noexcept {
 	// Assumes first call after any changes is for action 0.
 	// TODO: may need to invalidate memory in other circumstances
 	if (action == 0) {
@@ -632,4 +632,4 @@ void UndoHistory::CompletedRedoStep() noexcept {
 	currentAction++;
 }
 
-}
+}}

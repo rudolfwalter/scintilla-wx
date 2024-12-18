@@ -8,7 +8,7 @@
 #ifndef VIEWSTYLE_H
 #define VIEWSTYLE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
  */
@@ -37,7 +37,7 @@ public:
 
 typedef std::map<FontSpecification, std::unique_ptr<FontRealised>> FontMap;
 
-using ColourOptional = std::optional<ColourRGBA>;
+using ColourOptional = Compat::optional<ColourRGBA>;
 
 inline ColourOptional OptionalColour(Scintilla::uptr_t wParam, Scintilla::sptr_t lParam) noexcept {
 	if (wParam) {
@@ -253,6 +253,6 @@ private:
 	void FindMaxAscentDescent() noexcept;
 };
 
-}
+}}
 
 #endif

@@ -10,13 +10,13 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <map>
-#include <optional>
 #include <algorithm>
 #include <iterator>
 #include <memory>
+
+#include "Compat.h"
 
 #include "ScintillaTypes.h"
 

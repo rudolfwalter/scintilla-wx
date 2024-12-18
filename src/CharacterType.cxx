@@ -8,11 +8,13 @@
 #include <cstdlib>
 #include <cassert>
 
+#include "Compat.h"
+
 #include "CharacterType.h"
 
 using namespace Scintilla::Internal;
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 int CompareCaseInsensitive(const char *a, const char *b) noexcept {
 	while (*a && *b) {
@@ -48,4 +50,4 @@ int CompareNCaseInsensitive(const char *a, const char *b, size_t len) noexcept {
 		return *a - *b;
 }
 
-}
+}}

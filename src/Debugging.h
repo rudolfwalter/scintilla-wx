@@ -9,7 +9,7 @@
 #ifndef DEBUGGING_H
 #define DEBUGGING_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 #if defined(__clang__)
 # if __has_feature(attribute_analyzer_noreturn)
@@ -39,6 +39,6 @@ void Assert(const char *c, const char *file, int line) noexcept CLANG_ANALYZER_N
 #define PLATFORM_ASSERT(c) ((c) ? (void)(0) : Scintilla::Internal::Platform::Assert(#c, __FILE__, __LINE__))
 #endif
 
-}
+}}
 
 #endif

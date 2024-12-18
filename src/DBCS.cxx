@@ -5,11 +5,13 @@
 // Copyright 2017 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#include "Compat.h"
+
 #include "DBCS.h"
 
 using namespace Scintilla::Internal;
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 bool DBCSIsLeadByte(int codePage, char ch) noexcept {
 	// Byte ranges found in Wikipedia articles with relevant search strings in each case
@@ -51,4 +53,4 @@ bool IsDBCSValidSingleByte(int codePage, int ch) noexcept {
 	}
 }
 
-}
+}}

@@ -8,7 +8,7 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 typedef double XYPOSITION;
 typedef double XYACCUMULATOR;
@@ -317,6 +317,6 @@ public:
 	}
 };
 
-}
+}}
 
 #endif

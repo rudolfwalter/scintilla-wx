@@ -8,7 +8,7 @@
 #ifndef CASEFOLDER_H
 #define CASEFOLDER_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 class CaseFolder {
 public:
@@ -41,6 +41,6 @@ public:
 	size_t Fold(char *folded, size_t sizeFolded, const char *mixed, size_t lenMixed) override;
 };
 
-}
+}}
 
 #endif

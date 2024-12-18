@@ -14,11 +14,9 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <array>
 #include <forward_list>
-#include <optional>
 #include <algorithm>
 #include <memory>
 #include <chrono>
@@ -26,6 +24,8 @@
 #ifndef NO_CXX11_REGEX
 #include <regex>
 #endif
+
+#include "Compat.h"
 
 #include "ScintillaTypes.h"
 #include "ILoader.h"
@@ -119,7 +119,7 @@ void ActionDuration::AddSample(size_t numberActions, double durationOfActions) n
 	constexpr double alpha = 0.25;
 
 	const double durationOne = durationOfActions / numberActions;
-	duration = std::clamp(alpha * durationOne + (1.0 - alpha) * duration,
+	duration = Compat::clamp(alpha * durationOne + (1.0 - alpha) * duration,
 		minDuration, maxDuration);
 }
 
@@ -398,7 +398,7 @@ Sci::Position Document::UndoActionPosition(int action) const noexcept {
 	return cb.UndoActionPosition(action);
 }
 
-std::string_view Document::UndoActionText(int action) const noexcept {
+Compat::string_view Document::UndoActionText(int action) const noexcept {
 	return cb.UndoActionText(action);
 }
 
@@ -622,7 +622,7 @@ static bool IsSubordinate(FoldLevel levelStart, FoldLevel levelTry) noexcept {
 		return LevelNumber(levelStart) < LevelNumber(levelTry);
 }
 
-Sci::Line Document::GetLastChild(Sci::Line lineParent, std::optional<FoldLevel> level, Sci::Line lastLine) {
+Sci::Line Document::GetLastChild(Sci::Line lineParent, Compat::optional<FoldLevel> level, Sci::Line lastLine) {
 	const FoldLevel levelStart = LevelNumberPart(level ? *level : GetFoldLevel(lineParent));
 	const Sci::Line maxLine = LinesTotal();
 	const Sci::Line lookLastLine = (lastLine != -1) ? std::min(LinesTotal() - 1, lastLine) : -1;
@@ -721,7 +721,7 @@ void Document::GetHighlightDelimiters(HighlightDelimiter &highlightDelimiter, Sc
 }
 
 Sci::Position Document::ClampPositionIntoDocument(Sci::Position pos) const noexcept {
-	return std::clamp<Sci::Position>(pos, 0, LengthNoExcept());
+	return Compat::clamp<Sci::Position>(pos, 0, LengthNoExcept());
 }
 
 bool Document::IsCrLf(Sci::Position pos) const noexcept {
@@ -1170,7 +1170,7 @@ bool Document::IsDBCSTrailByteNoExcept(char ch) const noexcept {
 	return false;
 }
 
-int Document::DBCSDrawBytes(std::string_view text) const noexcept {
+int Document::DBCSDrawBytes(Compat::string_view text) const noexcept {
 	if (text.length() <= 1) {
 		return static_cast<int>(text.length());
 	}
@@ -1201,9 +1201,9 @@ bool Document::IsDBCSDualByteAt(Sci::Position pos) const noexcept {
 //   2) Break at word and punctuation boundary for better kerning and ligature support
 //   3) Break after whole character, this may break combining characters
 
-size_t Document::SafeSegment(std::string_view text) const noexcept {
+size_t Document::SafeSegment(Compat::string_view text) const noexcept {
 	// check space first as most written language use spaces.
-	for (std::string_view::iterator it = text.end() - 1; it != text.begin(); --it) {
+	for (Compat::string_view::iterator it = text.end() - 1; it != text.begin(); --it) {
 		if (IsBreakSpace(*it)) {
 			return it - text.begin();
 		}
@@ -1211,7 +1211,7 @@ size_t Document::SafeSegment(std::string_view text) const noexcept {
 
 	if (!dbcsCodePage || dbcsCodePage == CpUtf8) {
 		// backward iterate for UTF-8 and single byte encoding to find word and punctuation boundary.
-		std::string_view::iterator it = text.end() - 1;
+		Compat::string_view::iterator it = text.end() - 1;
 		const bool punctuation = IsPunctuation(*it);
 		do {
 			--it;
@@ -1278,7 +1278,7 @@ void Document::CheckReadOnly() {
 	}
 }
 
-void Document::TrimReplacement(std::string_view &text, Range &range) const noexcept {
+void Document::TrimReplacement(Compat::string_view &text, Range &range) const noexcept {
 	while (!text.empty() && !range.Empty() && (text.front() == CharAt(range.start))) {
 		text.remove_prefix(1);
 		range.start++;
@@ -1383,7 +1383,7 @@ Sci::Position Document::InsertString(Sci::Position position, const char *s, Sci:
 	return insertLength;
 }
 
-Sci::Position Document::InsertString(Sci::Position position, std::string_view sv) {
+Sci::Position Document::InsertString(Sci::Position position, Compat::string_view sv) {
 	return InsertString(position, sv.data(), sv.length());
 }
 
@@ -1720,7 +1720,7 @@ void Document::Indent(bool forwards, Sci::Line lineBottom, Sci::Line lineTop) {
 
 namespace {
 
-constexpr std::string_view EOLForMode(EndOfLine eolMode) noexcept {
+constexpr Compat::string_view EOLForMode(EndOfLine eolMode) noexcept {
 	switch (eolMode) {
 	case EndOfLine::CrLf:
 		return "\r\n";
@@ -1737,10 +1737,10 @@ constexpr std::string_view EOLForMode(EndOfLine eolMode) noexcept {
 // Stop at len or when a NUL is found.
 std::string Document::TransformLineEnds(const char *s, size_t len, EndOfLine eolModeWanted) {
 	std::string dest;
-	const std::string_view eol = EOLForMode(eolModeWanted);
+	const Compat::string_view eol = EOLForMode(eolModeWanted);
 	for (size_t i = 0; (i < len) && (s[i]); i++) {
 		if (s[i] == '\n' || s[i] == '\r') {
-			dest.append(eol);
+			dest.append(eol.as_string());
 			if ((s[i] == '\r') && (i+1 < len) && (s[i+1] == '\n')) {
 				i++;
 			}
@@ -1790,7 +1790,7 @@ void Document::ConvertLineEnds(EndOfLine eolModeSet) {
 
 }
 
-std::string_view Document::EOLString() const noexcept {
+Compat::string_view Document::EOLString() const noexcept {
 	return EOLForMode(eolMode);
 }
 
@@ -2128,7 +2128,7 @@ ptrdiff_t SplitFindChar(const SplitView &view, size_t start, size_t length, int 
 // Equivalent of memcmp over the split view
 // This does not call memcmp as search texts are commonly too short to overcome the
 // call overhead.
-bool SplitMatch(const SplitView &view, size_t start, std::string_view text) noexcept {
+bool SplitMatch(const SplitView &view, size_t start, Compat::string_view text) noexcept {
 	for (size_t i = 0; i < text.length(); i++) {
 		if (view.CharAt(i + start) != text[i]) {
 			return false;
@@ -2183,7 +2183,7 @@ Sci::Position Document::FindText(Sci::Position minPos, Sci::Position maxPos, con
 				// This is a fast case where there is no need to test byte values to iterate
 				// so becomes the equivalent of a memchr+memcmp loop.
 				// UTF-8 search will not be self-synchronizing when starts with trail byte
-				const std::string_view suffix(search + 1, lengthFind - 1);
+				const Compat::string_view suffix(search + 1, lengthFind - 1);
 				while (pos < endSearch) {
 					pos = SplitFindChar(cbView, pos, limitPos - pos, charStartSearch);
 					if (pos < 0) {
@@ -3372,7 +3372,7 @@ const char *BuiltinRegex::SubstituteByPosition(Document *doc, const char *text, 
 				if (len > 0) {	// Will be null if try for a match that did not occur
 					const size_t size = substituted.length();
 					substituted.resize(size + len);
-					doc->GetCharRange(substituted.data() + size, startPos, len);
+					doc->GetCharRange(&substituted[size], startPos, len);
 				}
 			} else {
 				switch (chNext) {

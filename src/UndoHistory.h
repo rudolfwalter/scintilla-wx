@@ -8,7 +8,8 @@
 #ifndef UNDOHISTORY_H
 #define UNDOHISTORY_H
 
-namespace Scintilla::Internal {
+
+namespace Scintilla { namespace Internal {
 
 // ScaledVector is a vector of unsigned integers that uses elements sized to hold the largest value.
 // Thus, if an undo history only contains short insertions and deletions the lengths vector may
@@ -86,10 +87,10 @@ class UndoHistory {
 	int undoSequenceDepth = 0;
 	int savePoint = 0;
 	int tentativePoint = -1;
-	std::optional<int> detach;	// Never set if savePoint set (>= 0)
+	Compat::optional<int> detach;	// Never set if savePoint set (>= 0)
 	std::unique_ptr<ScrapStack> scraps;
 	struct actPos { int act; size_t position; };
-	std::optional<actPos> memory;
+	Compat::optional<actPos> memory;
 
 	int PreviousAction() const noexcept;
 
@@ -131,7 +132,7 @@ public:
 	[[nodiscard]] int Type(int action) const noexcept;
 	[[nodiscard]] Sci::Position Position(int action) const noexcept;
 	[[nodiscard]] Sci::Position Length(int action) const noexcept;
-	[[nodiscard]] std::string_view Text(int action) noexcept;
+	[[nodiscard]] Compat::string_view Text(int action) noexcept;
 	void PushUndoActionType(int type, Sci::Position position);
 	void ChangeLastUndoActionText(size_t length, const char *text);
 
@@ -155,6 +156,6 @@ public:
 	void CompletedRedoStep() noexcept;
 };
 
-}
+}}
 
 #endif

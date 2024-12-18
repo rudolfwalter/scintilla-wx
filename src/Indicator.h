@@ -8,7 +8,7 @@
 #ifndef INDICATOR_H
 #define INDICATOR_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 struct StyleAndColour {
 	Scintilla::IndicatorStyle style;
@@ -52,6 +52,6 @@ public:
 	void SetFlags(Scintilla::IndicFlag attributes_) noexcept;
 };
 
-}
+}}
 
 #endif

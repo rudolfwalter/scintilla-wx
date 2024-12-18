@@ -8,7 +8,7 @@
 #ifndef CHARACTERTYPE_H
 #define CHARACTERTYPE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // Functions for classifying characters
 
@@ -137,6 +137,6 @@ constexpr T MakeLowerCase(T ch) noexcept {
 int CompareCaseInsensitive(const char *a, const char *b) noexcept;
 int CompareNCaseInsensitive(const char *a, const char *b, size_t len) noexcept;
 
-}
+}}
 
 #endif

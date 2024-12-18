@@ -13,9 +13,11 @@
 #include <algorithm>
 #include <iterator>
 
+#include "Compat.h"
+
 #include "CharacterCategoryMap.h"
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 namespace {
 	// Use an unnamed namespace to protect the declarations from name conflicts
@@ -4218,7 +4220,7 @@ int CharacterCategoryMap::Size() const noexcept {
 }
 
 void CharacterCategoryMap::Optimize(int countCharacters) {
-	const int characters = std::clamp(countCharacters, 256, maxUnicode + 1);
+	const int characters = Compat::clamp(countCharacters, 256, maxUnicode + 1);
 	dense.resize(characters);
 
 	int end = 0;
@@ -4238,4 +4240,4 @@ void CharacterCategoryMap::Optimize(int countCharacters) {
 	} while (characters > end);
 }
 
-}
+}}

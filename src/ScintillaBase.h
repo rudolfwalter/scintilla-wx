@@ -8,7 +8,7 @@
 #ifndef SCINTILLABASE_H
 #define SCINTILLABASE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // For most platforms (not Cocoa) all IME indicators are drawn in same colour,
 // blue, with different patterns.
@@ -56,12 +56,12 @@ protected:
 	void Initialise() override {}
 	void Finalise() override;
 
-	void InsertCharacter(std::string_view sv, Scintilla::CharacterSource charSource) override;
+	void InsertCharacter(Compat::string_view sv, Scintilla::CharacterSource charSource) override;
 	void Command(int cmdId);
 	void CancelModes() override;
 	int KeyCommand(Scintilla::Message iMessage) override;
 
-	void AutoCompleteInsert(Sci::Position startPos, Sci::Position removeLen, std::string_view text);
+	void AutoCompleteInsert(Sci::Position startPos, Sci::Position removeLen, Compat::string_view text);
 	void AutoCompleteStart(Sci::Position lenEntered, const char *list);
 	void AutoCompleteCancel();
 	void AutoCompleteMove(int delta);
@@ -95,6 +95,6 @@ public:
 	Scintilla::sptr_t WndProc(Scintilla::Message iMessage, Scintilla::uptr_t wParam, Scintilla::sptr_t lParam) override;
 };
 
-}
+}}
 
 #endif

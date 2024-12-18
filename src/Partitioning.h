@@ -8,7 +8,7 @@
 #ifndef PARTITIONING_H
 #define PARTITIONING_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /// Divide an interval into multiple partitions.
 /// Useful for breaking a document down into sections such as lines.
@@ -232,6 +232,6 @@ public:
 };
 
 
-}
+}}
 
 #endif

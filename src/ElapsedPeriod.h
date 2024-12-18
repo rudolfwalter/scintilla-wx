@@ -8,7 +8,7 @@
 #ifndef ELAPSEDPERIOD_H
 #define ELAPSEDPERIOD_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // Simplified access to high precision timing.
 class ElapsedPeriod {
@@ -30,6 +30,6 @@ public:
 	}
 };
 
-}
+}}
 
 #endif

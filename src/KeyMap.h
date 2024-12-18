@@ -8,7 +8,7 @@
 #ifndef KEYMAP_H
 #define KEYMAP_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 #define SCI_NORM KeyMod::Norm
 #define SCI_SHIFT KeyMod::Shift
@@ -60,6 +60,6 @@ public:
 	const std::map<KeyModifiers, Scintilla::Message> &GetKeyMap() const noexcept;
 };
 
-}
+}}
 
 #endif

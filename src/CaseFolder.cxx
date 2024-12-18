@@ -9,6 +9,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "Compat.h"
+
 #include "CharacterType.h"
 #include "CaseFolder.h"
 #include "CaseConvert.h"
