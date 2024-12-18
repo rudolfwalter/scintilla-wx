@@ -47,11 +47,11 @@ public:
 		return (start != Sci::invalidPosition) && (end != Sci::invalidPosition);
 	}
 
-	[[nodiscard]] bool Empty() const noexcept {
+	SCI_NODISCARD bool Empty() const noexcept {
 		return start == end;
 	}
 
-	[[nodiscard]] Sci::Position Length() const noexcept {
+	SCI_NODISCARD Sci::Position Length() const noexcept {
 		return (start <= end) ? (end - start) : (start - end);
 	}
 
@@ -423,10 +423,10 @@ public:
 	void ChangeLastUndoActionText(size_t length, const char *text);
 
 	void ChangeHistorySet(bool set) { cb.ChangeHistorySet(set); }
-	[[nodiscard]] int EditionAt(Sci::Position pos) const noexcept { return cb.EditionAt(pos); }
-	[[nodiscard]] Sci::Position EditionEndRun(Sci::Position pos) const noexcept { return cb.EditionEndRun(pos); }
-	[[nodiscard]] unsigned int EditionDeletesAt(Sci::Position pos) const noexcept { return cb.EditionDeletesAt(pos); }
-	[[nodiscard]] Sci::Position EditionNextDelete(Sci::Position pos) const noexcept { return cb.EditionNextDelete(pos); }
+	SCI_NODISCARD int EditionAt(Sci::Position pos) const noexcept { return cb.EditionAt(pos); }
+	SCI_NODISCARD Sci::Position EditionEndRun(Sci::Position pos) const noexcept { return cb.EditionEndRun(pos); }
+	SCI_NODISCARD unsigned int EditionDeletesAt(Sci::Position pos) const noexcept { return cb.EditionDeletesAt(pos); }
+	SCI_NODISCARD Sci::Position EditionNextDelete(Sci::Position pos) const noexcept { return cb.EditionNextDelete(pos); }
 
 	const char *SCI_METHOD BufferPointer() override { return cb.BufferPointer(); }
 	const char *RangePointer(Sci::Position position, Sci::Position rangeLength) noexcept { return cb.RangePointer(position, rangeLength); }
@@ -472,7 +472,7 @@ public:
 	int MarkerNumberFromLine(Sci::Line line, int which) const noexcept;
 	int MarkerHandleFromLine(Sci::Line line, int which) const noexcept;
 	Sci_Position SCI_METHOD LineStart(Sci_Position line) const override;
-	[[nodiscard]] Range LineRange(Sci::Line line) const noexcept;
+	SCI_NODISCARD Range LineRange(Sci::Line line) const noexcept;
 	bool IsLineStartPosition(Sci::Position position) const noexcept;
 	Sci_Position SCI_METHOD LineEnd(Sci_Position line) const override;
 	Sci::Position LineStartPosition(Sci::Position position) const noexcept;

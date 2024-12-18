@@ -51,8 +51,8 @@ public:
 	void AddStep();
 	void PushDeletion(Sci::Position positionDeletion, const EditionCount &ec);
 	void PushInsertion(Sci::Position positionInsertion, Sci::Position length, int edition);
-	[[nodiscard]] int PopStep() noexcept;
-	[[nodiscard]] ChangeSpan PopSpan(int maxSteps) noexcept;
+	SCI_NODISCARD int PopStep() noexcept;
+	SCI_NODISCARD ChangeSpan PopSpan(int maxSteps) noexcept;
 	void SetSavePoint() noexcept;
 	void Check() const noexcept;
 };
@@ -76,7 +76,7 @@ struct ChangeLog {
 	void SetSavePoint();
 
 	Sci::Position Length() const noexcept;
-	[[nodiscard]] size_t DeletionCount(Sci::Position start, Sci::Position length) const noexcept;
+	SCI_NODISCARD size_t DeletionCount(Sci::Position start, Sci::Position length) const noexcept;
 	void Check() const noexcept;
 };
 
@@ -101,20 +101,20 @@ public:
 
 	void UndoDeleteStep(Sci::Position position, Sci::Position deleteLength, bool isDetached);
 
-	[[nodiscard]] Sci::Position Length() const noexcept;
+	SCI_NODISCARD Sci::Position Length() const noexcept;
 
 	// Setting up history before this session
 	void SetEpoch(int epoch) noexcept;
 	void EditionCreateHistory(Sci::Position start, Sci::Position length);
 
 	// Queries for drawing
-	[[nodiscard]] int EditionAt(Sci::Position pos) const noexcept;
-	[[nodiscard]] Sci::Position EditionEndRun(Sci::Position pos) const noexcept;
-	[[nodiscard]] unsigned int EditionDeletesAt(Sci::Position pos) const noexcept;
-	[[nodiscard]] Sci::Position EditionNextDelete(Sci::Position pos) const noexcept;
+	SCI_NODISCARD int EditionAt(Sci::Position pos) const noexcept;
+	SCI_NODISCARD Sci::Position EditionEndRun(Sci::Position pos) const noexcept;
+	SCI_NODISCARD unsigned int EditionDeletesAt(Sci::Position pos) const noexcept;
+	SCI_NODISCARD Sci::Position EditionNextDelete(Sci::Position pos) const noexcept;
 
 	// Testing - not used by Scintilla
-	[[nodiscard]] size_t DeletionCount(Sci::Position start, Sci::Position length) const noexcept;
+	SCI_NODISCARD size_t DeletionCount(Sci::Position start, Sci::Position length) const noexcept;
 	EditionSet DeletionsAt(Sci::Position pos) const;
 	void Check() noexcept;
 };

@@ -36,7 +36,7 @@ public:
 	explicit StringCI(std::string_view sv_) : s(sv_) {
 	}
 	virtual ~StringCI() = default;
-	[[nodiscard]] Sci::Position Length() const noexcept {
+	SCI_NODISCARD Sci::Position Length() const noexcept {
 		return s.length();
 	}
 	char CharAt(Sci::Position index) const override {
@@ -45,7 +45,7 @@ public:
 	Sci::Position MovePositionOutsideChar(Sci::Position pos, [[maybe_unused]] Sci::Position moveDir) const noexcept override {
 		return pos;
 	}
-	[[nodiscard]] std::string GetCharRange(Sci::Position position, Sci::Position lengthRetrieve) const {
+	SCI_NODISCARD std::string GetCharRange(Sci::Position position, Sci::Position lengthRetrieve) const {
 		return s.substr(position, lengthRetrieve);
 	}
 };

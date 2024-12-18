@@ -15,6 +15,12 @@
 #include <type_traits>
 #include <utility>
 
+#if __cplusplus < 201703L
+#define SCI_NODISCARD
+#else
+#define SCI_NODISCARD [[nodiscard]]
+#endif
+
 namespace Scintilla {
 namespace Internal {
 namespace Compat {

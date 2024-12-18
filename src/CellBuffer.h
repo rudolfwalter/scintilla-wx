@@ -198,10 +198,10 @@ public:
 	void ChangeLastUndoActionText(size_t length, const char *text);
 
 	void ChangeHistorySet(bool set);
-	[[nodiscard]] int EditionAt(Sci::Position pos) const noexcept;
-	[[nodiscard]] Sci::Position EditionEndRun(Sci::Position pos) const noexcept;
-	[[nodiscard]] unsigned int EditionDeletesAt(Sci::Position pos) const noexcept;
-	[[nodiscard]] Sci::Position EditionNextDelete(Sci::Position pos) const noexcept;
+	SCI_NODISCARD int EditionAt(Sci::Position pos) const noexcept;
+	SCI_NODISCARD Sci::Position EditionEndRun(Sci::Position pos) const noexcept;
+	SCI_NODISCARD unsigned int EditionDeletesAt(Sci::Position pos) const noexcept;
+	SCI_NODISCARD Sci::Position EditionNextDelete(Sci::Position pos) const noexcept;
 };
 
 }}

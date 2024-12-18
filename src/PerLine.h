@@ -100,7 +100,7 @@ public:
 	LineAnnotation() {
 	}
 
-	[[nodiscard]] bool Empty() const noexcept;
+	SCI_NODISCARD bool Empty() const noexcept;
 	void Init() override;
 	void InsertLine(Sci::Line line) override;
 	void InsertLines(Sci::Line line, Sci::Line lines) override;

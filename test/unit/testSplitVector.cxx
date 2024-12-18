@@ -72,7 +72,7 @@ TEST_CASE("CompileCopying SplitVector") {
 
 struct StringSetHolder {
 	SplitVector<std::string> sa;
-	[[nodiscard]] bool Check() const noexcept {
+	SCI_NODISCARD bool Check() const noexcept {
 		for (int i = 0; i < sa.Length(); i++) {
 			if (sa[i].empty()) {
 				return false;
