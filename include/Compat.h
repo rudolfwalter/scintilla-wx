@@ -83,6 +83,7 @@ public:
     constexpr const T* end() const noexcept { return p + n; }
     constexpr const T* cend() const noexcept { return p + n; }
     constexpr const T& operator[](std::size_t i) const noexcept { return p[i]; }
+    constexpr const T& at(std::size_t i) const { if (i >= n) throw std::out_of_range(""); return p[i]; }
     constexpr const T& front() const { return p[0]; }
     constexpr const T& back() const { return p[n - 1]; }
     constexpr const T* data() const noexcept { return p; }
@@ -94,8 +95,14 @@ public:
     void swap(basic_string_view& other) noexcept { std::swap(p, other.p); std::swap(n, other.n); }
     std::size_t copy(T* dest, std::size_t k, std::size_t pos = 0) const { basic_string_view v(substr(pos, k)); for (std::size_t i = 0; i < v.n; i++) dest[i] = v.p[i]; return v.n; }
     constexpr basic_string_view substr(std::size_t pos = 0, std::size_t k = npos) const { if (pos > n) throw std::out_of_range(""); return basic_string_view(p + pos, std::min(k, n - pos)); }
-    constexpr std::size_t find_first_of(basic_string_view v, std::size_t pos = 0) const noexcept { const char* it = std::find_first_of(p + pos, end(), v.begin(), v.end()); return it == end() ? npos : it - p; }
-    constexpr std::size_t find_first_of(T c, std::size_t pos = 0) const noexcept { for (std::size_t i = 0; i < n; i++) if (p[i] == c) return i; return npos; }
+
+    constexpr std::size_t find(basic_string_view v, std::size_t pos = 0) const noexcept { auto it = std::search(begin() + pos, end(), v.begin(), v.end()); if (it == end()) return npos; return it - begin(); }
+    constexpr std::size_t find(T c, std::size_t pos = 0) const noexcept { for (std::size_t i = 0; i < n; i++) if (p[i] == c) return i; return npos; }
+    constexpr std::size_t find(const T* s, std::size_t pos, std::size_t k) const { return find(basic_string_view(s, k), pos); }
+    constexpr std::size_t find(const T* s, std::size_t pos = 0) const { return find(basic_string_view(s), pos); }
+
+    constexpr std::size_t find_first_of(basic_string_view v, std::size_t pos = 0) const noexcept { const char* it = std::find_first_of(begin() + pos, end(), v.begin(), v.end()); return it == end() ? npos : it - begin(); }
+    constexpr std::size_t find_first_of(T c, std::size_t pos = 0) const noexcept { return find(c, pos); }
     constexpr std::size_t find_first_of(const T* s, std::size_t pos, std::size_t k) const { return find_first_of(basic_string_view(s, k), pos); }
     constexpr std::size_t find_first_of(const T* s, std::size_t pos = 0) const { return find_first_of(basic_string_view(s), pos); }
 
@@ -183,9 +190,13 @@ public:
 template<typename T> constexpr bool operator==(basic_string_view<T> l, basic_string_view<T> r) noexcept { if (l.size() != r.size()) return false; for (std::size_t i = 0; i < l.size(); i++) if (l[i] != r[i]) return false; return true; }
 template<typename T> constexpr bool operator==(basic_string_view<T> l, const T* r) noexcept { return l == basic_string_view<T>(r); }
 template<typename T> constexpr bool operator==(const T* l, basic_string_view<T> r) noexcept { return basic_string_view<T>(l) == r; }
+template<typename T> constexpr bool operator==(std::basic_string<T> l, basic_string_view<T> r) noexcept { return basic_string_view<T>(l) == r; }
+template<typename T> constexpr bool operator==(basic_string_view<T> l, std::basic_string<T> r) noexcept { return l == basic_string_view<T>(r); }
 template<typename T> constexpr bool operator!=(basic_string_view<T> l, basic_string_view<T> r) noexcept { return !(l == r); }
 template<typename T> constexpr bool operator!=(basic_string_view<T> l, const T* r) noexcept { return !(l == r); }
 template<typename T> constexpr bool operator!=(const T* l, basic_string_view<T> r) noexcept { return !(l == r); }
+template<typename T> constexpr bool operator!=(std::basic_string<T> l, basic_string_view<T> r) noexcept { return !(l == r); }
+template<typename T> constexpr bool operator!=(basic_string_view<T> l, std::basic_string<T> r) noexcept { return !(l == r); }
 
 
 }
