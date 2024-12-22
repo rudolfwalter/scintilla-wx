@@ -97,7 +97,7 @@ public:
     constexpr basic_string_view substr(std::size_t pos = 0, std::size_t k = npos) const { if (pos > n) throw std::out_of_range(""); return basic_string_view(p + pos, std::min(k, n - pos)); }
 
     constexpr std::size_t find(basic_string_view v, std::size_t pos = 0) const noexcept { auto it = std::search(begin() + pos, end(), v.begin(), v.end()); if (it == end()) return npos; return it - begin(); }
-    constexpr std::size_t find(T c, std::size_t pos = 0) const noexcept { for (std::size_t i = 0; i < n; i++) if (p[i] == c) return i; return npos; }
+    constexpr std::size_t find(T c, std::size_t pos = 0) const noexcept { for (std::size_t i = pos; i < n; i++) if (p[i] == c) return i; return npos; }
     constexpr std::size_t find(const T* s, std::size_t pos, std::size_t k) const { return find(basic_string_view(s, k), pos); }
     constexpr std::size_t find(const T* s, std::size_t pos = 0) const { return find(basic_string_view(s), pos); }
 
@@ -107,8 +107,8 @@ public:
     constexpr std::size_t find_first_of(const T* s, std::size_t pos = 0) const { return find_first_of(basic_string_view(s), pos); }
 
     // custom
-    constexpr explicit operator std::basic_string<T>() const { return std::basic_string<T>(p, n); }
-    constexpr std::string as_string() const { return std::basic_string<T>(p, n); }
+    explicit operator std::basic_string<T>() const { return std::basic_string<T>(p, n); }
+    std::string as_string() const { return std::basic_string<T>(p, n); }
 };
 typedef basic_string_view<char> string_view;
 typedef basic_string_view<wchar_t> wstring_view;
