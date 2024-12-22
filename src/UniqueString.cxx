@@ -5,7 +5,7 @@
 // Copyright 2017 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-#include <string>
+#include <string_view>
 #include <vector>
 #include <algorithm>
 #include <memory>
@@ -13,7 +13,7 @@
 #include "UniqueString.h"
 #include "Compat.h"
 
-namespace Scintilla {
+namespace Scintilla::Internal {
 
 /// Equivalent to strdup but produces a std::unique_ptr<const char[]> allocation to go
 /// into collections.
@@ -29,11 +29,7 @@ UniqueString UniqueStringCopy(const char *text) {
 
 // A set of strings that always returns the same pointer for each string.
 
-UniqueStringSet::UniqueStringSet() noexcept = default;
-
-UniqueStringSet::~UniqueStringSet() {
-	strings.clear();
-}
+UniqueStringSet::UniqueStringSet() = default;
 
 void UniqueStringSet::Clear() noexcept {
 	strings.clear();
