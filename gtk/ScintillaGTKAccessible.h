@@ -6,7 +6,7 @@
 #ifndef SCINTILLAGTKACCESSIBLE_H
 #define SCINTILLAGTKACCESSIBLE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 #ifndef ATK_CHECK_VERSION
 # define ATK_CHECK_VERSION(x, y, z) 0
@@ -188,7 +188,7 @@ public:
 	};
 };
 
-}
+}}
 
 
 #endif

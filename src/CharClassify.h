@@ -8,7 +8,7 @@
 #ifndef CHARCLASSIFY_H
 #define CHARCLASSIFY_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 enum class CharacterClass : unsigned char { space, newLine, word, punctuation };
 
@@ -27,6 +27,6 @@ private:
 	CharacterClass charClass[maxChar];
 };
 
-}
+}}
 
 #endif

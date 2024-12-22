@@ -8,7 +8,7 @@
 #ifndef LINEMARKER_H
 #define LINEMARKER_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 class XPM;
 class RGBAImage;
@@ -53,6 +53,6 @@ public:
 	void DrawFoldingMark(Surface *surface, const PRectangle &rcWhole, FoldPart part) const;
 };
 
-}
+}}
 
 #endif

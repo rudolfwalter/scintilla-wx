@@ -8,7 +8,7 @@
 #ifndef PLATWIN_H
 #define PLATWIN_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 #ifndef USER_DEFAULT_SCREEN_DPI
 #define USER_DEFAULT_SCREEN_DPI		96
@@ -81,6 +81,6 @@ struct ISetRenderingParams {
 };
 #endif
 
-}
+}}
 
 #endif

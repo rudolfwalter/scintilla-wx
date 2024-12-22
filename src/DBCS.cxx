@@ -9,7 +9,7 @@
 
 using namespace Scintilla::Internal;
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 bool DBCSIsLeadByte(int codePage, char ch) noexcept {
 	// Byte ranges found in Wikipedia articles with relevant search strings in each case
@@ -51,4 +51,4 @@ bool IsDBCSValidSingleByte(int codePage, int ch) noexcept {
 	}
 }
 
-}
+}}

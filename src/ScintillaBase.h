@@ -8,7 +8,7 @@
 #ifndef SCINTILLABASE_H
 #define SCINTILLABASE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // For most platforms (not Cocoa) all IME indicators are drawn in same colour,
 // blue, with different patterns.
@@ -95,6 +95,6 @@ public:
 	Scintilla::sptr_t WndProc(Scintilla::Message iMessage, Scintilla::uptr_t wParam, Scintilla::sptr_t lParam) override;
 };
 
-}
+}}
 
 #endif

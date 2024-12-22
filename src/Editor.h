@@ -8,7 +8,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
  */
@@ -730,6 +730,6 @@ public:
 	}
 };
 
-}
+}}
 
 #endif

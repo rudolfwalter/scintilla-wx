@@ -765,7 +765,7 @@ void ScintillaGTK::StartDrag() {
 #endif
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 std::string ConvertText(const char *s, size_t len, const char *charSetDest,
 			const char *charSetSource, bool transliterations, bool silent) {
@@ -799,7 +799,7 @@ std::string ConvertText(const char *s, size_t len, const char *charSetDest,
 	}
 	return destForm;
 }
-}
+}}
 
 // Returns the target converted to UTF8.
 // Return the length in bytes.

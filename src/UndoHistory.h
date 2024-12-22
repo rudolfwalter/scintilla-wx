@@ -8,7 +8,7 @@
 #ifndef UNDOHISTORY_H
 #define UNDOHISTORY_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // ScaledVector is a vector of unsigned integers that uses elements sized to hold the largest value.
 // Thus, if an undo history only contains short insertions and deletions the lengths vector may
@@ -155,6 +155,6 @@ public:
 	void CompletedRedoStep() noexcept;
 };
 
-}
+}}
 
 #endif

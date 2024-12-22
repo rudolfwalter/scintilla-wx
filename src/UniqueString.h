@@ -11,7 +11,7 @@
 #ifndef UNIQUESTRING_H
 #define UNIQUESTRING_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 constexpr bool IsNullOrEmpty(const char *text) noexcept {
 	return text == nullptr || *text == '\0';
@@ -34,6 +34,6 @@ public:
 	const char *Save(const char *text);
 };
 
-}
+}}
 
 #endif

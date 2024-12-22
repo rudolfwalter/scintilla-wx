@@ -43,7 +43,7 @@
 
 using namespace Scintilla;
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 //----------------------------------------------------------------------
 
@@ -1383,4 +1383,4 @@ void Platform::Assert(const char *c, const char *file, int line) noexcept
 	}
 }
 
-}
+}}

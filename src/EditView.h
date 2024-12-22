@@ -8,7 +8,7 @@
 #ifndef EDITVIEW_H
 #define EDITVIEW_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 struct PrintParameters {
 	int magnification;
@@ -159,6 +159,6 @@ public:
 		const EditModel &model, const ViewStyle &vs);
 };
 
-}
+}}
 
 #endif

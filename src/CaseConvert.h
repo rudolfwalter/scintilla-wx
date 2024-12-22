@@ -10,7 +10,7 @@
 #ifndef CASECONVERT_H
 #define CASECONVERT_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 enum class CaseConversion {
 	fold,
@@ -41,6 +41,6 @@ size_t CaseConvertString(char *converted, size_t sizeConverted, const char *mixe
 // Converts a mixed case string using a particular conversion.
 std::string CaseConvertString(const std::string &s, CaseConversion conversion);
 
-}
+}}
 
 #endif

@@ -339,7 +339,7 @@ CLIPFORMAT RegisterClipboardType(LPCWSTR lpszFormat) noexcept {
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
  */
@@ -836,7 +836,7 @@ KeyMod ScintillaWin::MouseModifiers(uptr_t wParam) noexcept {
 		KeyboardIsKeyDown(VK_MENU));
 }
 
-}
+}}
 
 namespace {
 
@@ -1380,7 +1380,7 @@ Message SciMessageFromEM(unsigned int iMessage) noexcept {
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 UINT CodePageFromCharSet(CharacterSet characterSet, UINT documentCodePage) noexcept {
 	if (documentCodePage == CpUtf8) {
@@ -1414,7 +1414,7 @@ UINT CodePageFromCharSet(CharacterSet characterSet, UINT documentCodePage) noexc
 	return documentCodePage;
 }
 
-}
+}}
 
 UINT ScintillaWin::CodePageOfDocument() const noexcept {
 	return CodePageFromCharSet(vs.styles[StyleDefault].characterSet, pdoc->dbcsCodePage);
@@ -3782,14 +3782,14 @@ sptr_t ScintillaWin::DirectStatusFunction(
 	return returnValue;
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 sptr_t DirectFunction(
     ScintillaWin *sci, UINT iMessage, uptr_t wParam, sptr_t lParam) {
 	return sci->WndProc(static_cast<Message>(iMessage), wParam, lParam);
 }
 
-}
+}}
 
 LRESULT PASCAL ScintillaWin::SWndProc(
 	HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
@@ -3833,7 +3833,7 @@ extern "C" int Scintilla_RegisterClasses(void *hInstance) {
 	return result;
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 int ResourcesRelease(bool fromDllMain) noexcept {
 	const bool result = ScintillaWin::Unregister();
@@ -3846,7 +3846,7 @@ int RegisterClasses(void *hInstance) noexcept {
 	return result;
 }
 
-}
+}}
 
 // This function is externally visible so it can be called from container when building statically.
 extern "C" int Scintilla_ReleaseResources() {

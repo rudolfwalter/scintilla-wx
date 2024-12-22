@@ -81,7 +81,7 @@ extern "C" NSString *ScintillaRecPboardType;
 - (void) idleTriggered: (NSNotification *) notification;
 @end
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 CGContextRef CGContextCurrent();
 
@@ -265,6 +265,6 @@ public:
 };
 
 
-}
+}}
 
 

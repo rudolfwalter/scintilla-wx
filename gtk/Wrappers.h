@@ -6,7 +6,7 @@
 #ifndef WRAPPERS_H
 #define WRAPPERS_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // GLib
 
@@ -104,6 +104,6 @@ inline void UnRefCursor(GdkCursor *cursor) noexcept {
 	return gtk_widget_get_window(w);
 }
 
-}
+}}
 
 #endif

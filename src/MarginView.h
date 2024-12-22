@@ -8,7 +8,7 @@
 #ifndef MARGINVIEW_H
 #define MARGINVIEW_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 void DrawWrapMarker(Surface *surface, PRectangle rcPlace, bool isEndMarker, ColourRGBA wrapColour);
 
@@ -42,6 +42,6 @@ public:
 		const EditModel &model, const ViewStyle &vs);
 };
 
-}
+}}
 
 #endif

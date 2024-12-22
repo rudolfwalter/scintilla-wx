@@ -21,7 +21,7 @@ constexpr unsigned int Mixed(unsigned char a, unsigned char b, double proportion
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 PRectangle Clamp(PRectangle rc, Edge edge, XYPOSITION position) noexcept {
 	switch (edge) {
@@ -124,4 +124,4 @@ ColourRGBA ColourRGBA::MixedWith(ColourRGBA other, double proportion) const noex
 		Mixed(GetAlpha(), other.GetAlpha(), proportion));
 }
 
-}
+}}

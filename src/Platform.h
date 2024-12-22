@@ -83,7 +83,7 @@
 
 #endif
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // Underlying the implementation of the platform classes are platform specific types.
 // Sometimes these need to be passed around by client code so they are defined here
@@ -379,6 +379,6 @@ constexpr long LongFromTwoShorts(short a,short b) noexcept {
 
 }
 
-}
+}}
 
 #endif

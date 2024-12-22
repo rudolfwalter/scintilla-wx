@@ -73,7 +73,7 @@
 
 class ScintillaEditBase;
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 class ScintillaQt : public QObject, public ScintillaBase {
 	Q_OBJECT
@@ -178,6 +178,6 @@ private:
 	friend class ::ScintillaEditBase;
 };
 
-}
+}}
 
 #endif /* SCINTILLAQT_H */

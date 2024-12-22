@@ -9,7 +9,7 @@
 #ifndef WINTYPES_H
 #define WINTYPES_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // Release an IUnknown* and set to nullptr.
 // While IUnknown::Release must be noexcept, it isn't marked as such so produces
@@ -53,6 +53,6 @@ inline T DLLFunction(HMODULE hModule, LPCSTR lpProcName) noexcept {
 	return fp;
 }
 
-}
+}}
 
 #endif

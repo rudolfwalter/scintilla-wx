@@ -769,7 +769,7 @@ CaseConverter *ConverterForConversion(CaseConversion conversion) {
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 ICaseConverter *ConverterFor(CaseConversion conversion) {
 	return ConverterForConversion(conversion);
@@ -793,4 +793,4 @@ std::string CaseConvertString(const std::string &s, CaseConversion conversion) {
 	return retMapped;
 }
 
-}
+}}

@@ -570,7 +570,7 @@ void ScintillaBase::RightButtonDownWithModifiers(Point pt, unsigned int curTime,
 	Editor::RightButtonDownWithModifiers(pt, curTime, modifiers);
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 class LexState : public LexInterface {
 public:
@@ -606,7 +606,7 @@ public:
 	const char *DescriptionOfStyle(int style);
 };
 
-}
+}}
 
 LexState::LexState(Document *pdoc_) noexcept : LexInterface(pdoc_) {
 }

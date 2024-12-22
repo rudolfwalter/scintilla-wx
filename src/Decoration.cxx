@@ -304,7 +304,7 @@ Sci::Position DecorationList<POS>::End(int indicator, Sci::Position position) no
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 std::unique_ptr<IDecoration> DecorationCreate(bool largeDocument, int indicator) {
 	if (largeDocument)
@@ -320,5 +320,5 @@ std::unique_ptr<IDecorationList> DecorationListCreate(bool largeDocument) {
 		return Sci::make_unique<DecorationList<int>>();
 }
 
-}
+}}
 

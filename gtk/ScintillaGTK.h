@@ -6,7 +6,7 @@
 #ifndef SCINTILLAGTK_H
 #define SCINTILLAGTK_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 class ScintillaGTKAccessible;
 
@@ -332,6 +332,6 @@ public:
 std::string ConvertText(const char *s, size_t len, const char *charSetDest,
 			const char *charSetSource, bool transliterations, bool silent=false);
 
-}
+}}
 
 #endif

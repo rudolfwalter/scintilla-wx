@@ -8,7 +8,7 @@
 #ifndef POSITIONCACHE_H
 #define POSITIONCACHE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
 * A point in document space.
@@ -275,6 +275,6 @@ public:
 
 std::unique_ptr<IPositionCache> CreatePositionCache();
 
-}
+}}
 
 #endif

@@ -38,7 +38,7 @@
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
 #endif
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 struct CountWidths {
 	// Measures the number of characters in a string divided into those
@@ -92,7 +92,7 @@ public:
 	virtual ~ILineVector() {}
 };
 
-}
+}}
 
 using namespace Scintilla;
 using namespace Scintilla::Internal;

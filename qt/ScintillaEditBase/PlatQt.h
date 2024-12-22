@@ -29,7 +29,7 @@
 #include <QHash>
 #include <QTextCodec>
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 const char *CharacterSetID(Scintilla::CharacterSet characterSet);
 
@@ -157,6 +157,6 @@ public:
 	QPainter *GetPainter();
 };
 
-}
+}}
 
 #endif

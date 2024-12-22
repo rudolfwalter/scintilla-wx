@@ -69,13 +69,13 @@ TEST_CASE("CompileCopying RunStyles") {
 
 }
 
-namespace Scintilla::Internal {	// Xcode clang 9.0 doesn't like this when in the unnamed namespace
+namespace Scintilla { namespace Internal {	// Xcode clang 9.0 doesn't like this when in the unnamed namespace
 	bool operator==(const FillResult<int> &fra, const FillResult<int> &frb) noexcept {
 		return fra.changed == frb.changed &&
 			fra.position == frb.position &&
 			fra.fillLength == frb.fillLength;
 	}
-}
+}}
 
 TEST_CASE("RunStyles") {
 

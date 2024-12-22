@@ -420,7 +420,7 @@ void ContractionState<LINE>::Check() const noexcept {
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 std::unique_ptr<IContractionState> ContractionStateCreate(bool largeDocument) {
 	if (largeDocument)
@@ -429,4 +429,4 @@ std::unique_ptr<IContractionState> ContractionStateCreate(bool largeDocument) {
 		return Sci::make_unique<ContractionState<int>>();
 }
 
-}
+}}

@@ -8,7 +8,7 @@
 #ifndef CONTRACTIONSTATE_H
 #define CONTRACTIONSTATE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
 */
@@ -47,6 +47,6 @@ public:
 
 std::unique_ptr<IContractionState> ContractionStateCreate(bool largeDocument);
 
-}
+}}
 
 #endif

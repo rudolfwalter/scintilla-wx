@@ -8,7 +8,7 @@
 #ifndef AUTOCOMPLETE_H
 #define AUTOCOMPLETE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
  */
@@ -93,6 +93,6 @@ public:
 	void Select(const char *word);
 };
 
-}
+}}
 
 #endif

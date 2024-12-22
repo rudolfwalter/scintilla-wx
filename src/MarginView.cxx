@@ -57,7 +57,7 @@
 
 using namespace Scintilla;
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 void DrawWrapMarker(Surface *surface, PRectangle rcPlace,
 	bool isEndMarker, ColourRGBA wrapColour) {
@@ -519,5 +519,5 @@ void MarginView::PaintMargin(Surface *surface, Sci::Line topLine, PRectangle rc,
 	surface->FillRectangle(rcBlankMargin, vs.styles[StyleDefault].back);
 }
 
-}
+}}
 

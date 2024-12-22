@@ -8,7 +8,7 @@
 #ifndef VIEWSTYLE_H
 #define VIEWSTYLE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
  */
@@ -253,6 +253,6 @@ private:
 	void FindMaxAscentDescent() noexcept;
 };
 
-}
+}}
 
 #endif

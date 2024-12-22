@@ -30,12 +30,12 @@
 #include <QMimeData>
 #include <QElapsedTimer>
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 class ScintillaQt;
 class SurfaceImpl;
 
-}
+}}
 
 #ifndef EXPORT_IMPORT_API
 #ifdef WIN32

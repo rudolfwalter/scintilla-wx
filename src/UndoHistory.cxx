@@ -34,7 +34,7 @@
 #include "CellBuffer.h"
 #include "UndoHistory.h"
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 template <typename T>
 void VectorTruncate(std::vector<T> &v, size_t length) noexcept {
@@ -631,4 +631,4 @@ void UndoHistory::CompletedRedoStep() noexcept {
 	currentAction++;
 }
 
-}
+}}

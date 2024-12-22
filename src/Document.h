@@ -8,7 +8,7 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 class DocWatcher;
 class DocModification;
@@ -665,6 +665,6 @@ public:
 	virtual void NotifyErrorOccurred(Document *doc, void *userData, Scintilla::Status status) = 0;
 };
 
-}
+}}
 
 #endif

@@ -8,7 +8,7 @@
 #ifndef XPM_H
 #define XPM_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
  * Hold a pixmap in XPM format.
@@ -81,6 +81,6 @@ public:
 	int GetWidth() const noexcept;
 };
 
-}
+}}
 
 #endif

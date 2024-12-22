@@ -94,7 +94,7 @@ int WidthStyledText(Surface *surface, const ViewStyle &vs, int styleOffset,
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 bool ValidStyledText(const ViewStyle &vs, size_t styleOffset, const StyledText &st) noexcept {
 	if (st.multipleStyles) {
@@ -176,7 +176,7 @@ void DrawStyledText(Surface *surface, const ViewStyle &vs, int styleOffset, PRec
 	}
 }
 
-}
+}}
 
 EditView::EditView() {
 	tabWidthMinimumPixels = 2; // needed for calculating tab stops for fractional proportional fonts

@@ -8,7 +8,7 @@
 #ifndef EDITMODEL_H
 #define EDITMODEL_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /**
 */
@@ -77,6 +77,6 @@ public:
 	[[nodiscard]] int GetMark(Sci::Line line) const;
 };
 
-}
+}}
 
 #endif

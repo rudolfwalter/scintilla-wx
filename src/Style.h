@@ -8,7 +8,7 @@
 #ifndef STYLE_H
 #define STYLE_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 struct FontSpecification {
 	// fontName is allocated by a ViewStyle container object and may be null
@@ -61,6 +61,6 @@ public:
 	bool IsProtected() const noexcept { return !(changeable && visible);}
 };
 
-}
+}}
 
 #endif

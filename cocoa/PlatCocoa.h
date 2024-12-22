@@ -37,7 +37,7 @@ CFStringEncoding EncodingFromCharacterSet(bool unicode, Scintilla::CharacterSet 
 
 @end
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // A class to do the actual text rendering for us using Quartz 2D.
 class SurfaceImpl : public Surface {
@@ -137,6 +137,6 @@ public:
 
 }; // SurfaceImpl class
 
-} // Scintilla namespace
+}} // Scintilla namespace
 
 #endif

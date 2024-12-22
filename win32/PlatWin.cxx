@@ -64,7 +64,7 @@
 
 using namespace Scintilla;
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 UINT CodePageFromCharSet(CharacterSet characterSet, UINT documentCodePage) noexcept;
 
@@ -4168,4 +4168,4 @@ void Platform_Finalise(bool fromDllMain) noexcept {
 	ListBoxX_Unregister();
 }
 
-}
+}}

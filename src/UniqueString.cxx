@@ -12,7 +12,7 @@
 #include "UniqueString.h"
 #include "Compat.h"
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 /// Equivalent to strdup but produces a std::unique_ptr<const char[]> allocation to go
 /// into collections.
@@ -49,4 +49,4 @@ const char *UniqueStringSet::Save(const char *text) {
 	return strings.back().get();
 }
 
-}
+}}

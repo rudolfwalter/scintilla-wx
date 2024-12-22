@@ -16,7 +16,7 @@
 #include "CharacterCategoryMap.h"
 #include "Compat.h"
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 namespace {
 	// Use an unnamed namespace to protect the declarations from name conflicts
@@ -4239,4 +4239,4 @@ void CharacterCategoryMap::Optimize(int countCharacters) {
 	} while (characters > end);
 }
 
-}
+}}

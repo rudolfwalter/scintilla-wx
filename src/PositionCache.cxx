@@ -675,7 +675,7 @@ const char *const repsC1[] = {
 
 }
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 const char *ControlCharacterString(unsigned char ch) noexcept {
 	if (ch < Sci::size(repsC0)) {
@@ -693,7 +693,7 @@ void Hexits(char *hexits, int ch) noexcept {
 	hexits[3] = 0;
 }
 
-}
+}}
 
 void SpecialRepresentations::SetRepresentation(Sci::string_view charBytes, Sci::string_view value) {
 	if ((charBytes.length() <= 4) && (value.length() <= Representation::maxLength)) {

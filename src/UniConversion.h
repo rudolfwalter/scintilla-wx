@@ -8,7 +8,7 @@
 #ifndef UNICONVERSION_H
 #define UNICONVERSION_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 constexpr int UTF8MaxBytes = 4;
 
@@ -102,6 +102,6 @@ constexpr unsigned int UTF16LengthFromUTF8ByteCount(unsigned int byteCount) noex
 	return (byteCount < 4) ? 1 : 2;
 }
 
-}
+}}
 
 #endif

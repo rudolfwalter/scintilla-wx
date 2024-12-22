@@ -8,7 +8,7 @@
 #ifndef CELLBUFFER_H
 #define CELLBUFFER_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 // Interface to per-line data that wants to see each line insertion and deletion
 class PerLine {
@@ -203,6 +203,6 @@ public:
 	[[nodiscard]] Sci::Position EditionNextDelete(Sci::Position pos) const noexcept;
 };
 
-}
+}}
 
 #endif

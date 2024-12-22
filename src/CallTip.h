@@ -8,7 +8,7 @@
 #ifndef CALLTIP_H
 #define CALLTIP_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 struct Chunk {
 	size_t start;
@@ -92,6 +92,6 @@ public:
 	void SetForeBack(ColourRGBA fore, ColourRGBA back) noexcept;
 };
 
-}
+}}
 
 #endif

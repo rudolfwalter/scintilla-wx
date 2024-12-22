@@ -9,7 +9,7 @@
 #ifndef RESEARCH_H
 #define RESEARCH_H
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 class CharacterIndexer {
 public:
@@ -65,7 +65,7 @@ private:
 	}
 };
 
-}
+}}
 
 #endif
 

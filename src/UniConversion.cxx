@@ -13,7 +13,7 @@
 #include "Compat.h"
 #include "UniConversion.h"
 
-namespace Scintilla::Internal {
+namespace Scintilla { namespace Internal {
 
 size_t UTF8Length(Sci::wstring_view wsv) noexcept {
 	size_t len = 0;
@@ -403,4 +403,4 @@ std::string FixInvalidUTF8(const std::string &text) {
 	return result;
 }
 
-}
+}}
