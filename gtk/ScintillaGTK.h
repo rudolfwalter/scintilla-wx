@@ -293,7 +293,7 @@ private:
 class GObjectWatcher {
 	GObject *weakRef;
 
-	void WeakNotifyThis([[maybe_unused]] GObject *obj) {
+	void WeakNotifyThis(SCI_MAYBE_UNUSED GObject *obj) {
 		PLATFORM_ASSERT(obj == weakRef);
 
 		Destroyed();

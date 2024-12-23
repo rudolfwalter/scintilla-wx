@@ -1080,7 +1080,7 @@ void SurfaceGDI::Ellipse(PRectangle rc, FillStroke fillStroke) {
 	::Ellipse(hdc, rcw.left, rcw.top, rcw.right, rcw.bottom);
 }
 
-void SurfaceGDI::Stadium(PRectangle rc, FillStroke fillStroke, [[maybe_unused]] Ends ends) {
+void SurfaceGDI::Stadium(PRectangle rc, FillStroke fillStroke, SCI_MAYBE_UNUSED Ends ends) {
 	// TODO: Implement properly - the rectangle is just a placeholder
 	RectangleDraw(rc, fillStroke);
 }
@@ -2699,7 +2699,7 @@ void SurfaceD2D::SetRenderingParams(std::shared_ptr<RenderingParams> renderingPa
 
 #endif
 
-std::unique_ptr<Surface> Surface::Allocate([[maybe_unused]] Technology technology) {
+std::unique_ptr<Surface> Surface::Allocate(SCI_MAYBE_UNUSED Technology technology) {
 #if defined(USE_D2D)
 	if (technology == Technology::Default)
 		return std::make_unique<SurfaceGDI>();

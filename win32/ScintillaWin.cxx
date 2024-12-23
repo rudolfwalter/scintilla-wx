@@ -1004,7 +1004,7 @@ Sci::Position ScintillaWin::EncodedFromUTF8(const char *utf8, char *encoded) con
 	}
 }
 
-void ScintillaWin::SetRenderingParams([[maybe_unused]] Surface *psurf) const {
+void ScintillaWin::SetRenderingParams(SCI_MAYBE_UNUSED Surface *psurf) const {
 #if defined(USE_D2D)
 	if (psurf) {
 		ISetRenderingParams *setDrawingParams = dynamic_cast<ISetRenderingParams *>(psurf);

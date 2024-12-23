@@ -172,7 +172,7 @@ static QString StringFromSelectedText(const SelectionText &selectedText)
 	}
 }
 
-static void AddRectangularToMime(QMimeData *mimeData, [[maybe_unused]] const QString &su)
+static void AddRectangularToMime(QMimeData *mimeData, SCI_MAYBE_UNUSED const QString &su)
 {
 #if defined(Q_OS_WIN)
 	// Add an empty marker
@@ -189,7 +189,7 @@ static void AddRectangularToMime(QMimeData *mimeData, [[maybe_unused]] const QSt
 #endif
 }
 
-static void AddLineCutCopyToMime([[maybe_unused]] QMimeData *mimeData)
+static void AddLineCutCopyToMime(SCI_MAYBE_UNUSED QMimeData *mimeData)
 {
 #if defined(Q_OS_WIN)
 	// Add an empty marker

@@ -10,6 +10,7 @@
 
 #include <stdexcept>
 
+#include "Compat.h"
 #include "CharacterType.h"
 #include "CharClassify.h"
 

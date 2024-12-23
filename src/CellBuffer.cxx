@@ -871,7 +871,7 @@ void CellBuffer::BasicInsertString(Sci::Position position, const char *s, Sci::P
 				if (*ptr == '\n') {
 					++ptr;
 				}
-				[[fallthrough]];
+				SCI_FALLTHROUGH;
 			case 1: // '\n'
 				positions[nPositions++] = position + ptr - s;
 				if (nPositions == PositionBlockSize) {

@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cassert>
 
+#include "Compat.h"
 #include "CharacterType.h"
 
 using namespace Scintilla::Internal;

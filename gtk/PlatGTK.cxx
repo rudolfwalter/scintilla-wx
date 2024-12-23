@@ -73,7 +73,7 @@ GtkWidget *PWidget(WindowID wid) noexcept {
 	return static_cast<GtkWidget *>(wid);
 }
 
-void SetFractionalPositions([[maybe_unused]] PangoContext *pcontext) noexcept {
+void SetFractionalPositions(SCI_MAYBE_UNUSED PangoContext *pcontext) noexcept {
 #if PANGO_VERSION_CHECK(1,44,3)
 	pango_context_set_round_glyph_positions(pcontext, FALSE);
 #endif

@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "Compat.h"
 #include "ScintillaTypes.h"
 
 #include "Debugging.h"

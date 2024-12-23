@@ -989,7 +989,7 @@ public:
 	void SetList(const char *list, char separator, char typesep) override;
 	void SetOptions(ListOptions options_) override;
 
-	[[nodiscard]] ListWidget *GetWidget() const noexcept;
+	SCI_NODISCARD ListWidget *GetWidget() const noexcept;
 private:
 	bool unicodeMode{false};
 	int visibleRows{5};

@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "Compat.h"
 #include "ScintillaTypes.h"
 #include "ILoader.h"
 #include "ILexer.h"

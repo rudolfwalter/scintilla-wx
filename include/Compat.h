@@ -16,6 +16,16 @@
 #include <utility>
 #include <vector>
 
+#if __cplusplus < 2021702L
+#define SCI_FALLTHROUGH
+#define SCI_MAYBE_UNUSED
+#define SCI_NODISCARD
+#else
+#define SCI_FALLTHROUGH [[fallthrough]]
+#define SCI_MAYBE_UNUSED [[maybe_unused]]
+#define SCI_NODISCARD [[nodiscard]]
+#endif
+
 namespace Sci {
 
 // std::clamp

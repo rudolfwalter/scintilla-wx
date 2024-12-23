@@ -24,9 +24,9 @@ class ScaledVector {
 	SizeMax element;
 	std::vector<uint8_t> bytes;
 public:
-	[[nodiscard]] size_t Size() const noexcept;
-	[[nodiscard]] size_t ValueAt(size_t index) const noexcept;
-	[[nodiscard]] intptr_t SignedValueAt(size_t index) const noexcept;
+	SCI_NODISCARD size_t Size() const noexcept;
+	SCI_NODISCARD size_t ValueAt(size_t index) const noexcept;
+	SCI_NODISCARD intptr_t SignedValueAt(size_t index) const noexcept;
 	void SetValueAt(size_t index, size_t value);
 	void ClearValueAt(size_t index) noexcept;
 	void Clear() noexcept;
@@ -35,7 +35,7 @@ public:
 	void PushBack();
 
 	// For testing
-	[[nodiscard]] size_t SizeInBytes() const noexcept;
+	SCI_NODISCARD size_t SizeInBytes() const noexcept;
 };
 
 class UndoActionType {
@@ -54,12 +54,12 @@ struct UndoActions {
 	void Truncate(size_t length) noexcept;
 	void PushBack();
 	void Clear() noexcept;
-	[[nodiscard]] intptr_t SSize() const noexcept;
+	SCI_NODISCARD intptr_t SSize() const noexcept;
 	void Create(size_t index, ActionType at_, Sci::Position position_, Sci::Position lenData_, bool mayCoalesce_);
-	[[nodiscard]] bool AtStart(size_t index) const noexcept;
-	[[nodiscard]] size_t LengthTo(size_t index) const noexcept;
-	[[nodiscard]] Sci::Position Position(int action) const noexcept;
-	[[nodiscard]] Sci::Position Length(int action) const noexcept;
+	SCI_NODISCARD bool AtStart(size_t index) const noexcept;
+	SCI_NODISCARD size_t LengthTo(size_t index) const noexcept;
+	SCI_NODISCARD Sci::Position Position(int action) const noexcept;
+	SCI_NODISCARD Sci::Position Length(int action) const noexcept;
 };
 
 class ScrapStack {
@@ -71,8 +71,8 @@ public:
 	void SetCurrent(size_t position) noexcept;
 	void MoveForward(size_t length) noexcept;
 	void MoveBack(size_t length) noexcept;
-	[[nodiscard]] const char *CurrentText() const noexcept;
-	[[nodiscard]] const char *TextAt(size_t position) const noexcept;
+	SCI_NODISCARD const char *CurrentText() const noexcept;
+	SCI_NODISCARD const char *TextAt(size_t position) const noexcept;
 };
 
 constexpr int coalesceFlag = 0x100;
@@ -105,12 +105,12 @@ public:
 	void DropUndoSequence() noexcept;
 	void DeleteUndoHistory() noexcept;
 
-	[[nodiscard]] int Actions() const noexcept;
+	SCI_NODISCARD int Actions() const noexcept;
 
 	/// The save point is a marker in the undo stack where the container has stated that
 	/// the buffer was saved. Undo and redo can move over the save point.
 	void SetSavePoint(int action) noexcept;
-	[[nodiscard]] int SavePoint() const noexcept;
+	SCI_NODISCARD int SavePoint() const noexcept;
 	void SetSavePoint() noexcept;
 	bool IsSavePoint() const noexcept;
 	bool BeforeSavePoint() const noexcept;
@@ -120,24 +120,24 @@ public:
 
 	/// The detach point is the last action that was before an inaccessible missing save point.
 	void SetDetachPoint(int action) noexcept;
-	[[nodiscard]] int DetachPoint() const noexcept;
+	SCI_NODISCARD int DetachPoint() const noexcept;
 	bool AfterDetachPoint() const noexcept;
 	bool AfterOrAtDetachPoint() const noexcept;
 
-	[[nodiscard]] intptr_t Delta(int action) const noexcept;
-	[[nodiscard]] bool Validate(intptr_t lengthDocument) const noexcept;
+	SCI_NODISCARD intptr_t Delta(int action) const noexcept;
+	SCI_NODISCARD bool Validate(intptr_t lengthDocument) const noexcept;
 	void SetCurrent(int action, intptr_t lengthDocument);
-	[[nodiscard]] int Current() const noexcept;
-	[[nodiscard]] int Type(int action) const noexcept;
-	[[nodiscard]] Sci::Position Position(int action) const noexcept;
-	[[nodiscard]] Sci::Position Length(int action) const noexcept;
-	[[nodiscard]] Sci::string_view Text(int action) noexcept;
+	SCI_NODISCARD int Current() const noexcept;
+	SCI_NODISCARD int Type(int action) const noexcept;
+	SCI_NODISCARD Sci::Position Position(int action) const noexcept;
+	SCI_NODISCARD Sci::Position Length(int action) const noexcept;
+	SCI_NODISCARD Sci::string_view Text(int action) noexcept;
 	void PushUndoActionType(int type, Sci::Position position);
 	void ChangeLastUndoActionText(size_t length, const char *text);
 
 	// Tentative actions are used for input composition so that it can be undone cleanly
 	void SetTentative(int action) noexcept;
-	[[nodiscard]] int TentativePoint() const noexcept;
+	SCI_NODISCARD int TentativePoint() const noexcept;
 	void TentativeStart() noexcept;
 	void TentativeCommit() noexcept;
 	bool TentativeActive() const noexcept;

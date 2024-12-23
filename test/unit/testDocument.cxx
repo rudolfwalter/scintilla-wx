@@ -163,7 +163,7 @@ struct DocPlus {
 		document.DeleteChars(gapNew, 1);
 	}
 
-	[[nodiscard]] std::string Contents() const {
+	SCI_NODISCARD std::string Contents() const {
 		const Sci::Position length = document.Length();
 		std::string contents(length, 0);
 		document.GetCharRange(contents.data(), 0, length);

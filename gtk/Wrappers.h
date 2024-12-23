@@ -100,7 +100,7 @@ inline void UnRefCursor(GdkCursor *cursor) noexcept {
 #endif
 }
 
-[[nodiscard]] inline GdkWindow *WindowFromWidget(GtkWidget *w) noexcept {
+SCI_NODISCARD inline GdkWindow *WindowFromWidget(GtkWidget *w) noexcept {
 	return gtk_widget_get_window(w);
 }
 
