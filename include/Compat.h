@@ -14,6 +14,7 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace Sci {
 
@@ -54,6 +55,10 @@ constexpr size_t size(const T (&)[N]) noexcept {
 	return N;
 }
 
+template<typename T>
+size_t size(std::vector<T> const& v) noexcept {
+	return v.size();
+}
 
 // std::string_view and std::wstring_view -- Partial implementation.
 template<typename T>

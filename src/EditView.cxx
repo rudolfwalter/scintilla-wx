@@ -493,7 +493,7 @@ void EditView::LayoutLine(const EditModel &model, Surface *surface, const ViewSt
 				threads = 1;
 			}
 
-			std::atomic<uint32_t> nextIndex = 0;
+			std::atomic<uint32_t> nextIndex{0};
 
 			const bool textUnicode = CpUtf8 == model.pdoc->dbcsCodePage;
 			const bool multiThreaded = threads > 1;

@@ -1739,7 +1739,7 @@ std::string Document::TransformLineEnds(const char *s, size_t len, EndOfLine eol
 	const Sci::string_view eol = EOLForMode(eolModeWanted);
 	for (size_t i = 0; (i < len) && (s[i]); i++) {
 		if (s[i] == '\n' || s[i] == '\r') {
-			dest.append(eol);
+			dest.append(eol.data(), eol.size());
 			if ((s[i] == '\r') && (i+1 < len) && (s[i+1] == '\n')) {
 				i++;
 			}
@@ -3371,7 +3371,7 @@ const char *BuiltinRegex::SubstituteByPosition(Document *doc, const char *text, 
 				if (len > 0) {	// Will be null if try for a match that did not occur
 					const size_t size = substituted.length();
 					substituted.resize(size + len);
-					doc->GetCharRange(substituted.data() + size, startPos, len);
+					doc->GetCharRange(&substituted[0] + size, startPos, len);
 				}
 			} else {
 				switch (chNext) {

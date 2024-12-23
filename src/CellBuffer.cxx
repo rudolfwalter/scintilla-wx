@@ -217,8 +217,8 @@ public:
 	}
 	void InsertLines(Sci::Line line, const Sci::Position *positions, size_t lines, bool lineStart) override {
 		const POS lineAsPos = pos_cast(line);
-		if (sizeof(Sci::Position) == sizeof(POS)) {
-			starts.InsertPartitions(lineAsPos, positions, lines);
+		if /*constexpr*/ (sizeof(Sci::Position) == sizeof(POS)) {
+			starts.InsertPartitions(lineAsPos, reinterpret_cast<const POS*>(positions), lines);
 		} else {
 			starts.InsertPartitionsWithCast(lineAsPos, positions, lines);
 		}
@@ -777,7 +777,7 @@ void CellBuffer::RecalculateIndexLineStarts(Sci::Line lineFirst, Sci::Line lineL
 		posLineEnd = LineStart(line+1);
 		const Sci::Position width = posLineEnd - posLineStart;
 		text.resize(width);
-		GetCharRange(text.data(), posLineStart, width);
+		GetCharRange(&text[0], posLineStart, width);
 		const CountWidths cw = CountCharacterWidthsUTF8(text);
 		plv->SetLineCharactersWidth(line, cw);
 	}

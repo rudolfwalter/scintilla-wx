@@ -1507,7 +1507,7 @@ bool Editor::WrapBlock(Surface *surface, Sci::Line lineToWrap, Sci::Line lineToW
 	// If only 1 thread needed then use the main thread, else spin up multiple
 	const std::launch policy = multiThreaded ? std::launch::async : std::launch::deferred;
 
-	std::atomic<size_t> nextIndex = 0;
+	std::atomic<size_t> nextIndex{0};
 
 	// Lines that are less likely to be re-examined should not be read from or written to the cache.
 	const SignificantLines significantLines {
@@ -4317,7 +4317,7 @@ std::string Editor::RangeText(Sci::Position start, Sci::Position end) const {
 	if (start < end) {
 		const Sci::Position len = end - start;
 		std::string ret(len, '\0');
-		pdoc->GetCharRange(ret.data(), start, len);
+		pdoc->GetCharRange(&ret[0], start, len);
 		return ret;
 	}
 	return std::string();
@@ -4330,7 +4330,8 @@ bool Editor::CopyLineRange(SelectionText *ss, bool allowProtected) {
 
 	if (allowProtected || !RangeContainsProtected(start, end)) {
 		std::string text = RangeText(start, end);
-		text.append(pdoc->EOLString());
+		Sci::string_view eol = pdoc->EOLString();
+		text.append(eol.data(), eol.size());
 		ss->Copy(text, pdoc->dbcsCodePage,
 			vs.styles[StyleDefault].characterSet, false, true);
 		return true;
@@ -4354,7 +4355,7 @@ void Editor::CopySelectionRange(SelectionText *ss, bool allowLineCopy) {
 			text.append(RangeText(rangesInOrder[part].Start().Position(), rangesInOrder[part].End().Position()));
 			if ((sel.selType == Selection::SelTypes::rectangle) || (part < rangesInOrder.size() - 1)) {
 				// Append unless simple selection or last part of multiple selection
-				text.append(separator);
+				text.append(separator.data(), separator.size());
 			}
 		}
 		ss->Copy(text, pdoc->dbcsCodePage,
