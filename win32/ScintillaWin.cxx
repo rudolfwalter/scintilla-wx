@@ -451,14 +451,14 @@ class ScintillaWin :
 	void SelectionToHangul();
 	void EscapeHanja();
 	void ToggleHanja();
-	void AddWString(std::wstring_view wsv, CharacterSource charSource);
+	void AddWString(Sci::wstring_view wsv, CharacterSource charSource);
 
 	UINT CodePageOfDocument() const noexcept;
 	bool ValidCodePage(int codePage) const override;
-	std::string UTF8FromEncoded(std::string_view encoded) const override;
-	std::string EncodedFromUTF8(std::string_view utf8) const override;
+	std::string UTF8FromEncoded(Sci::string_view encoded) const override;
+	std::string EncodedFromUTF8(Sci::string_view utf8) const override;
 
-	std::string EncodeWString(std::wstring_view wsv);
+	std::string EncodeWString(Sci::wstring_view wsv);
 	sptr_t DefWndProc(Message iMessage, uptr_t wParam, sptr_t lParam) override;
 	void IdleWork() override;
 	void QueueIdleWork(WorkItems items, Sci::Position upTo) override;
@@ -912,23 +912,23 @@ bool BoundsContains(PRectangle rcBounds, HRGN hRgnBounds, PRectangle rcCheck) no
 
 // Simplify calling WideCharToMultiByte and MultiByteToWideChar by providing default parameters and using string view.
 
-int MultiByteFromWideChar(UINT codePage, std::wstring_view wsv, LPSTR lpMultiByteStr, ptrdiff_t cbMultiByte) noexcept {
+int MultiByteFromWideChar(UINT codePage, Sci::wstring_view wsv, LPSTR lpMultiByteStr, ptrdiff_t cbMultiByte) noexcept {
 	return ::WideCharToMultiByte(codePage, 0, wsv.data(), static_cast<int>(wsv.length()), lpMultiByteStr, static_cast<int>(cbMultiByte), nullptr, nullptr);
 }
 
-int MultiByteLenFromWideChar(UINT codePage, std::wstring_view wsv) noexcept {
+int MultiByteLenFromWideChar(UINT codePage, Sci::wstring_view wsv) noexcept {
 	return MultiByteFromWideChar(codePage, wsv, nullptr, 0);
 }
 
-int WideCharFromMultiByte(UINT codePage, std::string_view sv, LPWSTR lpWideCharStr, ptrdiff_t cchWideChar) noexcept {
+int WideCharFromMultiByte(UINT codePage, Sci::string_view sv, LPWSTR lpWideCharStr, ptrdiff_t cchWideChar) noexcept {
 	return ::MultiByteToWideChar(codePage, 0, sv.data(), static_cast<int>(sv.length()), lpWideCharStr, static_cast<int>(cchWideChar));
 }
 
-int WideCharLenFromMultiByte(UINT codePage, std::string_view sv) noexcept {
+int WideCharLenFromMultiByte(UINT codePage, Sci::string_view sv) noexcept {
 	return WideCharFromMultiByte(codePage, sv, nullptr, 0);
 }
 
-std::string StringEncode(std::wstring_view wsv, int codePage) {
+std::string StringEncode(Sci::wstring_view wsv, int codePage) {
 	const int cchMulti = wsv.length() ? MultiByteLenFromWideChar(codePage, wsv) : 0;
 	std::string sMulti(cchMulti, 0);
 	if (cchMulti) {
@@ -937,7 +937,7 @@ std::string StringEncode(std::wstring_view wsv, int codePage) {
 	return sMulti;
 }
 
-std::wstring StringDecode(std::string_view sv, int codePage) {
+std::wstring StringDecode(Sci::string_view sv, int codePage) {
 	const int cchWide = sv.length() ? WideCharLenFromMultiByte(codePage, sv) : 0;
 	std::wstring sWide(cchWide, 0);
 	if (cchWide) {
@@ -946,7 +946,7 @@ std::wstring StringDecode(std::string_view sv, int codePage) {
 	return sWide;
 }
 
-std::wstring StringMapCase(std::wstring_view wsv, DWORD mapFlags) {
+std::wstring StringMapCase(Sci::wstring_view wsv, DWORD mapFlags) {
 	const int charsConverted = ::LCMapStringW(LOCALE_SYSTEM_DEFAULT, mapFlags,
 		wsv.data(), static_cast<int>(wsv.length()), nullptr, 0);
 	std::wstring wsConverted(charsConverted, 0);
@@ -992,7 +992,7 @@ Sci::Position ScintillaWin::EncodedFromUTF8(const char *utf8, char *encoded) con
 		return inputLength;
 	} else {
 		// Need to convert
-		const std::string_view utf8Input(utf8, inputLength);
+		const Sci::string_view utf8Input(utf8, inputLength);
 		const int charsLen = WideCharLenFromMultiByte(CpUtf8, utf8Input);
 		std::wstring characters(charsLen, L'\0');
 		WideCharFromMultiByte(CpUtf8, utf8Input, &characters[0], charsLen);
@@ -1247,7 +1247,7 @@ std::vector<int> MapImeIndicators(std::vector<BYTE> inputStyle) {
 
 }
 
-void ScintillaWin::AddWString(std::wstring_view wsv, CharacterSource charSource) {
+void ScintillaWin::AddWString(Sci::wstring_view wsv, CharacterSource charSource) {
 	if (wsv.empty())
 		return;
 
@@ -1307,7 +1307,7 @@ sptr_t ScintillaWin::HandleCompositionInline(uptr_t, sptr_t lParam) {
 		std::vector<int> imeIndicator = MapImeIndicators(imc.GetImeAttributes());
 
 		const int codePage = CodePageOfDocument();
-		const std::wstring_view wsv = wcs;
+		const Sci::wstring_view wsv = wcs;
 		for (size_t i = 0; i < wsv.size(); ) {
 			const size_t ucWidth = UTF16CharLength(wsv[i]);
 			const std::string docChar = StringEncode(wsv.substr(i, ucWidth), codePage);
@@ -1422,7 +1422,7 @@ UINT ScintillaWin::CodePageOfDocument() const noexcept {
 	return CodePageFromCharSet(vs.styles[StyleDefault].characterSet, pdoc->dbcsCodePage);
 }
 
-std::string ScintillaWin::EncodeWString(std::wstring_view wsv) {
+std::string ScintillaWin::EncodeWString(Sci::wstring_view wsv) {
 	if (IsUnicodeMode()) {
 		const size_t len = UTF8Length(wsv);
 		std::string putf(len, 0);
@@ -1734,7 +1734,7 @@ sptr_t ScintillaWin::KeyMessage(unsigned int iMessage, uptr_t wParam, sptr_t lPa
 				lastHighSurrogateChar = 0;
 				wclen = 2;
 			}
-			AddWString(std::wstring_view(wcs, wclen), CharacterSource::DirectInput);
+			AddWString(Sci::wstring_view(wcs, wclen), CharacterSource::DirectInput);
 		}
 		return 0;
 
@@ -1746,7 +1746,7 @@ sptr_t ScintillaWin::KeyMessage(unsigned int iMessage, uptr_t wParam, sptr_t lPa
 		} else {
 			wchar_t wcs[3] = { 0 };
 			const size_t wclen = UTF16FromUTF32Character(static_cast<unsigned int>(wParam), wcs);
-			AddWString(std::wstring_view(wcs, wclen), CharacterSource::DirectInput);
+			AddWString(Sci::wstring_view(wcs, wclen), CharacterSource::DirectInput);
 			return FALSE;
 		}
 	}
@@ -2251,7 +2251,7 @@ bool ScintillaWin::ValidCodePage(int codePage) const {
 	       codePage == 950 || codePage == 1361;
 }
 
-std::string ScintillaWin::UTF8FromEncoded(std::string_view encoded) const {
+std::string ScintillaWin::UTF8FromEncoded(Sci::string_view encoded) const {
 	if (IsUnicodeMode()) {
 		return std::string(encoded);
 	} else {
@@ -2261,7 +2261,7 @@ std::string ScintillaWin::UTF8FromEncoded(std::string_view encoded) const {
 	}
 }
 
-std::string ScintillaWin::EncodedFromUTF8(std::string_view utf8) const {
+std::string ScintillaWin::EncodedFromUTF8(Sci::string_view utf8) const {
 	if (IsUnicodeMode()) {
 		return std::string(utf8);
 	} else {
@@ -2473,7 +2473,7 @@ bool ScintillaWin::ChangeScrollRange(int nBar, int nMin, int nMax, UINT nPage) n
 
 void ScintillaWin::HorizontalScrollToClamped(int xPos) {
 	const HorizontalScrollRange range = GetHorizontalScrollRange();
-	HorizontalScrollTo(std::clamp(xPos, 0, range.documentWidth - range.pageWidth + 1));
+	HorizontalScrollTo(Sci::clamp(xPos, 0, range.documentWidth - range.pageWidth + 1));
 }
 
 HorizontalScrollRange ScintillaWin::GetHorizontalScrollRange() const {
@@ -2569,7 +2569,7 @@ public:
 				utf16Mixed.resize(lenMixed + 8);
 			}
 			const size_t nUtf16Mixed = WideCharFromMultiByte(cp,
-				std::string_view(mixed, lenMixed),
+				Sci::string_view(mixed, lenMixed),
 				&utf16Mixed[0],
 				utf16Mixed.size());
 
@@ -2587,8 +2587,8 @@ public:
 				if (foldedUTF8) {
 					// Maximum length of a case conversion is 6 bytes, 3 characters
 					wchar_t wFolded[20];
-					const size_t charsConverted = UTF16FromUTF8(std::string_view(foldedUTF8),
-							wFolded, std::size(wFolded));
+					const size_t charsConverted = UTF16FromUTF8(Sci::string_view(foldedUTF8),
+							wFolded, Sci::size(wFolded));
 					for (size_t j=0; j<charsConverted; j++)
 						utf16Folded[lenFlat++] = wFolded[j];
 				} else {
@@ -2596,7 +2596,7 @@ public:
 				}
 			}
 
-			const std::wstring_view wsvFolded(&utf16Folded[0], lenFlat);
+			const Sci::wstring_view wsvFolded(&utf16Folded[0], lenFlat);
 			const size_t lenOut = MultiByteLenFromWideChar(cp, wsvFolded);
 
 			if (lenOut < sizeFolded) {
@@ -2624,18 +2624,18 @@ std::unique_ptr<CaseFolder> ScintillaWin::CaseFolderForEncoding() {
 				sCharacter[0] = static_cast<char>(i);
 				wchar_t wCharacter[20];
 				const unsigned int lengthUTF16 = WideCharFromMultiByte(cpDest, sCharacter,
-					wCharacter, std::size(wCharacter));
+					wCharacter, Sci::size(wCharacter));
 				if (lengthUTF16 == 1) {
 					const char *caseFolded = CaseConvert(wCharacter[0], CaseConversion::fold);
 					if (caseFolded) {
 						wchar_t wLower[20];
-						const size_t charsConverted = UTF16FromUTF8(std::string_view(caseFolded),
-							wLower, std::size(wLower));
+						const size_t charsConverted = UTF16FromUTF8(Sci::string_view(caseFolded),
+							wLower, Sci::size(wLower));
 						if (charsConverted == 1) {
 							char sCharacterLowered[20];
 							const unsigned int lengthConverted = MultiByteFromWideChar(cpDest,
-								std::wstring_view(wLower, charsConverted),
-								sCharacterLowered, std::size(sCharacterLowered));
+								Sci::wstring_view(wLower, charsConverted),
+								sCharacterLowered, Sci::size(sCharacterLowered));
 							if ((lengthConverted == 1) && (sCharacter[0] != sCharacterLowered[0])) {
 								pcf->SetTranslation(sCharacter[0], sCharacterLowered[0]);
 							}
@@ -2989,7 +2989,7 @@ STDMETHODIMP DataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC **ppEnu
 		}
 
 		const CLIPFORMAT formats[] = {CF_UNICODETEXT};
-		FormatEnumerator *pfe = new FormatEnumerator(0, formats, std::size(formats));
+		FormatEnumerator *pfe = new FormatEnumerator(0, formats, Sci::size(formats));
 		return pfe->QueryInterface(IID_IEnumFORMATETC, reinterpret_cast<void **>(ppEnum));
 	} catch (std::bad_alloc &) {
 		sci->errorStatus = Status::BadAlloc;
@@ -3093,7 +3093,7 @@ void ScintillaWin::ImeStartComposition() {
 			lf.lfFaceName[0] = L'\0';
 			if (vs.styles[styleHere].fontName) {
 				const char* fontName = vs.styles[styleHere].fontName;
-				UTF16FromUTF8(std::string_view(fontName), lf.lfFaceName, LF_FACESIZE);
+				UTF16FromUTF8(Sci::string_view(fontName), lf.lfFaceName, LF_FACESIZE);
 			}
 
 			::ImmSetCompositionFontW(imc.hIMC, &lf);
@@ -3254,7 +3254,7 @@ void ScintillaWin::GetMouseParameters() noexcept {
 }
 
 void ScintillaWin::CopyToGlobal(GlobalMemory &gmUnicode, const SelectionText &selectedText) {
-	const std::string_view svSelected(selectedText.Data(), selectedText.LengthWithTerminator());
+	const Sci::string_view svSelected(selectedText.Data(), selectedText.LengthWithTerminator());
 	if (IsUnicodeMode()) {
 		const size_t uchars = UTF16Length(svSelected);
 		gmUnicode.Allocate(2 * uchars);

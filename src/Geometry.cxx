@@ -10,6 +10,7 @@
 
 #include <algorithm>
 
+#include "Compat.h"
 #include "Geometry.h"
 
 namespace {
@@ -25,14 +26,14 @@ namespace Scintilla::Internal {
 PRectangle Clamp(PRectangle rc, Edge edge, XYPOSITION position) noexcept {
 	switch (edge) {
 	case Edge::left:
-		return PRectangle(std::clamp(position, rc.left, rc.right), rc.top, rc.right, rc.bottom);
+		return PRectangle(Sci::clamp(position, rc.left, rc.right), rc.top, rc.right, rc.bottom);
 	case Edge::top:
-		return PRectangle(rc.left, std::clamp(position, rc.top, rc.bottom), rc.right, rc.bottom);
+		return PRectangle(rc.left, Sci::clamp(position, rc.top, rc.bottom), rc.right, rc.bottom);
 	case Edge::right:
-		return PRectangle(rc.left, rc.top, std::clamp(position, rc.left, rc.right), rc.bottom);
+		return PRectangle(rc.left, rc.top, Sci::clamp(position, rc.left, rc.right), rc.bottom);
 	case Edge::bottom:
 	default:
-		return PRectangle(rc.left, rc.top, rc.right, std::clamp(position, rc.top, rc.bottom));
+		return PRectangle(rc.left, rc.top, rc.right, Sci::clamp(position, rc.top, rc.bottom));
 	}
 }
 

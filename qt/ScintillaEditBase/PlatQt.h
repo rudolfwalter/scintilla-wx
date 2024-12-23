@@ -120,24 +120,24 @@ public:
 	std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) override;
 
 	void DrawTextNoClip(PRectangle rc, const Font *font, XYPOSITION ybase,
-		std::string_view text, ColourRGBA fore, ColourRGBA back) override;
+		Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
 	void DrawTextClipped(PRectangle rc, const Font *font, XYPOSITION ybase,
-		std::string_view text, ColourRGBA fore, ColourRGBA back) override;
+		Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
 	void DrawTextTransparent(PRectangle rc, const Font *font, XYPOSITION ybase,
-		std::string_view text, ColourRGBA fore) override;
-	void MeasureWidths(const Font *font, std::string_view text,
+		Sci::string_view text, ColourRGBA fore) override;
+	void MeasureWidths(const Font *font, Sci::string_view text,
 		XYPOSITION *positions) override;
-	XYPOSITION WidthText(const Font *font, std::string_view text) override;
+	XYPOSITION WidthText(const Font *font, Sci::string_view text) override;
 
 	void DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase,
-		std::string_view text, ColourRGBA fore, ColourRGBA back) override;
+		Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
 	void DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase,
-		std::string_view text, ColourRGBA fore, ColourRGBA back) override;
+		Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
 	void DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase,
-		std::string_view text, ColourRGBA fore) override;
-	void MeasureWidthsUTF8(const Font *font_, std::string_view text,
+		Sci::string_view text, ColourRGBA fore) override;
+	void MeasureWidthsUTF8(const Font *font_, Sci::string_view text,
 		XYPOSITION *positions) override;
-	XYPOSITION WidthTextUTF8(const Font *font_, std::string_view text) override;
+	XYPOSITION WidthTextUTF8(const Font *font_, Sci::string_view text) override;
 
 	XYPOSITION Ascent(const Font *font) override;
 	XYPOSITION Descent(const Font *font) override;

@@ -56,12 +56,12 @@ protected:
 	void Initialise() override {}
 	void Finalise() override;
 
-	void InsertCharacter(std::string_view sv, Scintilla::CharacterSource charSource) override;
+	void InsertCharacter(Sci::string_view sv, Scintilla::CharacterSource charSource) override;
 	void Command(int cmdId);
 	void CancelModes() override;
 	int KeyCommand(Scintilla::Message iMessage) override;
 
-	void AutoCompleteInsert(Sci::Position startPos, Sci::Position removeLen, std::string_view text);
+	void AutoCompleteInsert(Sci::Position startPos, Sci::Position removeLen, Sci::string_view text);
 	void AutoCompleteStart(Sci::Position lenEntered, const char *list);
 	void AutoCompleteCancel();
 	void AutoCompleteMove(int delta);

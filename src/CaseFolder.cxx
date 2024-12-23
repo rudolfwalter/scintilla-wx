@@ -9,6 +9,7 @@
 #include <vector>
 #include <algorithm>
 
+#include "Compat.h"
 #include "CharacterType.h"
 #include "CaseFolder.h"
 #include "CaseConvert.h"
@@ -42,7 +43,7 @@ void CaseFolderTable::SetTranslation(char ch, char chTranslation) noexcept {
 }
 
 void CaseFolderTable::StandardASCII() noexcept {
-	for (size_t iChar=0; iChar<std::size(mapping); iChar++) {
+	for (size_t iChar=0; iChar<Sci::size(mapping); iChar++) {
 		mapping[iChar] = static_cast<char>(MakeLowerCase(iChar));
 	}
 }

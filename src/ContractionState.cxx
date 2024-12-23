@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "Compat.h"
 #include "Debugging.h"
 
 #include "Position.h"

@@ -114,7 +114,7 @@ Timer::Timer() noexcept :
 Idler::Idler() noexcept :
 		state(false), idlerID(nullptr) {}
 
-static constexpr bool IsAllSpacesOrTabs(std::string_view sv) noexcept {
+static constexpr bool IsAllSpacesOrTabs(Sci::string_view sv) noexcept {
 	for (const char ch : sv) {
 		// This is safe because IsSpaceOrTab() will return false for null terminators
 		if (!IsSpaceOrTab(ch))
@@ -1035,7 +1035,7 @@ void Editor::MoveSelectedLines(int lineDelta) {
 		SetSelection(pdoc->MovePositionOutsideChar(selectionStart - 1, -1), selectionEnd);
 	ClearSelection();
 
-	const std::string_view eol = pdoc->EOLString();
+	const Sci::string_view eol = pdoc->EOLString();
 	if (currentLine + lineDelta >= pdoc->LinesTotal())
 		pdoc->InsertString(pdoc->Length(), eol);
 	GoToLine(currentLine + lineDelta);
@@ -1645,7 +1645,7 @@ bool Editor::WrapLines(WrapScope ws) {
 			lineToWrapEnd = lineDocTop;
 			Sci::Line lines = LinesOnScreen() + 1;
 			constexpr double secondsAllowed = 0.1;
-			const size_t actionsInAllowedTime = std::clamp<Sci::Line>(
+			const size_t actionsInAllowedTime = Sci::clamp<Sci::Line>(
 				durationWrapOneByte.ActionsInAllowedTime(secondsAllowed),
 				0x2000, 0x200000);
 			const Sci::Line lineLast = pdoc->LineFromPositionAfter(lineToWrap, actionsInAllowedTime);
@@ -1733,7 +1733,7 @@ void Editor::LinesSplit(int pixelWidth) {
 		}
 		const Sci::Line lineStart = pdoc->SciLineFromPosition(targetRange.start.Position());
 		Sci::Line lineEnd = pdoc->SciLineFromPosition(targetRange.end.Position());
-		const std::string_view eol = pdoc->EOLString();
+		const Sci::string_view eol = pdoc->EOLString();
 		UndoGroup ug(pdoc);
 		for (Sci::Line line = lineStart; line <= lineEnd; line++) {
 			AutoSurface surface(this);
@@ -2015,7 +2015,7 @@ SelectionPosition Editor::RealizeVirtualSpace(const SelectionPosition &position)
 
 void Editor::AddChar(char ch) {
 	const char s[1] {ch};
-	InsertCharacter(std::string_view(s, 1), CharacterSource::DirectInput);
+	InsertCharacter(Sci::string_view(s, 1), CharacterSource::DirectInput);
 }
 
 void Editor::FilterSelections() {
@@ -2026,7 +2026,7 @@ void Editor::FilterSelections() {
 }
 
 // InsertCharacter inserts a character encoded in document code page.
-void Editor::InsertCharacter(std::string_view sv, CharacterSource charSource) {
+void Editor::InsertCharacter(Sci::string_view sv, CharacterSource charSource) {
 	if (sv.empty()) {
 		return;
 	}
@@ -2107,7 +2107,7 @@ void Editor::InsertCharacter(std::string_view sv, CharacterSource charSource) {
 			// characters representing themselves.
 		} else {
 			unsigned int utf32[1] = { 0 };
-			UTF32FromUTF8(sv, utf32, std::size(utf32));
+			UTF32FromUTF8(sv, utf32, Sci::size(utf32));
 			ch = utf32[0];
 		}
 	}
@@ -2185,7 +2185,7 @@ void Editor::InsertPasteShape(const char *text, Sci::Position len, PasteShape sh
 			Sci::Position lengthInserted = pdoc->InsertString(insertPos, text, len);
 			// add the newline if necessary
 			if ((len > 0) && (text[len - 1] != '\n' && text[len - 1] != '\r')) {
-				const std::string_view endline = pdoc->EOLString();
+				const Sci::string_view endline = pdoc->EOLString();
 				lengthInserted += pdoc->InsertString(insertPos + lengthInserted, endline);
 			}
 			if (sel.MainCaret() == insertPos) {
@@ -2294,7 +2294,7 @@ void Editor::PasteRectangular(SelectionPosition pos, const char *ptr, Sci::Posit
 			if ((ptr[i] == '\r') || (!prevCr))
 				line++;
 			if (line >= pdoc->LinesTotal()) {
-				const std::string_view eol = pdoc->EOLString();
+				const Sci::string_view eol = pdoc->EOLString();
 				pdoc->InsertString(pdoc->LengthNoExcept(), eol);
 			}
 			// Pad the end of lines with spaces if required
@@ -3148,7 +3148,7 @@ void Editor::Duplicate(bool forLine) {
 		forLine = true;
 	}
 	UndoGroup ug(pdoc);
-	std::string_view eol;
+	Sci::string_view eol;
 	if (forLine) {
 		eol = pdoc->EOLString();
 	}
@@ -3201,7 +3201,7 @@ void Editor::NewLine() {
 
 	// Insert each line end
 	size_t countInsertions = 0;
-	const std::string_view eol = pdoc->EOLString();
+	const Sci::string_view eol = pdoc->EOLString();
 	for (size_t r = 0; r < sel.Count(); r++) {
 		sel.Range(r).ClearVirtualSpace();
 		const Sci::Position positionInsert = sel.Range(r).caret.Position();
@@ -4351,7 +4351,7 @@ void Editor::CopySelectionRange(SelectionText *ss, bool allowLineCopy) {
 		std::vector<SelectionRange> rangesInOrder = sel.RangesCopy();
 		if (sel.selType == Selection::SelTypes::rectangle)
 			std::sort(rangesInOrder.begin(), rangesInOrder.end());
-		const std::string_view separator = (sel.selType == Selection::SelTypes::rectangle) ? pdoc->EOLString() : copySeparator;
+		const Sci::string_view separator = (sel.selType == Selection::SelTypes::rectangle) ? pdoc->EOLString() : copySeparator;
 		for (size_t part = 0; part < rangesInOrder.size(); part++) {
 			text.append(RangeText(rangesInOrder[part].Start().Position(), rangesInOrder[part].End().Position()));
 			if ((sel.selType == Selection::SelTypes::rectangle) || (part < rangesInOrder.size() - 1)) {
@@ -5793,7 +5793,7 @@ Sci::Position Editor::GetTag(char *tagValue, int tagNumber) {
 	return length;
 }
 
-Sci::Position Editor::ReplaceTarget(ReplaceType replaceType, std::string_view text) {
+Sci::Position Editor::ReplaceTarget(ReplaceType replaceType, Sci::string_view text) {
 	UndoGroup ug(pdoc);
 
 	std::string substituted;	// Copy in case of re-entrance
@@ -5863,7 +5863,7 @@ std::unique_ptr<Surface> Editor::CreateMeasurementSurface() const {
 	return surf;
 }
 
-std::unique_ptr<Surface> Editor::CreateDrawingSurface(SurfaceID sid, std::optional<Scintilla::Technology> technologyOpt) const {
+std::unique_ptr<Surface> Editor::CreateDrawingSurface(SurfaceID sid, Sci::optional<Scintilla::Technology> technologyOpt) const {
 	if (!wMain.GetID()) {
 		return {};
 	}
@@ -6152,7 +6152,7 @@ sptr_t Editor::BytesResult(sptr_t lParam, const unsigned char *val, size_t len) 
 	return val ? len : 0;
 }
 
-sptr_t Editor::BytesResult(Scintilla::sptr_t lParam, std::string_view sv) noexcept {
+sptr_t Editor::BytesResult(Scintilla::sptr_t lParam, Sci::string_view sv) noexcept {
 	// No NUL termination: sv.length() is number of valid/displayed bytes
 	if (lParam && !sv.empty()) {
 		char *ptr = CharPtrFromSPtr(lParam);
@@ -6672,7 +6672,7 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 		return pdoc->UndoActionPosition(static_cast<int>(wParam));
 
 	case Message::GetUndoActionText: {
-		const std::string_view text = pdoc->UndoActionText(static_cast<int>(wParam));
+		const Sci::string_view text = pdoc->UndoActionText(static_cast<int>(wParam));
 		return BytesResult(lParam, text);
 	}
 

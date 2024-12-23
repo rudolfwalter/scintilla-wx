@@ -32,7 +32,7 @@ using namespace Scintilla;
 using namespace Scintilla::Internal;
 
 // Test CellBuffer.
-bool Equal(const char *ptr, std::string_view sv) noexcept {
+bool Equal(const char *ptr, Sci::string_view sv) noexcept {
 	return memcmp(ptr, sv.data(), sv.length()) == 0;
 }
 
@@ -67,7 +67,7 @@ TEST_CASE("ScrapStack") {
 
 TEST_CASE("CellBuffer") {
 
-	constexpr std::string_view sText = "Scintilla";
+	constexpr Sci::string_view sText = "Scintilla";
 	constexpr Sci::Position sLength = sText.length();
 
 	CellBuffer cb(true, false);
@@ -88,7 +88,7 @@ TEST_CASE("CellBuffer") {
 	}
 
 	SECTION("InsertTwoLines") {
-		constexpr std::string_view sText2 = "Two\nLines";
+		constexpr Sci::string_view sText2 = "Two\nLines";
 		constexpr Sci::Position sLength2 = sText2.length();
 		bool startSequence = false;
 		const char *cpChange = cb.InsertString(0, sText2.data(), sLength2, startSequence);
@@ -112,7 +112,7 @@ TEST_CASE("CellBuffer") {
 		bool startSequence = false;
 		{
 			// Unix \n
-			constexpr std::string_view sText2 = "Two\nLines";
+			constexpr Sci::string_view sText2 = "Two\nLines";
 			constexpr Sci::Position sLength2 = sText2.length();
 			cb.InsertString(0, sText2.data(), sLength2, startSequence);
 			REQUIRE(3 == cb.LineEnd(0));
@@ -121,7 +121,7 @@ TEST_CASE("CellBuffer") {
 		}
 		{
 			// Windows \r\n
-			constexpr std::string_view sText2 = "Two\r\nLines";
+			constexpr Sci::string_view sText2 = "Two\r\nLines";
 			constexpr Sci::Position sLength2 = sText2.length();
 			cb.InsertString(0, sText2.data(), sLength2, startSequence);
 			REQUIRE(3 == cb.LineEnd(0));
@@ -130,7 +130,7 @@ TEST_CASE("CellBuffer") {
 		}
 		{
 			// Old macOS \r
-			constexpr std::string_view sText2 = "Two\rLines";
+			constexpr Sci::string_view sText2 = "Two\rLines";
 			constexpr Sci::Position sLength2 = sText2.length();
 			cb.InsertString(0, sText2.data(), sLength2, startSequence);
 			REQUIRE(3 == cb.LineEnd(0));
@@ -139,7 +139,7 @@ TEST_CASE("CellBuffer") {
 		}
 		{
 			// Unicode NEL is U+0085 \xc2\x85
-			constexpr std::string_view sText2 = "Two\xc2\x85Lines";
+			constexpr Sci::string_view sText2 = "Two\xc2\x85Lines";
 			constexpr Sci::Position sLength2 = sText2.length();
 			cb.InsertString(0, sText2.data(), sLength2, startSequence);
 			REQUIRE(3 == cb.LineEnd(0));
@@ -148,7 +148,7 @@ TEST_CASE("CellBuffer") {
 		}
 		{
 			// Unicode LS line separator is U+2028 \xe2\x80\xa8
-			constexpr std::string_view sText2 = "Two\xe2\x80\xa8Lines";
+			constexpr Sci::string_view sText2 = "Two\xe2\x80\xa8Lines";
 			constexpr Sci::Position sLength2 = sText2.length();
 			cb.InsertString(0, sText2.data(), sLength2, startSequence);
 			REQUIRE(3 == cb.LineEnd(0));
@@ -172,8 +172,8 @@ TEST_CASE("CellBuffer") {
 	}
 
 	SECTION("UndoRedo") {
-		constexpr std::string_view sTextDeleted = "ci";
-		constexpr std::string_view sTextAfterDeletion = "Sntilla";
+		constexpr Sci::string_view sTextDeleted = "ci";
+		constexpr Sci::string_view sTextAfterDeletion = "Sntilla";
 		bool startSequence = false;
 		const char *cpChange = cb.InsertString(0, sText.data(), sLength, startSequence);
 		REQUIRE(startSequence);
@@ -241,7 +241,7 @@ TEST_CASE("CellBuffer") {
 
 }
 
-bool Equal(const Action &a, ActionType at, Sci::Position position, std::string_view value) noexcept {
+bool Equal(const Action &a, ActionType at, Sci::Position position, Sci::string_view value) noexcept {
 	// Currently ignores mayCoalesce since this is not set consistently when following
 	// start action implies it.
 	if (a.at != at)
@@ -701,7 +701,7 @@ TEST_CASE("CharacterIndex") {
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf32) == 0);
 		REQUIRE(cb.IndexLineStart(1, LineCharacterIndexType::Utf32) == 1);
 
-		constexpr std::string_view hwair = "\xF0\x90\x8D\x88";
+		constexpr Sci::string_view hwair = "\xF0\x90\x8D\x88";
 		cb.InsertString(0, hwair.data(), hwair.length(), startSequence);
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf16) == 0);
 		REQUIRE(cb.IndexLineStart(1, LineCharacterIndexType::Utf16) == 3);
@@ -715,7 +715,7 @@ TEST_CASE("CharacterIndex") {
 		cb.AllocateLineCharacterIndex(LineCharacterIndexType::Utf16 | LineCharacterIndexType::Utf32);
 
 		bool startSequence = false;
-		constexpr std::string_view hwair = "a\xF0\x90\x8D\x88z";
+		constexpr Sci::string_view hwair = "a\xF0\x90\x8D\x88z";
 		cb.InsertString(0, hwair.data(), hwair.length(), startSequence);
 
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf16) == 0);
@@ -745,7 +745,7 @@ TEST_CASE("CharacterIndex") {
 
 		bool startSequence = false;
 		// 3 lines of text containing 8 bytes
-		constexpr std::string_view data = "a\n\xF0\x90\x8D\x88\nz";
+		constexpr Sci::string_view data = "a\n\xF0\x90\x8D\x88\nz";
 		cb.InsertString(0, data.data(), data.length(), startSequence);
 
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf16) == 0);
@@ -794,7 +794,7 @@ TEST_CASE("CharacterIndex") {
 		// Insert a valid 3-byte UTF-8 character at start ->
 		// "\xE2\x82\xACa\n\xF0\x90\x8D\x88\nz\n\n" 5 lines
 
-		constexpr std::string_view euro = "\xE2\x82\xAC";
+		constexpr Sci::string_view euro = "\xE2\x82\xAC";
 		cb.InsertString(0, euro.data(), euro.length(), startSequence);
 
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf16) == 0);
@@ -815,7 +815,7 @@ TEST_CASE("CharacterIndex") {
 		// "\xE2\x82\xACa\n\EF\xF0\x90\x8D\x88\nz\n\n" 5 lines
 		// Should be treated as a single byte character
 
-		constexpr std::string_view lead = "\xEF";
+		constexpr Sci::string_view lead = "\xEF";
 		cb.InsertString(5, lead.data(), lead.length(), startSequence);
 
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf16) == 0);
@@ -834,7 +834,7 @@ TEST_CASE("CharacterIndex") {
 		// byte before and the 2 bytes after also be each treated as singles
 		// so 3 more characters on line 0.
 
-		constexpr std::string_view ascii = "!";
+		constexpr Sci::string_view ascii = "!";
 		cb.InsertString(1, ascii.data(), ascii.length(), startSequence);
 
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf16) == 0);
@@ -848,7 +848,7 @@ TEST_CASE("CharacterIndex") {
 		// Insert a NEL after the '!' to trigger the utf8 line end case ->
 		// "\xE2!\xC2\x85 \x82\xACa\n \EF\xF0\x90\x8D\x88\n z\n\n" 5 lines
 
-		constexpr std::string_view nel = "\xC2\x85";
+		constexpr Sci::string_view nel = "\xC2\x85";
 		cb.InsertString(2, nel.data(), nel.length(), startSequence);
 
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf16) == 0);
@@ -868,7 +868,7 @@ TEST_CASE("CharacterIndex") {
 
 		bool startSequence = false;
 		// 3 lines of text containing 8 bytes
-		constexpr std::string_view data = "a\n\xF0\x90\x8D\x88\nz\nc";
+		constexpr Sci::string_view data = "a\n\xF0\x90\x8D\x88\nz\nc";
 		cb.InsertString(0, data.data(), data.length(), startSequence);
 
 		// Delete first 2 new lines -> "az\nc"
@@ -889,7 +889,7 @@ TEST_CASE("CharacterIndex") {
 
 		bool startSequence = false;
 		// 3 lines of text containing 8 bytes
-		constexpr std::string_view data = "a\n\xF0\x90\x8D\x88\nz";
+		constexpr Sci::string_view data = "a\n\xF0\x90\x8D\x88\nz";
 		cb.InsertString(0, data.data(), data.length(), startSequence);
 
 		// Delete lead byte from character on line 1 ->
@@ -923,7 +923,7 @@ TEST_CASE("CharacterIndex") {
 		// Restore lead byte from character on line 0 making a 4-byte character ->
 		// "a\xF0\x90\x8D\x88\nz"
 
-		constexpr std::string_view lead4 = "\xF0";
+		constexpr Sci::string_view lead4 = "\xF0";
 		cb.InsertString(1, lead4.data(), lead4.length(), startSequence);
 
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf16) == 0);
@@ -941,12 +941,12 @@ TEST_CASE("CharacterIndex") {
 
 		bool startSequence = false;
 		// 2 lines of text containing 4 bytes
-		constexpr std::string_view data = "a\r\nb";
+		constexpr Sci::string_view data = "a\r\nb";
 		cb.InsertString(0, data.data(), data.length(), startSequence);
 
 		// 3 lines of text containing 5 bytes ->
 		// "a\r!\nb"
-		constexpr std::string_view ascii = "!";
+		constexpr Sci::string_view ascii = "!";
 		cb.InsertString(2, ascii.data(), ascii.length(), startSequence);
 
 		REQUIRE(cb.IndexLineStart(0, LineCharacterIndexType::Utf16) == 0);
@@ -1137,12 +1137,12 @@ TEST_CASE("ChangeHistory") {
 		REQUIRE(il.Length() == 10);
 		il.SetSavePoint();
 		REQUIRE(il.DeletionCount(0, 10) == 0);
-		for (size_t i = 0; i < std::size(spans); i++) {
+		for (size_t i = 0; i < Sci::size(spans); i++) {
 			il.DeleteRangeSavingHistory(spans[i].position, spans[i].length, false, false);
 		}
 		REQUIRE(il.Length() == 0);
-		for (size_t j = 0; j < std::size(spans); j++) {
-			const size_t i = std::size(spans) - j - 1;
+		for (size_t j = 0; j < Sci::size(spans); j++) {
+			const size_t i = Sci::size(spans) - j - 1;
 			il.UndoDeleteStep(spans[i].position, spans[i].length, false);
 		}
 		REQUIRE(il.DeletionCount(0, 10) == 0);
@@ -1324,7 +1324,7 @@ TEST_CASE("CellBufferWithChangeHistory") {
 	SECTION("StraightUndoRedoSaveRevertRedo") {
 		CellBuffer cb(true, false);
 		cb.SetUndoCollection(false);
-		constexpr std::string_view sInsert = "abcdefghijklmnopqrstuvwxyz";
+		constexpr Sci::string_view sInsert = "abcdefghijklmnopqrstuvwxyz";
 		bool startSequence = false;
 		cb.InsertString(0, sInsert.data(), sInsert.length(), startSequence);
 		cb.SetUndoCollection(true);
@@ -1463,7 +1463,7 @@ TEST_CASE("CellBufferWithChangeHistory") {
 	SECTION("Detached") {
 		CellBuffer cb(true, false);
 		cb.SetUndoCollection(false);
-		constexpr std::string_view sInsert = "abcdefghijklmnopqrstuvwxyz";
+		constexpr Sci::string_view sInsert = "abcdefghijklmnopqrstuvwxyz";
 		bool startSequence = false;
 		cb.InsertString(0, sInsert.data(), sInsert.length(), startSequence);
 		cb.SetUndoCollection(true);
@@ -1519,7 +1519,7 @@ TEST_CASE("CellBufferWithChangeHistory") {
 
 namespace {
 
-void PushUndoAction(CellBuffer &cb, int type, Sci::Position pos, std::string_view sv) {
+void PushUndoAction(CellBuffer &cb, int type, Sci::Position pos, Sci::string_view sv) {
 	cb.PushUndoActionType(type, pos);
 	cb.ChangeLastUndoActionText(sv.length(), sv.data());
 }
@@ -1534,7 +1534,7 @@ TEST_CASE("CellBufferLoadUndoHistory") {
 
 	SECTION("Basics") {
 		cb.SetUndoCollection(false);
-		constexpr std::string_view sInsert = "abcdef";
+		constexpr Sci::string_view sInsert = "abcdef";
 		bool startSequence = false;
 		cb.InsertString(0, sInsert.data(), sInsert.length(), startSequence);
 		cb.SetUndoCollection(true);
@@ -1565,7 +1565,7 @@ TEST_CASE("CellBufferLoadUndoHistory") {
 
 	SECTION("Detached") {
 		cb.SetUndoCollection(false);
-		constexpr std::string_view sInsert = "a-b=cdef";
+		constexpr Sci::string_view sInsert = "a-b=cdef";
 		bool startSequence = false;
 		cb.InsertString(0, sInsert.data(), sInsert.length(), startSequence);
 		cb.SetUndoCollection(true);

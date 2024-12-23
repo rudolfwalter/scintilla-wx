@@ -272,7 +272,7 @@ void ScintillaEditBase::keyPressEvent(QKeyEvent *event)
 				const QString oneCharUTF16 = text.mid(i, ucWidth);
 				const QByteArray oneChar = sqt->BytesForDocument(oneCharUTF16);
 
-				sqt->InsertCharacter(std::string_view(oneChar.data(), oneChar.length()), CharacterSource::DirectInput);
+				sqt->InsertCharacter(Sci::string_view(oneChar.data(), oneChar.length()), CharacterSource::DirectInput);
 				i += ucWidth;
 			}
 		} else {
@@ -562,7 +562,7 @@ void ScintillaEditBase::inputMethodEvent(QInputMethodEvent *event)
 			const QString oneCharUTF16 = commitStr.mid(i, ucWidth);
 			const QByteArray oneChar = sqt->BytesForDocument(oneCharUTF16);
 
-			sqt->InsertCharacter(std::string_view(oneChar.data(), oneChar.length()), CharacterSource::DirectInput);
+			sqt->InsertCharacter(Sci::string_view(oneChar.data(), oneChar.length()), CharacterSource::DirectInput);
 			i += ucWidth;
 		}
 
@@ -589,7 +589,7 @@ void ScintillaEditBase::inputMethodEvent(QInputMethodEvent *event)
 			const QByteArray oneChar = sqt->BytesForDocument(oneCharUTF16);
 			const int oneCharLen = oneChar.length();
 
-			sqt->InsertCharacter(std::string_view(oneChar.data(), oneCharLen), CharacterSource::TentativeInput);
+			sqt->InsertCharacter(Sci::string_view(oneChar.data(), oneCharLen), CharacterSource::TentativeInput);
 
 			DrawImeIndicator(imeIndicator[i], oneCharLen);
 			i += ucWidth;

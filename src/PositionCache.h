@@ -129,7 +129,7 @@ struct ScreenLine : public IScreenLine {
 	void operator=(ScreenLine &&) = delete;
 	virtual ~ScreenLine();
 
-	std::string_view Text() const override;
+	Sci::string_view Text() const override;
 	size_t Length() const override;
 	size_t RepresentationCount() const override;
 	XYPOSITION Width() const override;
@@ -182,7 +182,7 @@ public:
 	std::string stringRep;
 	RepresentationAppearance appearance;
 	ColourRGBA colour;
-	explicit Representation(std::string_view value="", RepresentationAppearance appearance_= RepresentationAppearance::Blob) :
+	explicit Representation(Sci::string_view value="", RepresentationAppearance appearance_= RepresentationAppearance::Blob) :
 		stringRep(value), appearance(appearance_) {
 	}
 };
@@ -198,12 +198,12 @@ class SpecialRepresentations {
 	unsigned int maxKey = 0;
 	bool crlf = false;
 public:
-	void SetRepresentation(std::string_view charBytes, std::string_view value);
-	void SetRepresentationAppearance(std::string_view charBytes, RepresentationAppearance appearance);
-	void SetRepresentationColour(std::string_view charBytes, ColourRGBA colour);
-	void ClearRepresentation(std::string_view charBytes);
-	const Representation *GetRepresentation(std::string_view charBytes) const;
-	const Representation *RepresentationFromCharacter(std::string_view charBytes) const;
+	void SetRepresentation(Sci::string_view charBytes, Sci::string_view value);
+	void SetRepresentationAppearance(Sci::string_view charBytes, RepresentationAppearance appearance);
+	void SetRepresentationColour(Sci::string_view charBytes, ColourRGBA colour);
+	void ClearRepresentation(Sci::string_view charBytes);
+	const Representation *GetRepresentation(Sci::string_view charBytes) const;
+	const Representation *RepresentationFromCharacter(Sci::string_view charBytes) const;
 	bool ContainsCrLf() const noexcept {
 		return crlf;
 	}
@@ -270,7 +270,7 @@ public:
 	virtual void SetSize(size_t size_) = 0;
 	virtual size_t GetSize() const noexcept = 0;
 	virtual void MeasureWidths(Surface *surface, const ViewStyle &vstyle, unsigned int styleNumber,
-		bool unicode, std::string_view sv, XYPOSITION *positions, bool needsLocking) = 0;
+		bool unicode, Sci::string_view sv, XYPOSITION *positions, bool needsLocking) = 0;
 };
 
 std::unique_ptr<IPositionCache> CreatePositionCache();

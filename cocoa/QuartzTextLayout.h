@@ -19,7 +19,7 @@
 class QuartzTextLayout {
 public:
 	/** Create a text layout for drawing. */
-	QuartzTextLayout(std::string_view sv, CFStringEncoding encoding, const QuartzTextStyle *r) {
+	QuartzTextLayout(Sci::string_view sv, CFStringEncoding encoding, const QuartzTextStyle *r) {
 		encodingUsed = encoding;
 		const UInt8 *puiBuffer = reinterpret_cast<const UInt8 *>(sv.data());
 		CFStringRef str = CFStringCreateWithBytes(NULL, puiBuffer, sv.length(), encodingUsed, false);

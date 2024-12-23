@@ -81,7 +81,7 @@ void SetFractionalPositions([[maybe_unused]] PangoContext *pcontext) noexcept {
 #endif
 }
 
-void LayoutSetText(PangoLayout *layout, std::string_view text) noexcept {
+void LayoutSetText(PangoLayout *layout, Sci::string_view text) noexcept {
 	pango_layout_set_text(layout, text.data(), static_cast<int>(text.length()));
 }
 
@@ -186,19 +186,19 @@ public:
 
 	std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) override;
 
-	void DrawTextBase(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore);
-	void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore) override;
-	void MeasureWidths(const Font *font_, std::string_view text, XYPOSITION *positions) override;
-	XYPOSITION WidthText(const Font *font_, std::string_view text) override;
+	void DrawTextBase(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore);
+	void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore) override;
+	void MeasureWidths(const Font *font_, Sci::string_view text, XYPOSITION *positions) override;
+	XYPOSITION WidthText(const Font *font_, Sci::string_view text) override;
 
-	void DrawTextBaseUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore);
-	void DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore) override;
-	void MeasureWidthsUTF8(const Font *font_, std::string_view text, XYPOSITION *positions) override;
-	XYPOSITION WidthTextUTF8(const Font *font_, std::string_view text) override;
+	void DrawTextBaseUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore);
+	void DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore) override;
+	void MeasureWidthsUTF8(const Font *font_, Sci::string_view text, XYPOSITION *positions) override;
+	XYPOSITION WidthTextUTF8(const Font *font_, Sci::string_view text) override;
 
 	XYPOSITION Ascent(const Font *font_) override;
 	XYPOSITION Descent(const Font *font_) override;
@@ -542,7 +542,7 @@ void SurfaceImpl::RoundedRectangle(PRectangle rc, FillStroke fillStroke) {
 			Point(rc.left, rc.bottom - 2),
 			Point(rc.left, rc.top + 2),
 		};
-		Polygon(pts, std::size(pts), fillStroke);
+		Polygon(pts, Sci::size(pts), fillStroke);
 	} else {
 		RectangleDraw(rc, fillStroke);
 	}
@@ -719,7 +719,7 @@ std::unique_ptr<IScreenLineLayout> SurfaceImpl::Layout(const IScreenLine *) {
 	return {};
 }
 
-std::string UTF8FromLatin1(std::string_view text) {
+std::string UTF8FromLatin1(Sci::string_view text) {
 	std::string utfForm(text.length()*2 + 1, '\0');
 	size_t lenU = 0;
 	for (const char ch : text) {
@@ -737,7 +737,7 @@ std::string UTF8FromLatin1(std::string_view text) {
 
 namespace {
 
-std::string UTF8FromIconv(const Converter &conv, std::string_view text) {
+std::string UTF8FromIconv(const Converter &conv, Sci::string_view text) {
 	if (conv) {
 		std::string utfForm(text.length()*3+1, '\0');
 		char *pin = const_cast<char *>(text.data());
@@ -774,7 +774,7 @@ size_t MultiByteLenFromIconv(const Converter &conv, const char *s, size_t len) n
 
 }
 
-void SurfaceImpl::DrawTextBase(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceImpl::DrawTextBase(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 			       ColourRGBA fore) {
 	if (context) {
 		PenColourAlpha(fore);
@@ -799,20 +799,20 @@ void SurfaceImpl::DrawTextBase(PRectangle rc, const Font *font_, XYPOSITION ybas
 	}
 }
 
-void SurfaceImpl::DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceImpl::DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 				 ColourRGBA fore, ColourRGBA back) {
 	FillRectangleAligned(rc, back);
 	DrawTextBase(rc, font_, ybase, text, fore);
 }
 
 // On GTK+, exactly same as DrawTextNoClip
-void SurfaceImpl::DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceImpl::DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 				  ColourRGBA fore, ColourRGBA back) {
 	FillRectangleAligned(rc, back);
 	DrawTextBase(rc, font_, ybase, text, fore);
 }
 
-void SurfaceImpl::DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceImpl::DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 				      ColourRGBA fore) {
 	// Avoid drawing spaces in transparent mode
 	for (size_t i=0; i<text.length(); i++) {
@@ -835,7 +835,7 @@ public:
 	XYPOSITION position = 0.0;
 	XYPOSITION distance = 0.0;
 	int curIndex = 0;
-	ClusterIterator(PangoLayout *layout, std::string_view text) noexcept :
+	ClusterIterator(PangoLayout *layout, Sci::string_view text) noexcept :
 		lenPositions(static_cast<int>(text.length())) {
 		LayoutSetText(layout, text);
 		iter.reset(pango_layout_get_iter(layout));
@@ -870,7 +870,7 @@ void EquallySpaced(PangoLayout *layout, XYPOSITION *positions, size_t lenPositio
 
 }
 
-void SurfaceImpl::MeasureWidths(const Font *font_, std::string_view text, XYPOSITION *positions) {
+void SurfaceImpl::MeasureWidths(const Font *font_, Sci::string_view text, XYPOSITION *positions) {
 	if (PFont(font_)->fd) {
 		UniquePangoContext contextMeasure = MeasuringContext();
 		UniquePangoLayout layoutMeasure(pango_layout_new(contextMeasure.get()));
@@ -1010,7 +1010,7 @@ void SurfaceImpl::MeasureWidths(const Font *font_, std::string_view text, XYPOSI
 	}
 }
 
-XYPOSITION SurfaceImpl::WidthText(const Font *font_, std::string_view text) {
+XYPOSITION SurfaceImpl::WidthText(const Font *font_, Sci::string_view text) {
 	if (PFont(font_)->fd) {
 		pango_layout_set_font_description(layout.get(), PFont(font_)->fd.get());
 		if (et == EncodingType::utf8) {
@@ -1031,7 +1031,7 @@ XYPOSITION SurfaceImpl::WidthText(const Font *font_, std::string_view text) {
 	return 1;
 }
 
-void SurfaceImpl::DrawTextBaseUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceImpl::DrawTextBaseUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore) {
 	if (context) {
 		PenColourAlpha(fore);
@@ -1047,20 +1047,20 @@ void SurfaceImpl::DrawTextBaseUTF8(PRectangle rc, const Font *font_, XYPOSITION 
 	}
 }
 
-void SurfaceImpl::DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceImpl::DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	FillRectangleAligned(rc, back);
 	DrawTextBaseUTF8(rc, font_, ybase, text, fore);
 }
 
 // On GTK+, exactly same as DrawTextNoClip
-void SurfaceImpl::DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceImpl::DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	FillRectangleAligned(rc, back);
 	DrawTextBaseUTF8(rc, font_, ybase, text, fore);
 }
 
-void SurfaceImpl::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceImpl::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore) {
 	// Avoid drawing spaces in transparent mode
 	for (size_t i = 0; i < text.length(); i++) {
@@ -1071,7 +1071,7 @@ void SurfaceImpl::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPO
 	}
 }
 
-void SurfaceImpl::MeasureWidthsUTF8(const Font *font_, std::string_view text, XYPOSITION *positions) {
+void SurfaceImpl::MeasureWidthsUTF8(const Font *font_, Sci::string_view text, XYPOSITION *positions) {
 	if (PFont(font_)->fd) {
 		UniquePangoContext contextMeasure = MeasuringContext();
 		UniquePangoLayout layoutMeasure(pango_layout_new(contextMeasure.get()));
@@ -1096,8 +1096,8 @@ void SurfaceImpl::MeasureWidthsUTF8(const Font *font_, std::string_view text, XY
 				while (lenASCII<text.length() && IsASCII(text[lenASCII])) {
 					lenASCII++;
 				}
-				const std::string_view asciiPrefix = text.substr(0, lenASCII);
-				const std::string_view bidiSuffix = text.substr(lenASCII);
+				const Sci::string_view asciiPrefix = text.substr(0, lenASCII);
+				const Sci::string_view bidiSuffix = text.substr(lenASCII);
 				// Recurse for ASCII prefix.
 				MeasureWidthsUTF8(font_, asciiPrefix, positions);
 				// Measure the whole bidiSuffix and spread its width evenly
@@ -1128,7 +1128,7 @@ void SurfaceImpl::MeasureWidthsUTF8(const Font *font_, std::string_view text, XY
 	}
 }
 
-XYPOSITION SurfaceImpl::WidthTextUTF8(const Font *font_, std::string_view text) {
+XYPOSITION SurfaceImpl::WidthTextUTF8(const Font *font_, Sci::string_view text) {
 	if (PFont(font_)->fd) {
 		pango_layout_set_font_description(layout.get(), PFont(font_)->fd.get());
 		LayoutSetText(layout.get(), text);
@@ -2208,7 +2208,7 @@ void Platform::DebugPrintf(const char *format, ...) noexcept {
 	char buffer[2000];
 	va_list pArguments;
 	va_start(pArguments, format);
-	vsnprintf(buffer, std::size(buffer), format, pArguments);
+	vsnprintf(buffer, Sci::size(buffer), format, pArguments);
 	va_end(pArguments);
 	Platform::DebugDisplay(buffer);
 }

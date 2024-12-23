@@ -255,7 +255,7 @@ TEST_CASE("UniConversion") {
 namespace {
 
 // Simple adapter to avoid casting
-int UTFClass(std::string_view sv) noexcept {
+int UTFClass(Sci::string_view sv) noexcept {
 	return UTF8Classify(sv);
 }
 

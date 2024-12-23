@@ -33,7 +33,7 @@ using namespace Scintilla::Internal;
 class StringCI : public CharacterIndexer {
 	std::string s;
 public:
-	explicit StringCI(std::string_view sv_) : s(sv_) {
+	explicit StringCI(Sci::string_view sv_) : s(sv_) {
 	}
 	virtual ~StringCI() = default;
 	[[nodiscard]] Sci::Position Length() const noexcept {
@@ -55,8 +55,8 @@ public:
 TEST_CASE("RESearch") {
 
 	CharClassify cc;
-	constexpr std::string_view sTextSpace = "Scintilla ";
-	constexpr std::string_view pattern = "[a-z]+";
+	constexpr Sci::string_view sTextSpace = "Scintilla ";
+	constexpr Sci::string_view pattern = "[a-z]+";
 
 	SECTION("Compile") {
 		RESearch re(&cc);
@@ -67,8 +67,8 @@ TEST_CASE("RESearch") {
 	SECTION("Bug2413") {
 		// Check for https://sourceforge.net/p/scintilla/bugs/2413/
 		RESearch re(&cc);
-		constexpr std::string_view BOW = "\\<";
-		constexpr std::string_view EOW = "\\>";
+		constexpr Sci::string_view BOW = "\\<";
+		constexpr Sci::string_view EOW = "\\>";
 		const char *msg = re.Compile(BOW.data(), BOW.length(), true, false);
 		REQUIRE(nullptr == msg);
 		msg = re.Compile(EOW.data(), EOW.length(), true, false);

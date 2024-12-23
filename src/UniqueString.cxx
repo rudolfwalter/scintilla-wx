@@ -39,7 +39,7 @@ const char *UniqueStringSet::Save(const char *text) {
 	if (!text)
 		return nullptr;
 
-	const std::string_view sv(text);
+	const Sci::string_view sv(text);
 	for (const UniqueString &us : strings) {
 		if (sv == us.get()) {
 			return us.get();

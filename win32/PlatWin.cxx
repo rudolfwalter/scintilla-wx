@@ -498,7 +498,7 @@ constexpr int stackBufferLength = 400;
 class TextWide : public VarBuffer<wchar_t, stackBufferLength> {
 public:
 	int tlen;	// Using int instead of size_t as most Win32 APIs take int.
-	TextWide(std::string_view text, int codePage) :
+	TextWide(Sci::string_view text, int codePage) :
 		VarBuffer<wchar_t, stackBufferLength>(text.length()) {
 		if (codePage == CpUtf8) {
 			tlen = static_cast<int>(UTF16FromUTF8(text, buffer, text.length()));
@@ -601,19 +601,19 @@ public:
 
 	std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) override;
 
-	void DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, UINT fuOptions);
-	void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore) override;
-	void MeasureWidths(const Font *font_, std::string_view text, XYPOSITION *positions) override;
-	XYPOSITION WidthText(const Font *font_, std::string_view text) override;
+	void DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, UINT fuOptions);
+	void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore) override;
+	void MeasureWidths(const Font *font_, Sci::string_view text, XYPOSITION *positions) override;
+	XYPOSITION WidthText(const Font *font_, Sci::string_view text) override;
 
-	void DrawTextCommonUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, UINT fuOptions);
-	void DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore) override;
-	void MeasureWidthsUTF8(const Font *font_, std::string_view text, XYPOSITION *positions) override;
-	XYPOSITION WidthTextUTF8(const Font *font_, std::string_view text) override;
+	void DrawTextCommonUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, UINT fuOptions);
+	void DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore) override;
+	void MeasureWidthsUTF8(const Font *font_, Sci::string_view text, XYPOSITION *positions) override;
+	XYPOSITION WidthTextUTF8(const Font *font_, Sci::string_view text) override;
 
 	XYPOSITION Ascent(const Font *font_) override;
 	XYPOSITION Descent(const Font *font_) override;
@@ -1101,7 +1101,7 @@ std::unique_ptr<IScreenLineLayout> SurfaceGDI::Layout(const IScreenLine *) {
 
 typedef VarBuffer<int, stackBufferLength> TextPositionsI;
 
-void SurfaceGDI::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, UINT fuOptions) {
+void SurfaceGDI::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, UINT fuOptions) {
 	SetFont(font_);
 	const RECT rcw = RectFromPRectangle(rc);
 	const int x = static_cast<int>(rc.left);
@@ -1115,21 +1115,21 @@ void SurfaceGDI::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION yba
 	}
 }
 
-void SurfaceGDI::DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceGDI::DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	::SetTextColor(hdc, fore.OpaqueRGB());
 	::SetBkColor(hdc, back.OpaqueRGB());
 	DrawTextCommon(rc, font_, ybase, text, ETO_OPAQUE);
 }
 
-void SurfaceGDI::DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceGDI::DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	::SetTextColor(hdc, fore.OpaqueRGB());
 	::SetBkColor(hdc, back.OpaqueRGB());
 	DrawTextCommon(rc, font_, ybase, text, ETO_OPAQUE | ETO_CLIPPED);
 }
 
-void SurfaceGDI::DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceGDI::DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore) {
 	// Avoid drawing spaces in transparent mode
 	for (const char ch : text) {
@@ -1143,7 +1143,7 @@ void SurfaceGDI::DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITIO
 	}
 }
 
-void SurfaceGDI::MeasureWidths(const Font *font_, std::string_view text, XYPOSITION *positions) {
+void SurfaceGDI::MeasureWidths(const Font *font_, Sci::string_view text, XYPOSITION *positions) {
 	// Zero positions to avoid random behaviour on failure.
 	std::fill(positions, positions + text.length(), 0.0f);
 	SetFont(font_);
@@ -1185,7 +1185,7 @@ void SurfaceGDI::MeasureWidths(const Font *font_, std::string_view text, XYPOSIT
 	std::fill(positions + i, positions + text.length(), lastPos);
 }
 
-XYPOSITION SurfaceGDI::WidthText(const Font *font_, std::string_view text) {
+XYPOSITION SurfaceGDI::WidthText(const Font *font_, Sci::string_view text) {
 	SetFont(font_);
 	SIZE sz = { 0,0 };
 	if (!(mode.codePage == CpUtf8)) {
@@ -1197,7 +1197,7 @@ XYPOSITION SurfaceGDI::WidthText(const Font *font_, std::string_view text) {
 	return static_cast<XYPOSITION>(sz.cx);
 }
 
-void SurfaceGDI::DrawTextCommonUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, UINT fuOptions) {
+void SurfaceGDI::DrawTextCommonUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, UINT fuOptions) {
 	SetFont(font_);
 	const RECT rcw = RectFromPRectangle(rc);
 	const int x = static_cast<int>(rc.left);
@@ -1207,21 +1207,21 @@ void SurfaceGDI::DrawTextCommonUTF8(PRectangle rc, const Font *font_, XYPOSITION
 	::ExtTextOutW(hdc, x, yBaseInt, fuOptions, &rcw, tbuf.buffer, tbuf.tlen, nullptr);
 }
 
-void SurfaceGDI::DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceGDI::DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	::SetTextColor(hdc, fore.OpaqueRGB());
 	::SetBkColor(hdc, back.OpaqueRGB());
 	DrawTextCommonUTF8(rc, font_, ybase, text, ETO_OPAQUE);
 }
 
-void SurfaceGDI::DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceGDI::DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	::SetTextColor(hdc, fore.OpaqueRGB());
 	::SetBkColor(hdc, back.OpaqueRGB());
 	DrawTextCommonUTF8(rc, font_, ybase, text, ETO_OPAQUE | ETO_CLIPPED);
 }
 
-void SurfaceGDI::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceGDI::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore) {
 	// Avoid drawing spaces in transparent mode
 	for (const char ch : text) {
@@ -1235,7 +1235,7 @@ void SurfaceGDI::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOS
 	}
 }
 
-void SurfaceGDI::MeasureWidthsUTF8(const Font *font_, std::string_view text, XYPOSITION *positions) {
+void SurfaceGDI::MeasureWidthsUTF8(const Font *font_, Sci::string_view text, XYPOSITION *positions) {
 	// Zero positions to avoid random behaviour on failure.
 	std::fill(positions, positions + text.length(), 0.0f);
 	SetFont(font_);
@@ -1265,7 +1265,7 @@ void SurfaceGDI::MeasureWidthsUTF8(const Font *font_, std::string_view text, XYP
 	std::fill(positions + i, positions + text.length(), lastPos);
 }
 
-XYPOSITION SurfaceGDI::WidthTextUTF8(const Font *font_, std::string_view text) {
+XYPOSITION SurfaceGDI::WidthTextUTF8(const Font *font_, Sci::string_view text) {
 	SetFont(font_);
 	SIZE sz = { 0,0 };
 	const TextWide tbuf(text, CpUtf8);
@@ -1428,19 +1428,19 @@ public:
 
 	std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) override;
 
-	void DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, int codePageOverride, UINT fuOptions);
+	void DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, int codePageOverride, UINT fuOptions);
 
-	void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore) override;
-	void MeasureWidths(const Font *font_, std::string_view text, XYPOSITION *positions) override;
-	XYPOSITION WidthText(const Font *font_, std::string_view text) override;
+	void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore) override;
+	void MeasureWidths(const Font *font_, Sci::string_view text, XYPOSITION *positions) override;
+	XYPOSITION WidthText(const Font *font_, Sci::string_view text) override;
 
-	void DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) override;
-	void DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore) override;
-	void MeasureWidthsUTF8(const Font *font_, std::string_view text, XYPOSITION *positions) override;
-	XYPOSITION WidthTextUTF8(const Font *font_, std::string_view text) override;
+	void DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) override;
+	void DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore) override;
+	void MeasureWidthsUTF8(const Font *font_, Sci::string_view text, XYPOSITION *positions) override;
+	XYPOSITION WidthTextUTF8(const Font *font_, Sci::string_view text) override;
 
 	XYPOSITION Ascent(const Font *font_) override;
 	XYPOSITION Descent(const Font *font_) override;
@@ -2093,8 +2093,8 @@ class ScreenLineLayout : public IScreenLineLayout {
 	std::wstring buffer;
 	std::vector<BlobInline> blobs;
 	static void FillTextLayoutFormats(const IScreenLine *screenLine, IDWriteTextLayout *textLayout, std::vector<BlobInline> &blobs);
-	static std::wstring ReplaceRepresentation(std::string_view text);
-	static size_t GetPositionInLayout(std::string_view text, size_t position);
+	static std::wstring ReplaceRepresentation(Sci::string_view text);
+	static size_t GetPositionInLayout(Sci::string_view text, size_t position);
 public:
 	ScreenLineLayout(const IScreenLine *screenLine);
 	// Deleted so ScreenLineLayout objects can not be copied
@@ -2114,7 +2114,7 @@ void ScreenLineLayout::FillTextLayoutFormats(const IScreenLine *screenLine, IDWr
 	// Reserve enough entries up front so they are not moved and the pointers handed
 	// to textLayout remain valid.
 	const ptrdiff_t numRepresentations = screenLine->RepresentationCount();
-	std::string_view text = screenLine->Text();
+	Sci::string_view text = screenLine->Text();
 	const ptrdiff_t numTabs = std::count(std::begin(text), std::end(text), '\t');
 	blobs.reserve(numRepresentations + numTabs);
 
@@ -2185,7 +2185,7 @@ void ScreenLineLayout::FillTextLayoutFormats(const IScreenLine *screenLine, IDWr
 
 /* Convert to a wide character string and replace tabs with X to stop DirectWrite tab expansion */
 
-std::wstring ScreenLineLayout::ReplaceRepresentation(std::string_view text) {
+std::wstring ScreenLineLayout::ReplaceRepresentation(Sci::string_view text) {
 	const TextWide wideText(text, CpUtf8);
 	std::wstring ws(wideText.buffer, wideText.tlen);
 	std::replace(ws.begin(), ws.end(), L'\t', L'X');
@@ -2194,8 +2194,8 @@ std::wstring ScreenLineLayout::ReplaceRepresentation(std::string_view text) {
 
 // Finds the position in the wide character version of the text.
 
-size_t ScreenLineLayout::GetPositionInLayout(std::string_view text, size_t position) {
-	const std::string_view textUptoPosition = text.substr(0, position);
+size_t ScreenLineLayout::GetPositionInLayout(Sci::string_view text, size_t position) {
+	const Sci::string_view textUptoPosition = text.substr(0, position);
 	return UTF16Length(textUptoPosition);
 }
 
@@ -2377,7 +2377,7 @@ std::unique_ptr<IScreenLineLayout> SurfaceD2D::Layout(const IScreenLine *screenL
 	return std::make_unique<ScreenLineLayout>(screenLine);
 }
 
-void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, int codePageOverride, UINT fuOptions) {
+void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, int codePageOverride, UINT fuOptions) {
 	const FontDirectWrite *pfm = FontDirectWrite::Cast(font_);
 	if (pfm->pTextFormat && pRenderTarget && pBrush) {
 		// Use Unicode calls
@@ -2411,7 +2411,7 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION yba
 	}
 }
 
-void SurfaceD2D::DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceD2D::DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	if (pRenderTarget) {
 		FillRectangleAligned(rc, back);
@@ -2420,7 +2420,7 @@ void SurfaceD2D::DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION yba
 	}
 }
 
-void SurfaceD2D::DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceD2D::DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	if (pRenderTarget) {
 		FillRectangleAligned(rc, back);
@@ -2429,7 +2429,7 @@ void SurfaceD2D::DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION yb
 	}
 }
 
-void SurfaceD2D::DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceD2D::DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore) {
 	// Avoid drawing spaces in transparent mode
 	for (const char ch : text) {
@@ -2485,7 +2485,7 @@ HRESULT MeasurePositions(TextPositions &poses, const TextWide &tbuf, IDWriteText
 
 }
 
-void SurfaceD2D::MeasureWidths(const Font *font_, std::string_view text, XYPOSITION *positions) {
+void SurfaceD2D::MeasureWidths(const Font *font_, Sci::string_view text, XYPOSITION *positions) {
 	const FontDirectWrite *pfm = FontDirectWrite::Cast(font_);
 	const int codePageText = pfm->CodePageText(mode.codePage);
 	const TextWide tbuf(text, codePageText);
@@ -2536,7 +2536,7 @@ void SurfaceD2D::MeasureWidths(const Font *font_, std::string_view text, XYPOSIT
 	}
 }
 
-XYPOSITION SurfaceD2D::WidthText(const Font *font_, std::string_view text) {
+XYPOSITION SurfaceD2D::WidthText(const Font *font_, Sci::string_view text) {
 	FLOAT width = 1.0;
 	const FontDirectWrite *pfm = FontDirectWrite::Cast(font_);
 	if (pfm->pTextFormat) {
@@ -2554,7 +2554,7 @@ XYPOSITION SurfaceD2D::WidthText(const Font *font_, std::string_view text) {
 	return width;
 }
 
-void SurfaceD2D::DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceD2D::DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	if (pRenderTarget) {
 		FillRectangleAligned(rc, back);
@@ -2563,7 +2563,7 @@ void SurfaceD2D::DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION
 	}
 }
 
-void SurfaceD2D::DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceD2D::DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore, ColourRGBA back) {
 	if (pRenderTarget) {
 		FillRectangleAligned(rc, back);
@@ -2572,7 +2572,7 @@ void SurfaceD2D::DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITIO
 	}
 }
 
-void SurfaceD2D::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
+void SurfaceD2D::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text,
 	ColourRGBA fore) {
 	// Avoid drawing spaces in transparent mode
 	for (const char ch : text) {
@@ -2586,7 +2586,7 @@ void SurfaceD2D::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOS
 	}
 }
 
-void SurfaceD2D::MeasureWidthsUTF8(const Font *font_, std::string_view text, XYPOSITION *positions) {
+void SurfaceD2D::MeasureWidthsUTF8(const Font *font_, Sci::string_view text, XYPOSITION *positions) {
 	const FontDirectWrite *pfm = FontDirectWrite::Cast(font_);
 	const TextWide tbuf(text, CpUtf8);
 	TextPositions poses(tbuf.tlen);
@@ -2612,7 +2612,7 @@ void SurfaceD2D::MeasureWidthsUTF8(const Font *font_, std::string_view text, XYP
 	}
 }
 
-XYPOSITION SurfaceD2D::WidthTextUTF8(const Font * font_, std::string_view text) {
+XYPOSITION SurfaceD2D::WidthTextUTF8(const Font * font_, Sci::string_view text) {
 	FLOAT width = 1.0;
 	const FontDirectWrite *pfm = FontDirectWrite::Cast(font_);
 	if (pfm->pTextFormat) {
@@ -2809,7 +2809,7 @@ void Window::InvalidateRectangle(PRectangle rc) {
 
 namespace {
 
-std::optional<DWORD> RegGetDWORD(HKEY hKey, LPCWSTR valueName) noexcept {
+Sci::optional<DWORD> RegGetDWORD(HKEY hKey, LPCWSTR valueName) noexcept {
 	DWORD value = 0;
 	DWORD type = REG_NONE;
 	DWORD size = sizeof(DWORD);
@@ -2932,7 +2932,7 @@ public:
 		pTarget->BeginDraw();
 
 		// Draw something on the bitmap section.
-		constexpr size_t nPoints = std::size(arrow);
+		constexpr size_t nPoints = Sci::size(arrow);
 		D2D1_POINT_2F points[nPoints]{};
 		const FLOAT scale = width/32.0f;
 		for (size_t i = 0; i < nPoints; i++) {
@@ -2981,7 +2981,7 @@ public:
 #endif
 
 		// Draw something on the DIB section.
-		constexpr size_t nPoints = std::size(arrow);
+		constexpr size_t nPoints = Sci::size(arrow);
 		POINT points[nPoints]{};
 		const float scale = width/32.0f;
 		for (size_t i = 0; i < nPoints; i++) {
@@ -3031,7 +3031,7 @@ HCURSOR LoadReverseArrowCursor(UINT dpi) noexcept {
 	HKEY hKey {};
 	LSTATUS status = ::RegOpenKeyExW(HKEY_CURRENT_USER, L"Control Panel\\Cursors", 0, KEY_QUERY_VALUE, &hKey);
 	if (status == ERROR_SUCCESS) {
-		if (std::optional<DWORD> baseSize = RegGetDWORD(hKey, L"CursorBaseSize")) {
+		if (Sci::optional<DWORD> baseSize = RegGetDWORD(hKey, L"CursorBaseSize")) {
 			// CursorBaseSize is multiple of 16
 			cursorBaseSize = std::min(*baseSize & ~15, maxCursorBaseSize);
 		}
@@ -3058,14 +3058,14 @@ HCURSOR LoadReverseArrowCursor(UINT dpi) noexcept {
 	COLORREF strokeColour = RGB(0, 0, 1);
 	status = ::RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Accessibility", 0, KEY_QUERY_VALUE, &hKey);
 	if (status == ERROR_SUCCESS) {
-		if (std::optional<DWORD> cursorType = RegGetDWORD(hKey, L"CursorType")) {
+		if (Sci::optional<DWORD> cursorType = RegGetDWORD(hKey, L"CursorType")) {
 			switch (*cursorType) {
 			case 1: // black
 			case 4: // black
 				std::swap(fillColour, strokeColour);
 				break;
 			case 6: // custom
-				if (std::optional<DWORD> cursorColor = RegGetDWORD(hKey, L"CursorColor")) {
+				if (Sci::optional<DWORD> cursorColor = RegGetDWORD(hKey, L"CursorColor")) {
 					fillColour = *cursorColor;
 				}
 				break;
@@ -3431,7 +3431,7 @@ void ListBoxX::ClearRegisteredImages() {
 
 namespace {
 
-int ColourOfElement(std::optional<ColourRGBA> colour, int nIndex) {
+int ColourOfElement(Sci::optional<ColourRGBA> colour, int nIndex) {
 	if (colour.has_value()) {
 		return colour.value().OpaqueRGB();
 	} else {
@@ -3682,10 +3682,10 @@ void ListBoxX::ResizeToCursor() {
 	const POINT ptMin = MinTrackSize();
 	const POINT ptMax = MaxTrackSize();
 	// We don't allow the left edge to move at present, but just in case
-	rc.left = std::clamp(rc.left, rcPreSize.right - ptMax.x, rcPreSize.right - ptMin.x);
-	rc.top = std::clamp(rc.top, rcPreSize.bottom - ptMax.y, rcPreSize.bottom - ptMin.y);
-	rc.right = std::clamp(rc.right, rcPreSize.left + ptMin.x, rcPreSize.left + ptMax.x);
-	rc.bottom = std::clamp(rc.bottom, rcPreSize.top + ptMin.y, rcPreSize.top + ptMax.y);
+	rc.left = Sci::clamp(rc.left, rcPreSize.right - ptMax.x, rcPreSize.right - ptMin.x);
+	rc.top = Sci::clamp(rc.top, rcPreSize.bottom - ptMax.y, rcPreSize.bottom - ptMin.y);
+	rc.right = Sci::clamp(rc.right, rcPreSize.left + ptMin.x, rcPreSize.left + ptMax.x);
+	rc.bottom = Sci::clamp(rc.bottom, rcPreSize.top + ptMin.y, rcPreSize.top + ptMax.y);
 
 	SetPosition(rc);
 }
@@ -3995,7 +3995,7 @@ LRESULT ListBoxX::WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 	case WM_MOUSEWHEEL:
 		if (wheelDelta.Accumulate(wParam)) {
 			const int nRows = GetVisibleRows();
-			int linesToScroll = std::clamp(nRows - 1, 1, 3);
+			int linesToScroll = Sci::clamp(nRows - 1, 1, 3);
 			linesToScroll *= wheelDelta.Actions();
 			int top = ListBox_GetTopIndex(lb) + linesToScroll;
 			if (top < 0) {
@@ -4105,7 +4105,7 @@ void Platform::DebugPrintf(const char *format, ...) noexcept {
 	char buffer[2000];
 	va_list pArguments;
 	va_start(pArguments, format);
-	vsnprintf(buffer, std::size(buffer), format, pArguments);
+	vsnprintf(buffer, Sci::size(buffer), format, pArguments);
 	va_end(pArguments);
 	Platform::DebugDisplay(buffer);
 }
@@ -4124,7 +4124,7 @@ bool Platform::ShowAssertionPopUps(bool assertionPopUps_) noexcept {
 
 void Platform::Assert(const char *c, const char *file, int line) noexcept {
 	char buffer[2000] {};
-	snprintf(buffer, std::size(buffer), "Assertion [%s] failed at %s %d%s", c, file, line, assertionPopUps ? "" : "\r\n");
+	snprintf(buffer, Sci::size(buffer), "Assertion [%s] failed at %s %d%s", c, file, line, assertionPopUps ? "" : "\r\n");
 	if (assertionPopUps) {
 		const int idButton = ::MessageBoxA(0, buffer, "Assertion failure",
 			MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);

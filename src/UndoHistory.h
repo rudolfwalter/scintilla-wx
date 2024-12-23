@@ -86,10 +86,10 @@ class UndoHistory {
 	int undoSequenceDepth = 0;
 	int savePoint = 0;
 	int tentativePoint = -1;
-	std::optional<int> detach;	// Never set if savePoint set (>= 0)
+	Sci::optional<int> detach;	// Never set if savePoint set (>= 0)
 	std::unique_ptr<ScrapStack> scraps;
 	struct actPos { int act; size_t position; };
-	std::optional<actPos> memory;
+	Sci::optional<actPos> memory;
 
 	int PreviousAction() const noexcept;
 
@@ -131,7 +131,7 @@ public:
 	[[nodiscard]] int Type(int action) const noexcept;
 	[[nodiscard]] Sci::Position Position(int action) const noexcept;
 	[[nodiscard]] Sci::Position Length(int action) const noexcept;
-	[[nodiscard]] std::string_view Text(int action) noexcept;
+	[[nodiscard]] Sci::string_view Text(int action) noexcept;
 	void PushUndoActionType(int type, Sci::Position position);
 	void ChangeLastUndoActionText(size_t length, const char *text);
 

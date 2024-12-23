@@ -99,7 +99,7 @@ TEST_CASE("Partitioning") {
 	SECTION("InsertMultiple") {
 		part.InsertText(0, 10);
 		const Sci::Position positions[] { 2, 5, 7 };
-		part.InsertPartitions(1, positions, std::size(positions));
+		part.InsertPartitions(1, positions, Sci::size(positions));
 		REQUIRE(4 == part.Partitions());
 		REQUIRE(0 == part.PositionFromPartition(0));
 		REQUIRE(2 == part.PositionFromPartition(1));
@@ -113,7 +113,7 @@ TEST_CASE("Partitioning") {
 		part.InsertText(0, 9);
 		REQUIRE(1 == part.Partitions());
 		const ptrdiff_t positionsp[]{ 2, 4, 6, 8 };
-		part.InsertPartitionsWithCast(1, positionsp, std::size(positionsp));
+		part.InsertPartitionsWithCast(1, positionsp, Sci::size(positionsp));
 		REQUIRE(5 == part.Partitions());
 		REQUIRE(0 == part.PositionFromPartition(0));
 		REQUIRE(2 == part.PositionFromPartition(1));

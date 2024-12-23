@@ -348,7 +348,7 @@ namespace {
 
 constexpr int IndividualStyles = 0x100;
 
-size_t NumberLines(std::string_view sv) {
+size_t NumberLines(Sci::string_view sv) {
 	return std::count(sv.begin(), sv.end(), '\n') + 1;
 }
 

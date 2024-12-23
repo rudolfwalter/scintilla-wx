@@ -82,7 +82,7 @@ void FontRealised::Realise(Surface &surface, int zoomLevel, Technology technolog
 
 	if (fs.checkMonospaced) {
 		// "Ay" is normally strongly kerned and "fi" may be a ligature
-		constexpr std::string_view allASCIIGraphic("Ayfi"
+		constexpr Sci::string_view allASCIIGraphic("Ayfi"
 		// python: ''.join(chr(ch) for ch in range(32, 127))
 		" !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
 		std::array<XYPOSITION, allASCIIGraphic.length()> positions {};

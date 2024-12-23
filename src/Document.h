@@ -369,18 +369,18 @@ public:
 	bool SCI_METHOD IsDBCSLeadByte(char ch) const override;
 	bool IsDBCSLeadByteNoExcept(char ch) const noexcept;
 	bool IsDBCSTrailByteNoExcept(char ch) const noexcept;
-	int DBCSDrawBytes(std::string_view text) const noexcept;
+	int DBCSDrawBytes(Sci::string_view text) const noexcept;
 	bool IsDBCSDualByteAt(Sci::Position pos) const noexcept;
-	size_t SafeSegment(std::string_view text) const noexcept;
+	size_t SafeSegment(Sci::string_view text) const noexcept;
 	EncodingFamily CodePageFamily() const noexcept;
 
 	// Gateways to modifying document
 	void ModifiedAt(Sci::Position pos) noexcept;
 	void CheckReadOnly();
-	void TrimReplacement(std::string_view &text, Range &range) const noexcept;
+	void TrimReplacement(Sci::string_view &text, Range &range) const noexcept;
 	bool DeleteChars(Sci::Position pos, Sci::Position len);
 	Sci::Position InsertString(Sci::Position position, const char *s, Sci::Position insertLength);
-	Sci::Position InsertString(Sci::Position position, std::string_view sv);
+	Sci::Position InsertString(Sci::Position position, Sci::string_view sv);
 	void ChangeInsertion(const char *s, Sci::Position length);
 	int SCI_METHOD AddData(const char *data, Sci_Position length) override;
 	IDocumentEditable *AsDocumentEditable() noexcept;
@@ -417,7 +417,7 @@ public:
 	int UndoCurrent() const noexcept;
 	int UndoActionType(int action) const noexcept;
 	Sci::Position UndoActionPosition(int action) const noexcept;
-	std::string_view UndoActionText(int action) const noexcept;
+	Sci::string_view UndoActionText(int action) const noexcept;
 	void PushUndoActionType(int type, Sci::Position position);
 	void ChangeLastUndoActionText(size_t length, const char *text);
 
@@ -441,7 +441,7 @@ public:
 	void Indent(bool forwards, Sci::Line lineBottom, Sci::Line lineTop);
 	static std::string TransformLineEnds(const char *s, size_t len, Scintilla::EndOfLine eolModeWanted);
 	void ConvertLineEnds(Scintilla::EndOfLine eolModeSet);
-	std::string_view EOLString() const noexcept;
+	Sci::string_view EOLString() const noexcept;
 	void SetReadOnly(bool set) noexcept { cb.SetReadOnly(set); }
 	bool IsReadOnly() const noexcept { return cb.IsReadOnly(); }
 	bool IsLarge() const noexcept { return cb.IsLarge(); }
@@ -487,7 +487,7 @@ public:
 	int SCI_METHOD GetLevel(Sci_Position line) const override;
 	Scintilla::FoldLevel GetFoldLevel(Sci_Position line) const noexcept;
 	void ClearLevels();
-	Sci::Line GetLastChild(Sci::Line lineParent, std::optional<Scintilla::FoldLevel> level = {}, Sci::Line lastLine = -1);
+	Sci::Line GetLastChild(Sci::Line lineParent, Sci::optional<Scintilla::FoldLevel> level = {}, Sci::Line lastLine = -1);
 	Sci::Line GetFoldParent(Sci::Line line) const noexcept;
 	void GetHighlightDelimiters(HighlightDelimiter &highlightDelimiter, Sci::Line line, Sci::Line lastLine);
 

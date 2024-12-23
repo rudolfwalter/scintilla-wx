@@ -152,7 +152,7 @@ public:
 
 class IScreenLine {
 public:
-	virtual std::string_view Text() const = 0;
+	virtual Sci::string_view Text() const = 0;
 	virtual size_t Length() const = 0;
 	virtual size_t RepresentationCount() const = 0;
 	virtual XYPOSITION Width() const = 0;
@@ -235,17 +235,17 @@ public:
 
 	virtual std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) = 0;
 
-	virtual void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
-	virtual void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
-	virtual void DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore) = 0;
-	virtual void MeasureWidths(const Font *font_, std::string_view text, XYPOSITION *positions) = 0;
-	virtual XYPOSITION WidthText(const Font *font_, std::string_view text) = 0;
+	virtual void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
+	virtual void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
+	virtual void DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore) = 0;
+	virtual void MeasureWidths(const Font *font_, Sci::string_view text, XYPOSITION *positions) = 0;
+	virtual XYPOSITION WidthText(const Font *font_, Sci::string_view text) = 0;
 
-	virtual void DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
-	virtual void DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
-	virtual void DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore) = 0;
-	virtual void MeasureWidthsUTF8(const Font *font_, std::string_view text, XYPOSITION *positions) = 0;
-	virtual XYPOSITION WidthTextUTF8(const Font *font_, std::string_view text) = 0;
+	virtual void DrawTextNoClipUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
+	virtual void DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
+	virtual void DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, ColourRGBA fore) = 0;
+	virtual void MeasureWidthsUTF8(const Font *font_, Sci::string_view text, XYPOSITION *positions) = 0;
+	virtual XYPOSITION WidthTextUTF8(const Font *font_, Sci::string_view text) = 0;
 
 	virtual XYPOSITION Ascent(const Font *font_)=0;
 	virtual XYPOSITION Descent(const Font *font_)=0;
@@ -314,10 +314,10 @@ public:
 };
 
 struct ListOptions {
-	std::optional<ColourRGBA> fore;
-	std::optional<ColourRGBA> back;
-	std::optional<ColourRGBA> foreSelected;
-	std::optional<ColourRGBA> backSelected;
+	Sci::optional<ColourRGBA> fore;
+	Sci::optional<ColourRGBA> back;
+	Sci::optional<ColourRGBA> foreSelected;
+	Sci::optional<ColourRGBA> backSelected;
 	AutoCompleteOption options=AutoCompleteOption::Normal;
 };
 

@@ -109,8 +109,8 @@ private:
 	void Finalise() override;
 	bool DragThreshold(Point ptStart, Point ptNow) override;
 	bool ValidCodePage(int codePage) const override;
-	std::string UTF8FromEncoded(std::string_view encoded) const override;
-	std::string EncodedFromUTF8(std::string_view utf8) const override;
+	std::string UTF8FromEncoded(Sci::string_view encoded) const override;
+	std::string EncodedFromUTF8(Sci::string_view utf8) const override;
 
 private:
 	void ScrollText(Sci::Line linesToMove) override;

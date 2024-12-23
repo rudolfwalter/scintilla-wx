@@ -98,7 +98,7 @@ using namespace Scintilla;
 using namespace Scintilla::Internal;
 
 // From PlatGTK.cxx
-extern std::string UTF8FromLatin1(std::string_view text);
+extern std::string UTF8FromLatin1(Sci::string_view text);
 extern void Platform_Initialise();
 extern void Platform_Finalise();
 
@@ -124,14 +124,14 @@ const GtkTargetEntry clipboardCopyTargets[] = {
 	{ (gchar *) "UTF8_STRING", 0, TARGET_UTF8_STRING },
 	{ (gchar *) "STRING", 0, TARGET_STRING },
 };
-constexpr gint nClipboardCopyTargets = static_cast<gint>(std::size(clipboardCopyTargets));
+constexpr gint nClipboardCopyTargets = static_cast<gint>(Sci::size(clipboardCopyTargets));
 
 const GtkTargetEntry clipboardPasteTargets[] = {
 	{ (gchar *) "text/uri-list", 0, TARGET_URI },
 	{ (gchar *) "UTF8_STRING", 0, TARGET_UTF8_STRING },
 	{ (gchar *) "STRING", 0, TARGET_STRING },
 };
-constexpr gint nClipboardPasteTargets = static_cast<gint>(std::size(clipboardPasteTargets));
+constexpr gint nClipboardPasteTargets = static_cast<gint>(Sci::size(clipboardPasteTargets));
 
 const GdkDragAction actionCopyOrMove = static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
@@ -869,7 +869,7 @@ bool ScintillaGTK::ValidCodePage(int codePage) const {
 	       || codePage == 1361;
 }
 
-std::string ScintillaGTK::UTF8FromEncoded(std::string_view encoded) const {
+std::string ScintillaGTK::UTF8FromEncoded(Sci::string_view encoded) const {
 	if (IsUnicodeMode()) {
 		return std::string(encoded);
 	} else {
@@ -878,7 +878,7 @@ std::string ScintillaGTK::UTF8FromEncoded(std::string_view encoded) const {
 	}
 }
 
-std::string ScintillaGTK::EncodedFromUTF8(std::string_view utf8) const {
+std::string ScintillaGTK::EncodedFromUTF8(Sci::string_view utf8) const {
 	if (IsUnicodeMode()) {
 		return std::string(utf8);
 	} else {

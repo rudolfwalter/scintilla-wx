@@ -37,7 +37,7 @@ enum class DrawPhase {
 bool ValidStyledText(const ViewStyle &vs, size_t styleOffset, const StyledText &st) noexcept;
 int WidestLineWidth(Surface *surface, const ViewStyle &vs, int styleOffset, const StyledText &st);
 void DrawTextNoClipPhase(Surface *surface, PRectangle rc, const Style &style, XYPOSITION ybase,
-	std::string_view text, DrawPhase phase);
+	Sci::string_view text, DrawPhase phase);
 void DrawStyledText(Surface *surface, const ViewStyle &vs, int styleOffset, PRectangle rcText,
 	const StyledText &st, size_t start, size_t length, DrawPhase phase);
 

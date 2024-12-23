@@ -192,7 +192,7 @@ public:
 	int UndoCurrent() const noexcept;
 	int UndoActionType(int action) const noexcept;
 	Sci::Position UndoActionPosition(int action) const noexcept;
-	std::string_view UndoActionText(int action) const noexcept;
+	Sci::string_view UndoActionText(int action) const noexcept;
 	void PushUndoActionType(int type, Sci::Position position);
 	void ChangeLastUndoActionText(size_t length, const char *text);
 

@@ -122,23 +122,23 @@ std::string ScintillaCall::StringOfRange(Span span) {
 	}
 }
 
-Position ScintillaCall::ReplaceTarget(std::string_view text) {
+Position ScintillaCall::ReplaceTarget(Sci::string_view text) {
 	return ScintillaCall::CallString(Message::ReplaceTarget, text.length(), text.data());
 }
 
-Position ScintillaCall::ReplaceTargetRE(std::string_view text) {
+Position ScintillaCall::ReplaceTargetRE(Sci::string_view text) {
 	return CallString(Message::ReplaceTargetRE, text.length(), text.data());
 }
 
-Position ScintillaCall::ReplaceTargetMinimal(std::string_view text) {
+Position ScintillaCall::ReplaceTargetMinimal(Sci::string_view text) {
 	return CallString(Message::ReplaceTargetMinimal, text.length(), text.data());
 }
 
-Position ScintillaCall::SearchInTarget(std::string_view text) {
+Position ScintillaCall::SearchInTarget(Sci::string_view text) {
 	return CallString(Message::SearchInTarget, text.length(), text.data());
 }
 
-Span ScintillaCall::SpanSearchInTarget(std::string_view text) {
+Span ScintillaCall::SpanSearchInTarget(Sci::string_view text) {
 	const Position posFound = SearchInTarget(text);
 	if (posFound >= 0)
 		return Span(posFound, TargetEnd());

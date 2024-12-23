@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "Compat.h"
 #include "ScintillaTypes.h"
 
 #include "Debugging.h"
@@ -487,7 +488,7 @@ Sci::Position UndoHistory::Length(int action) const noexcept {
 	return actions.Length(action);
 }
 
-std::string_view UndoHistory::Text(int action) noexcept {
+Sci::string_view UndoHistory::Text(int action) noexcept {
 	// Assumes first call after any changes is for action 0.
 	// TODO: may need to invalidate memory in other circumstances
 	if (action == 0) {

@@ -66,7 +66,7 @@ void Indicator::Draw(Surface *surface, const PRectangle &rc, const PRectangle &r
 				y = pitch - y;
 				pts.emplace_back(x, top + y);
 				}
-			surface->PolyLine(pts.data(), std::size(pts), Stroke(sacDraw.fore, strokeWidth));
+			surface->PolyLine(pts.data(), Sci::size(pts), Stroke(sacDraw.fore, strokeWidth));
 			surface->PopClip();
 		}
 		break;
@@ -110,7 +110,7 @@ void Indicator::Draw(Surface *surface, const PRectangle &rc, const PRectangle &r
 				x += pitch;
 			}
 			pts.emplace_back(rcAligned.right, top + y);
-			surface->PolyLine(pts.data(), std::size(pts), Stroke(sacDraw.fore, strokeWidth));
+			surface->PolyLine(pts.data(), Sci::size(pts), Stroke(sacDraw.fore, strokeWidth));
 		}
 		break;
 
@@ -291,7 +291,7 @@ void Indicator::Draw(Surface *surface, const PRectangle &rc, const PRectangle &r
 				Point(ix + pixelHeight, iy),	// Right
 				Point(ix, iy + pixelHeight)		// Bottom
 			};
-			surface->Polygon(pts, std::size(pts), FillStroke(sacDraw.fore));
+			surface->Polygon(pts, Sci::size(pts), FillStroke(sacDraw.fore));
 		}
 		break;
 

@@ -151,7 +151,7 @@ void DrawTail(Surface *surface, XYPOSITION leftLine, XYPOSITION rightTail, XYPOS
 		// Slope
 		Point(leftLine + widthSymbolStroke / 2.0f, centreY + halfWidth),
 	};
-	surface->PolyLine(lines, std::size(lines), Stroke(fill, widthSymbolStroke));
+	surface->PolyLine(lines, Sci::size(lines), Stroke(fill, widthSymbolStroke));
 }
 
 }
@@ -329,7 +329,7 @@ void LineMarker::AlignedPolygon(Surface *surface, const Point *pts, size_t npts)
 	std::transform(pts, pts + npts, std::back_inserter(points), [=](Point pt) noexcept ->Point {
 		return Point(pt.x + move, pt.y + move);
 	});
-	surface->Polygon(points.data(), std::size(points), FillStroke(back, fore, strokeWidth));
+	surface->Polygon(points.data(), Sci::size(points), FillStroke(back, fore, strokeWidth));
 }
 
 void LineMarker::Draw(Surface *surface, const PRectangle &rcWhole, const Font *fontForCharacter, FoldPart part, MarginType marginStyle) const {
@@ -482,7 +482,7 @@ void LineMarker::Draw(Surface *surface, const PRectangle &rcWhole, const Font *f
 					Point(right, midY),
 					Point(right - armLength, midY + armLength)
 				};
-				surface->PolyLine(pts, std::size(pts), Stroke(fore, strokeWidth));
+				surface->PolyLine(pts, Sci::size(pts), Stroke(fore, strokeWidth));
 				right += strokeWidth + 3.0f;
 			}
 		}

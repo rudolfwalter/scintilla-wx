@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "Compat.h"
 #include "ScintillaTypes.h"
 
 #include "Debugging.h"
@@ -750,7 +751,7 @@ void CellBuffer::ResetLineEnds() {
 
 namespace {
 
-CountWidths CountCharacterWidthsUTF8(std::string_view sv) noexcept {
+CountWidths CountCharacterWidthsUTF8(Sci::string_view sv) noexcept {
 	CountWidths cw;
 	size_t remaining = sv.length();
 	while (remaining > 0) {
@@ -808,7 +809,7 @@ void CellBuffer::BasicInsertString(Sci::Position position, const char *s, Sci::P
 		// Actually, don't need to check that whole insertion is valid just that there
 		// are no potential fragments at ends.
 		simpleInsertion = UTF8IsCharacterBoundary(position) &&
-			UTF8IsValid(std::string_view(s, insertLength));
+			UTF8IsValid(Sci::string_view(s, insertLength));
 	}
 
 	substance.InsertFromArray(position, s, 0, insertLength);
@@ -947,7 +948,7 @@ void CellBuffer::BasicInsertString(Sci::Position position, const char *s, Sci::P
 	}
 	if (maintainingIndex) {
 		if (simpleInsertion && (lineInsert == lineStart)) {
-			const CountWidths cw = CountCharacterWidthsUTF8(std::string_view(s, insertLength));
+			const CountWidths cw = CountCharacterWidthsUTF8(Sci::string_view(s, insertLength));
 			plv->InsertCharacters(linePosition, cw);
 		} else {
 			RecalculateIndexLineStarts(linePosition, lineInsert - 1);
@@ -1273,7 +1274,7 @@ Sci::Position CellBuffer::UndoActionPosition(int action) const noexcept {
 	return uh->Position(action);
 }
 
-std::string_view CellBuffer::UndoActionText(int action) const noexcept {
+Sci::string_view CellBuffer::UndoActionText(int action) const noexcept {
 	return uh->Text(action);
 }
 

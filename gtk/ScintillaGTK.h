@@ -109,8 +109,8 @@ private:
 	Sci::Position TargetAsUTF8(char *text) const;
 	Sci::Position EncodedFromUTF8(const char *utf8, char *encoded) const;
 	bool ValidCodePage(int codePage) const override;
-	std::string UTF8FromEncoded(std::string_view encoded) const override;
-	std::string EncodedFromUTF8(std::string_view utf8) const override;
+	std::string UTF8FromEncoded(Sci::string_view encoded) const override;
+	std::string EncodedFromUTF8(Sci::string_view utf8) const override;
 public: 	// Public for scintilla_send_message
 	sptr_t WndProc(Scintilla::Message iMessage, Scintilla::uptr_t wParam, Scintilla::sptr_t lParam) override;
 private:

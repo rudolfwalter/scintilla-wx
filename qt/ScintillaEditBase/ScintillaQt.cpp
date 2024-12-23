@@ -249,7 +249,7 @@ bool ScintillaQt::ValidCodePage(int codePage) const
 	|| codePage == 1361;
 }
 
-std::string ScintillaQt::UTF8FromEncoded(std::string_view encoded) const {
+std::string ScintillaQt::UTF8FromEncoded(Sci::string_view encoded) const {
 	if (IsUnicodeMode()) {
 		return std::string(encoded);
 	} else {
@@ -260,7 +260,7 @@ std::string ScintillaQt::UTF8FromEncoded(std::string_view encoded) const {
 	}
 }
 
-std::string ScintillaQt::EncodedFromUTF8(std::string_view utf8) const {
+std::string ScintillaQt::EncodedFromUTF8(Sci::string_view utf8) const {
 	if (IsUnicodeMode()) {
 		return std::string(utf8);
 	} else {

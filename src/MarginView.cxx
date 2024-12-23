@@ -100,7 +100,7 @@ void DrawWrapMarker(Surface *surface, PRectangle rcPlace,
 		rel.At(xa, y),
 		rel.At(xa + dy + extraFinalPixel, y + dy + extraFinalPixel)
 	};
-	surface->PolyLine(head, std::size(head), Stroke(wrapColour, widthStroke));
+	surface->PolyLine(head, Sci::size(head), Stroke(wrapColour, widthStroke));
 
 	// arrow body
 	const Point body[] = {
@@ -109,7 +109,7 @@ void DrawWrapMarker(Surface *surface, PRectangle rcPlace,
 		rel.At(xa + w, y - 2 * dy),
 		rel.At(xa, y - 2 * dy),
 	};
-	surface->PolyLine(body, std::size(body), Stroke(wrapColour, widthStroke));
+	surface->PolyLine(body, Sci::size(body), Stroke(wrapColour, widthStroke));
 }
 
 MarginView::MarginView() noexcept {
@@ -376,7 +376,7 @@ void MarginView::PaintOneMargin(Surface *surface, PRectangle rc, PRectangle rcOn
 					char number[100] = "";
 					if (FlagSet(model.foldFlags, FoldFlag::LevelNumbers)) {
 						const FoldLevel lev = model.pdoc->GetFoldLevel(lineDoc);
-						snprintf(number,std::size(number), "%c%c %03X %03X",
+						snprintf(number,Sci::size(number), "%c%c %03X %03X",
 							LevelIsHeader(lev) ? 'H' : '_',
 							LevelIsWhitespace(lev) ? 'W' : '_',
 							LevelNumber(lev),
@@ -384,7 +384,7 @@ void MarginView::PaintOneMargin(Surface *surface, PRectangle rc, PRectangle rcOn
 						);
 					} else {
 						const int state = model.pdoc->GetLineState(lineDoc);
-						snprintf(number, std::size(number), "%0X", state);
+						snprintf(number, Sci::size(number), "%0X", state);
 					}
 					sNumber = number;
 				}

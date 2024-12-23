@@ -98,7 +98,7 @@ const char *CharacterSetID(CharacterSet characterSet)
 	}
 }
 
-QString UnicodeFromText(QTextCodec *codec, std::string_view text) {
+QString UnicodeFromText(QTextCodec *codec, Sci::string_view text) {
 	return codec->toUnicode(text.data(), static_cast<int>(text.length()));
 }
 
@@ -530,7 +530,7 @@ std::unique_ptr<IScreenLineLayout> SurfaceImpl::Layout(const IScreenLine *)
 void SurfaceImpl::DrawTextNoClip(PRectangle rc,
 				 const Font *font,
                                  XYPOSITION ybase,
-				 std::string_view text,
+				 Sci::string_view text,
 				 ColourRGBA fore,
 				 ColourRGBA back)
 {
@@ -546,7 +546,7 @@ void SurfaceImpl::DrawTextNoClip(PRectangle rc,
 void SurfaceImpl::DrawTextClipped(PRectangle rc,
 				  const Font *font,
                                   XYPOSITION ybase,
-				  std::string_view text,
+				  Sci::string_view text,
 				  ColourRGBA fore,
 				  ColourRGBA back)
 {
@@ -558,7 +558,7 @@ void SurfaceImpl::DrawTextClipped(PRectangle rc,
 void SurfaceImpl::DrawTextTransparent(PRectangle rc,
 				      const Font *font,
                                       XYPOSITION ybase,
-				      std::string_view text,
+				      Sci::string_view text,
 	ColourRGBA fore)
 {
 	SetFont(font);
@@ -581,7 +581,7 @@ void SurfaceImpl::PopClip()
 }
 
 void SurfaceImpl::MeasureWidths(const Font *font,
-				std::string_view text,
+				Sci::string_view text,
                                 XYPOSITION *positions)
 {
 	if (!font)
@@ -631,7 +631,7 @@ void SurfaceImpl::MeasureWidths(const Font *font,
 	}
 }
 
-XYPOSITION SurfaceImpl::WidthText(const Font *font, std::string_view text)
+XYPOSITION SurfaceImpl::WidthText(const Font *font, Sci::string_view text)
 {
 	QFontMetricsF metrics(*FontPointer(font), device);
 	SetCodec(font);
@@ -646,7 +646,7 @@ XYPOSITION SurfaceImpl::WidthText(const Font *font, std::string_view text)
 void SurfaceImpl::DrawTextNoClipUTF8(PRectangle rc,
 				 const Font *font,
 				 XYPOSITION ybase,
-				 std::string_view text,
+				 Sci::string_view text,
 				 ColourRGBA fore,
 				 ColourRGBA back)
 {
@@ -662,7 +662,7 @@ void SurfaceImpl::DrawTextNoClipUTF8(PRectangle rc,
 void SurfaceImpl::DrawTextClippedUTF8(PRectangle rc,
 				  const Font *font,
 				  XYPOSITION ybase,
-				  std::string_view text,
+				  Sci::string_view text,
 				  ColourRGBA fore,
 				  ColourRGBA back)
 {
@@ -674,7 +674,7 @@ void SurfaceImpl::DrawTextClippedUTF8(PRectangle rc,
 void SurfaceImpl::DrawTextTransparentUTF8(PRectangle rc,
 				      const Font *font,
 				      XYPOSITION ybase,
-				      std::string_view text,
+				      Sci::string_view text,
 	ColourRGBA fore)
 {
 	SetFont(font);
@@ -686,7 +686,7 @@ void SurfaceImpl::DrawTextTransparentUTF8(PRectangle rc,
 }
 
 void SurfaceImpl::MeasureWidthsUTF8(const Font *font,
-				std::string_view text,
+				Sci::string_view text,
 				XYPOSITION *positions)
 {
 	if (!font)
@@ -717,7 +717,7 @@ void SurfaceImpl::MeasureWidthsUTF8(const Font *font,
 	}
 }
 
-XYPOSITION SurfaceImpl::WidthTextUTF8(const Font *font, std::string_view text)
+XYPOSITION SurfaceImpl::WidthTextUTF8(const Font *font, Sci::string_view text)
 {
 	QFontMetricsF metrics(*FontPointer(font), device);
 	QString su = QString::fromUtf8(text.data(), static_cast<int>(text.length()));
@@ -1359,7 +1359,7 @@ void Platform::DebugPrintf(const char *format, ...) noexcept
 	char buffer[2000];
 	va_list pArguments{};
 	va_start(pArguments, format);
-	vsnprintf(buffer, std::size(buffer), format, pArguments);
+	vsnprintf(buffer, Sci::size(buffer), format, pArguments);
 	va_end(pArguments);
 	Platform::DebugDisplay(buffer);
 }
@@ -1372,7 +1372,7 @@ bool Platform::ShowAssertionPopUps(bool /*assertionPopUps*/) noexcept
 void Platform::Assert(const char *c, const char *file, int line) noexcept
 {
 	char buffer[2000];
-	snprintf(buffer, std::size(buffer), "Assertion [%s] failed at %s %d", c, file, line);
+	snprintf(buffer, Sci::size(buffer), "Assertion [%s] failed at %s %d", c, file, line);
 	if (Platform::ShowAssertionPopUps(false)) {
 		QMessageBox mb("Assertion Failure", buffer, QMessageBox::NoIcon,
 			QMessageBox::Ok, QMessageBox::NoButton, QMessageBox::NoButton);

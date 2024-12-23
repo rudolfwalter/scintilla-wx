@@ -78,7 +78,7 @@ void ScintillaBase::Finalise() {
 	popup.Destroy();
 }
 
-void ScintillaBase::InsertCharacter(std::string_view sv, CharacterSource charSource) {
+void ScintillaBase::InsertCharacter(Sci::string_view sv, CharacterSource charSource) {
 	const bool acActive = ac.Active();
 	const bool isFillUp = acActive && ac.IsFillUpChar(sv[0]);
 	if (!isFillUp) {
@@ -213,7 +213,7 @@ void ScintillaBase::ListNotify(ListBoxEvent *plbe) {
 	}
 }
 
-void ScintillaBase::AutoCompleteInsert(Sci::Position startPos, Sci::Position removeLen, std::string_view text) {
+void ScintillaBase::AutoCompleteInsert(Sci::Position startPos, Sci::Position removeLen, Sci::string_view text) {
 	UndoGroup ug(pdoc);
 	if (multiAutoCMode == MultiAutoComplete::Once) {
 		pdoc->DeleteChars(startPos, removeLen);
@@ -246,8 +246,8 @@ void ScintillaBase::AutoCompleteStart(Sci::Position lenEntered, const char *list
 	if (ac.chooseSingle && (listType == 0)) {
 		if (list && !strchr(list, ac.GetSeparator())) {
 			// list contains just one item so choose it
-			const std::string_view item(list);
-			const std::string_view choice = item.substr(0, item.find_first_of(ac.GetTypesep()));
+			const Sci::string_view item(list);
+			const Sci::string_view choice = item.substr(0, item.find_first_of(ac.GetTypesep()));
 			if (ac.ignoreCase) {
 				// May need to convert the case before invocation, so remove lenEntered characters
 				AutoCompleteInsert(sel.MainCaret() - lenEntered, lenEntered, choice);
