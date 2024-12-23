@@ -15,12 +15,10 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <set>
 #include <forward_list>
-#include <optional>
 #include <algorithm>
 #include <iterator>
 #include <memory>

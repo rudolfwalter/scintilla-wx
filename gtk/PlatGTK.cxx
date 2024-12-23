@@ -10,10 +10,8 @@
 #include <cmath>
 
 #include <string>
-#include <string_view>
 #include <vector>
 #include <map>
-#include <optional>
 #include <algorithm>
 #include <memory>
 #include <sstream>

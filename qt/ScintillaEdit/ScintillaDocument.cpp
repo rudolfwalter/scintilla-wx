@@ -3,11 +3,9 @@
 // Copyright (c) 2011 Archaeopteryx Software, Inc. d/b/a Wingware
 
 #include <stdexcept>
-#include <string_view>
 #include <vector>
 #include <map>
 #include <set>
-#include <optional>
 #include <memory>
 
 #include "ScintillaTypes.h"

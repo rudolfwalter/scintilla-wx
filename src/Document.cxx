@@ -14,11 +14,9 @@
 
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <array>
 #include <forward_list>
-#include <optional>
 #include <algorithm>
 #include <memory>
 #include <chrono>

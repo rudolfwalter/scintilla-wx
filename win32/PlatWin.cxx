@@ -14,10 +14,8 @@
 #include <cmath>
 #include <climits>
 
-#include <string_view>
 #include <vector>
 #include <map>
-#include <optional>
 #include <algorithm>
 #include <iterator>
 #include <memory>

@@ -11,7 +11,6 @@
 #include <cstdint>
 
 #include <string>
-#include <string_view>
 
 #include "ScintillaTypes.h"
 #include "ScintillaMessages.h"

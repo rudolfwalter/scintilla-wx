@@ -5,7 +5,6 @@
 // Copyright 2017 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-#include <string_view>
 #include <vector>
 #include <algorithm>
 #include <memory>
