@@ -390,11 +390,11 @@ void MarginView::PaintOneMargin(Surface *surface, PRectangle rc, PRectangle rcOn
 				}
 				PRectangle rcNumber = rcMarker;
 				// Right justify
-				const XYPOSITION width = surface->WidthText(fontLineNumber, sNumber.c_str(), static_cast<int>(sNumber.length()));
+				const XYPOSITION width = surface->WidthText(vs.styles[StyleLineNumber].font.get(), sNumber);
 				const XYPOSITION xpos = rcNumber.right - width - vs.marginNumberPadding;
 				rcNumber.left = xpos;
 				DrawTextNoClipPhase(surface, rcNumber, vs.styles[StyleLineNumber],
-					rcNumber.top + vs.maxAscent, sNumber.c_str(), static_cast<int>(sNumber.length()), drawAll);
+					rcNumber.top + vs.maxAscent, sNumber, DrawPhase::all);
 			} else if (FlagSet(vs.wrap.visualFlags, WrapVisualFlag::Margin)) {
 				PRectangle rcWrapMarker = rcMarker;
 				rcWrapMarker.right -= wrapMarkerPaddingRight;

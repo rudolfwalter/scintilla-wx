@@ -258,8 +258,8 @@ int LineLevels::SetLevel(Sci::Line line, int level, Sci::Line lines) {
 			ExpandLevels(lines + 1);
 		}
 		prev = levels[line];
-			levels[line] = level;
-		}
+		levels[line] = level;
+	}
 	return prev;
 }
 
@@ -319,7 +319,7 @@ int LineState::SetLineState(Sci::Line line, int state, Sci::Line lines) {
 	if ((line >= 0) && (line < lines)) {
 		lineStates.EnsureLength(lines + 1);
 		stateOld = lineStates[line];
-	lineStates[line] = state;
+		lineStates[line] = state;
 	}
 	return stateOld;
 }
@@ -348,16 +348,8 @@ namespace {
 
 constexpr int IndividualStyles = 0x100;
 
-size_t NumberLines(const char *text) noexcept {
-	int lines = 1;
-	if (text) {
-		while (*text) {
-			if (*text == '\n')
-				lines++;
-			text++;
-		}
-	}
-	return lines;
+size_t NumberLines(std::string_view sv) {
+	return std::count(sv.begin(), sv.end(), '\n') + 1;
 }
 
 std::unique_ptr<char[]>AllocateAnnotation(size_t length, int style) {

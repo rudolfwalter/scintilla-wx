@@ -56,7 +56,7 @@ protected:
 	void Initialise() override {}
 	void Finalise() override;
 
-	void InsertCharacter(const char *s, unsigned int len, Scintilla::CharacterSource charSource) override;
+	void InsertCharacter(std::string_view sv, Scintilla::CharacterSource charSource) override;
 	void Command(int cmdId);
 	void CancelModes() override;
 	int KeyCommand(Scintilla::Message iMessage) override;

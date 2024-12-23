@@ -86,7 +86,7 @@ EditModel::EditModel() : braces{} {
 EditModel::~EditModel() {
 	try {
 		// This never throws but isn't marked noexcept for compatibility
-	pdoc->Release();
+		pdoc->Release();
 	} catch (...) {
 		// Ignore any exception
 	}

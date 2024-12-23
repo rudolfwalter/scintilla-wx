@@ -412,8 +412,8 @@ ScreenLine::ScreenLine(
 ScreenLine::~ScreenLine() {
 }
 
-const char *ScreenLine::Text() const {
-	return &ll->chars[start];
+std::string_view ScreenLine::Text() const {
+	return std::string_view(&ll->chars[start], len);
 }
 
 size_t ScreenLine::Length() const {
@@ -1045,19 +1045,19 @@ PositionCacheEntry::PositionCacheEntry(const PositionCacheEntry &other) :
 	}
 }
 
-void PositionCacheEntry::Set(unsigned int styleNumber_, bool unicode_, const char *s_,
-	unsigned int len_, const XYPOSITION *positions_, uint16_t clock_) {
+void PositionCacheEntry::Set(unsigned int styleNumber_, bool unicode_, std::string_view sv,
+	const XYPOSITION *positions_, uint16_t clock_) {
 	Clear();
 	styleNumber = static_cast<uint16_t>(styleNumber_);
-	len = len_;
+	len = static_cast<uint16_t>(sv.length());
 	clock = clock_;
 	unicode = unicode_;
-	if (s_ && positions_) {
 		positions = Sci::make_unique<XYPOSITION[]>(len + (len / sizeof(XYPOSITION)) + 1);
+	if (sv.data() && positions_) {
 		for (unsigned int i=0; i<len; i++) {
 			positions[i] = positions_[i];
 		}
-		memcpy(&positions[len], s_, len);
+		memcpy(&positions[len], sv.data(), sv.length());
 	}
 }
 
@@ -1126,12 +1126,12 @@ size_t PositionCache::GetSize() const noexcept {
 }
 
 void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, unsigned int styleNumber,
-	bool unicode, const char *s, unsigned int len, XYPOSITION *positions, bool needsLocking) {
+	bool unicode, std::string_view sv, XYPOSITION *positions, bool needsLocking) {
 	const Style &style = vstyle.styles[styleNumber];
 	if (style.monospaceASCII) {
-		if (AllGraphicASCII(s, len)) {
+		if (AllGraphicASCII(sv)) {
 			const XYPOSITION monospaceCharacterWidth = style.monospaceCharacterWidth;
-			for (size_t i = 0; i < len; i++) {
+			for (size_t i = 0; i < sv.length(); i++) {
 				positions[i] = monospaceCharacterWidth * (i+1);
 			}
 			return;
@@ -1139,22 +1139,22 @@ void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, uns
 	}
 
 	size_t probe = pces.size();	// Out of bounds
-	if ((!pces.empty()) && (len < 30)) {
+	if ((!pces.empty()) && (sv.length() < 30)) {
 		// Only store short strings in the cache so it doesn't churn with
 		// long comments with only a single comment.
 
 		// Two way associative: try two probe positions.
-		const size_t hashValue = PositionCacheEntry::Hash(styleNumber, unicode, s, len);
+		const size_t hashValue = PositionCacheEntry::Hash(styleNumber, unicode, sv);
 		probe = hashValue % pces.size();
 		std::unique_lock<std::mutex> guard(mutex, std::defer_lock);
 		if (needsLocking) {
 			guard.lock();
 		}
-		if (pces[probe].Retrieve(styleNumber, unicode, s, len, positions)) {
+		if (pces[probe].Retrieve(styleNumber, unicode, sv, positions)) {
 			return;
 		}
 		const size_t probe2 = (hashValue * 37) % pces.size();
-		if (pces[probe2].Retrieve(styleNumber, unicode, s, len, positions)) {
+		if (pces[probe2].Retrieve(styleNumber, unicode, sv, positions)) {
 			return;
 		}
 		// Not found. Choose the oldest of the two slots to replace
@@ -1165,9 +1165,9 @@ void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, uns
 
 	const Font *fontStyle = style.font.get();
 	if (unicode) {
-		surface->MeasureWidthsUTF8(fontStyle, s, len, positions);
+		surface->MeasureWidthsUTF8(fontStyle, sv, positions);
 	} else {
-		surface->MeasureWidths(fontStyle, s, len, positions);
+		surface->MeasureWidths(fontStyle, sv, positions);
 	}
 	if (probe < pces.size()) {
 		// Store into cache
@@ -1185,7 +1185,7 @@ void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, uns
 			clock = 2;
 		}
 		allClear = false;
-		pces[probe].Set(styleNumber, unicode, s, len, positions, clock);
+		pces[probe].Set(styleNumber, unicode, sv, positions, clock);
 	}
 }
 

@@ -21,7 +21,7 @@ UniqueString UniqueStringCopy(const char *text) {
 	if (!text) {
 		return UniqueString();
 	}
-	const std::string sv(text);
+	const Sci::string_view sv(text);
 	std::unique_ptr<char[]> upcNew = Sci::make_unique<char[]>(sv.length() + 1);
 	sv.copy(upcNew.get(), sv.length());
 	return UniqueString(upcNew.release());
@@ -39,7 +39,7 @@ const char *UniqueStringSet::Save(const char *text) {
 	if (!text)
 		return nullptr;
 
-	const std::string sv(text);
+	const std::string_view sv(text);
 	for (const UniqueString &us : strings) {
 		if (sv == us.get()) {
 			return us.get();

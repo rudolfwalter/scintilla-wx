@@ -431,7 +431,7 @@ void ViewStyle::Refresh(Surface &surface, int tabInChars) {
 	controlCharWidth = 0.0;
 	if (controlCharSymbol >= 32) {
 		const char cc[2] = { static_cast<char>(controlCharSymbol), '\0' };
-		controlCharWidth = surface.WidthText(styles[StyleControlChar].font.get(), cc, 1);
+		controlCharWidth = surface.WidthText(styles[StyleControlChar].font.get(), cc);
 	}
 
 	CalculateMarginWidthAndMask();

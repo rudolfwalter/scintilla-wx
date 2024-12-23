@@ -129,7 +129,7 @@ struct ScreenLine : public IScreenLine {
 	void operator=(ScreenLine &&) = delete;
 	virtual ~ScreenLine();
 
-	const char *Text() const override;
+	std::string_view Text() const override;
 	size_t Length() const override;
 	size_t RepresentationCount() const override;
 	XYPOSITION Width() const override;

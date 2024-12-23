@@ -114,10 +114,10 @@ Timer::Timer() noexcept :
 Idler::Idler() noexcept :
 		state(false), idlerID(nullptr) {}
 
-static bool IsAllSpacesOrTabs(const char *s, unsigned int len) noexcept {
-    for (unsigned int i = 0; i < len; i++) {
+static constexpr bool IsAllSpacesOrTabs(std::string_view sv) noexcept {
+	for (const char ch : sv) {
 		// This is safe because IsSpaceOrTab() will return false for null terminators
-		if (!IsSpaceOrTab(s[i]))
+		if (!IsSpaceOrTab(ch))
 			return false;
 	}
 	return true;
@@ -1035,14 +1035,14 @@ void Editor::MoveSelectedLines(int lineDelta) {
 		SetSelection(pdoc->MovePositionOutsideChar(selectionStart - 1, -1), selectionEnd);
 	ClearSelection();
 
-	const char *eol = StringFromEOLMode(pdoc->eolMode);
+	const std::string_view eol = pdoc->EOLString();
 	if (currentLine + lineDelta >= pdoc->LinesTotal())
-		pdoc->InsertString(pdoc->Length(), eol, strlen(eol));
+		pdoc->InsertString(pdoc->Length(), eol);
 	GoToLine(currentLine + lineDelta);
 
-	Sci::Position selectionLength = pdoc->InsertString(CurrentPosition(), selectedText.Data(), selectedText.Length());
+	Sci::Position selectionLength = pdoc->InsertString(CurrentPosition(), selectedText);
 	if (appendEol) {
-		const Sci::Position lengthInserted = pdoc->InsertString(CurrentPosition() + selectionLength, eol, strlen(eol));
+		const Sci::Position lengthInserted = pdoc->InsertString(CurrentPosition() + selectionLength, eol);
 		selectionLength += lengthInserted;
 	}
 	SetSelection(CurrentPosition(), CurrentPosition() + selectionLength);
@@ -1941,7 +1941,7 @@ long Editor::TextWidth(uptr_t style, const char *text) {
 	RefreshStyleData();
 	AutoSurface surface(this);
 	if (surface) {
-		return std::lround(surface->WidthText(vs.styles[style].font.get(), text, static_cast<int>(strlen(text))));
+		return std::lround(surface->WidthText(vs.styles[style].font.get(), text));
 	} else {
 		return 1;
 	}
@@ -2015,7 +2015,7 @@ SelectionPosition Editor::RealizeVirtualSpace(const SelectionPosition &position)
 
 void Editor::AddChar(char ch) {
 	const char s[1] {ch};
-	InsertCharacter(s, 1, CharacterSource::DirectInput);
+	InsertCharacter(std::string_view(s, 1), CharacterSource::DirectInput);
 }
 
 void Editor::FilterSelections() {
@@ -2026,8 +2026,8 @@ void Editor::FilterSelections() {
 }
 
 // InsertCharacter inserts a character encoded in document code page.
-void Editor::InsertCharacter(const char *s, unsigned int len, CharacterSource charSource) {
-	if (len == 0) {
+void Editor::InsertCharacter(std::string_view sv, CharacterSource charSource) {
+	if (sv.empty()) {
 		return;
 	}
 	FilterSelections();
@@ -2061,7 +2061,7 @@ void Editor::InsertCharacter(const char *s, unsigned int len, CharacterSource ch
 					}
 				}
 				positionInsert = RealizeVirtualSpace(positionInsert, currentSel->caret.VirtualSpace());
-				const Sci::Position lengthInserted = pdoc->InsertString(positionInsert, s, len);
+				const Sci::Position lengthInserted = pdoc->InsertString(positionInsert, sv);
 				if (lengthInserted > 0) {
 					*currentSel = SelectionRange(positionInsert + lengthInserted);
 				}
@@ -2089,32 +2089,32 @@ void Editor::InsertCharacter(const char *s, unsigned int len, CharacterSource ch
 	// Avoid blinking during rapid typing:
 	ShowCaretAtCurrentPosition();
 	if ((caretSticky == CaretSticky::Off) ||
-		((caretSticky == CaretSticky::WhiteSpace) && !IsAllSpacesOrTabs(s, len))) {
+		((caretSticky == CaretSticky::WhiteSpace) && !IsAllSpacesOrTabs(sv))) {
 		SetLastXChosen();
 	}
 
-	int ch = static_cast<unsigned char>(s[0]);
+	int ch = static_cast<unsigned char>(sv[0]);
 	if (pdoc->dbcsCodePage != CpUtf8) {
-		if (len > 1) {
+		if (sv.length() > 1) {
 			// DBCS code page or DBCS font character set.
-			ch = (ch << 8) | static_cast<unsigned char>(s[1]);
+			ch = (ch << 8) | static_cast<unsigned char>(sv[1]);
 		}
 	} else {
-		if ((ch < 0xC0) || (1 == len)) {
+		if ((ch < 0xC0) || (1 == sv.length())) {
 			// Handles UTF-8 characters between 0x01 and 0x7F and single byte
 			// characters when not in UTF-8 mode.
 			// Also treats \0 and naked trail bytes 0x80 to 0xBF as valid
 			// characters representing themselves.
 		} else {
 			unsigned int utf32[1] = { 0 };
-			UTF32FromUTF8(std::string(s, len), utf32, Sci::size(utf32));
+			UTF32FromUTF8(sv, utf32, std::size(utf32));
 			ch = utf32[0];
 		}
 	}
 	NotifyChar(ch, charSource);
 
 	if (recordingMacro && charSource != CharacterSource::TentativeInput) {
-		std::string copy(s, len); // ensure NUL-terminated
+		std::string copy(sv); // ensure NUL-terminated
 		NotifyMacroRecord(Message::ReplaceSel, 0, reinterpret_cast<sptr_t>(copy.data()));
 	}
 }
@@ -4319,7 +4319,7 @@ std::string Editor::RangeText(Sci::Position start, Sci::Position end) const {
 	if (start < end) {
 		const Sci::Position len = end - start;
 		std::string ret(len, '\0');
-		pdoc->GetCharRange(const_cast<char *>(ret.data()), start, len);
+		pdoc->GetCharRange(ret.data(), start, len);
 		return ret;
 	}
 	return std::string();
@@ -8362,7 +8362,7 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 		return static_cast<sptr_t>(modEventMask);
 
 	case Message::SetCommandEvents:
-		commandEvents = static_cast<int>(wParam) != 0;
+		commandEvents = static_cast<bool>(wParam);
 		return 0;
 
 	case Message::GetCommandEvents:

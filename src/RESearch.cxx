@@ -769,6 +769,7 @@ int RESearch::Execute(const CharacterIndexer &ci, Sci::Position lp, Sci::Positio
 		if (lp >= endp)	/* if EOS, fail, else fall through. */
 			return 0;
 	}
+	[[fallthrough]];
 	default:			/* regular matching all the way. */
 		while (lp < endp) {
 			ep = PMatch(ci, lp, endp, ap);
