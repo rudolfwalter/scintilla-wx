@@ -20,6 +20,7 @@
 #include <memory>
 #include <numeric>
 
+#include "Compat.h"
 #include "ScintillaTypes.h"
 
 #include "Debugging.h"
@@ -80,10 +81,10 @@ void FontRealised::Realise(Surface &surface, int zoomLevel, Technology technolog
 
 	if (fs.checkMonospaced) {
 		// "Ay" is normally strongly kerned and "fi" may be a ligature
-		constexpr Sci::string_view allASCIIGraphic("Ayfi"
+		const char allASCIIGraphic[] = "Ayfi"
 		// python: ''.join(chr(ch) for ch in range(32, 127))
-		" !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
-		std::array<XYPOSITION, allASCIIGraphic.length()> positions {};
+		" !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+		std::array<XYPOSITION, sizeof(allASCIIGraphic) - 1> positions {};
 		surface.MeasureWidthsUTF8(font.get(), allASCIIGraphic, positions.data());
 		std::adjacent_difference(positions.begin(), positions.end(), positions.begin());
 		const XYPOSITION maxWidth = *std::max_element(positions.begin(), positions.end());

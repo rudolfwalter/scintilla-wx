@@ -18,6 +18,8 @@ namespace Scintilla { namespace Internal {
 struct SizeMax {
 	size_t size = 1;
 	size_t maxValue = UINT8_MAX;
+
+	constexpr SizeMax(size_t size = 1, size_t maxValue = UINT8_MAX) : size(size), maxValue(maxValue) { }
 };
 
 class ScaledVector {
@@ -50,7 +52,7 @@ struct UndoActions {
 	ScaledVector positions;
 	ScaledVector lengths;
 
-	UndoActions() noexcept;
+	UndoActions();
 	void Truncate(size_t length) noexcept;
 	void PushBack();
 	void Clear() noexcept;

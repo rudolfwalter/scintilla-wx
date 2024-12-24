@@ -53,8 +53,7 @@ constexpr bool UTF8IsAscii(unsigned char ch) noexcept {
 }
 
 constexpr bool UTF8IsAscii(char ch) noexcept {
-	const unsigned char uch = ch;
-	return uch < 0x80;
+	return ((unsigned char)ch) < 0x80;
 }
 
 enum { UTF8MaskWidth=0x7, UTF8MaskInvalid=0x8 };

@@ -318,7 +318,7 @@ struct ListOptions {
 	Sci::optional<ColourRGBA> back;
 	Sci::optional<ColourRGBA> foreSelected;
 	Sci::optional<ColourRGBA> backSelected;
-	AutoCompleteOption options=AutoCompleteOption::Normal;
+	AutoCompleteOption options /*=AutoCompleteOption::Normal*/;
 };
 
 class ListBox : public Window {

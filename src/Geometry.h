@@ -199,8 +199,7 @@ public:
 	}
 
 	static constexpr ColourRGBA FromIpRGB(intptr_t co_) noexcept {
-		const int rgb = co_ & rgbMask;
-		return ColourRGBA(rgb | (maximumByte << 24));
+		return ColourRGBA((co_ & rgbMask) | (maximumByte << 24));
 	}
 
 	constexpr ColourRGBA WithoutAlpha() const noexcept {
@@ -230,9 +229,7 @@ public:
 		return (co >> 16) & maximumByte;
 	}
 	constexpr unsigned char GetAlpha() const noexcept {
-		// Use a temporary here to prevent a 'Wconversion' warning from GCC
-		const int shifted = co >> 24;
-		return shifted & maximumByte;
+		return ((int)co >> 24) & maximumByte;
 	}
 
 	// Red, green, blue, and alpha values as float 0..1.0

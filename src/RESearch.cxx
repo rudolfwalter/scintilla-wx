@@ -286,7 +286,7 @@ void RESearch::ChSetWithCase(unsigned char c, bool caseSensitive) noexcept {
 
 namespace {
 
-constexpr unsigned char escapeValue(unsigned char ch) noexcept {
+SCI_CONSTEXPR14 unsigned char escapeValue(unsigned char ch) noexcept {
 	switch (ch) {
 	case 'a':	return '\a';
 	case 'b':	return '\b';
@@ -300,7 +300,7 @@ constexpr unsigned char escapeValue(unsigned char ch) noexcept {
 	return 0;
 }
 
-constexpr int GetHexaChar(unsigned char hd1, unsigned char hd2) noexcept {
+SCI_CONSTEXPR14 int GetHexaChar(unsigned char hd1, unsigned char hd2) noexcept {
 	int hexValue = 0;
 	if (hd1 >= '0' && hd1 <= '9') {
 		hexValue += 16 * (hd1 - '0');

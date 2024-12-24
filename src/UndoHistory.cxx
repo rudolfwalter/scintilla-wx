@@ -72,7 +72,7 @@ intptr_t ScaledVector::SignedValueAt(size_t index) const noexcept {
 	return ReadValue(bytes.data() + index * element.size, element.size);
 }
 
-constexpr SizeMax ElementForValue(size_t value) noexcept {
+SCI_CONSTEXPR14 SizeMax ElementForValue(size_t value) noexcept {
 	size_t maxN = byteMask;
 	size_t i = 1;
 	while (value > byteMask) {
@@ -129,7 +129,7 @@ size_t ScaledVector::SizeInBytes() const noexcept {
 UndoActionType::UndoActionType() noexcept : at(ActionType::insert), mayCoalesce(false) {
 }
 
-UndoActions::UndoActions() noexcept = default;
+UndoActions::UndoActions() = default;
 
 void UndoActions::Truncate(size_t length) noexcept {
 	VectorTruncate(types, length);

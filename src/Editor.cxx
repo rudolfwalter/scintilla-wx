@@ -28,6 +28,7 @@
 #include <thread>
 #include <future>
 
+#include "Compat.h"
 #include "ScintillaTypes.h"
 #include "ScintillaMessages.h"
 #include "ScintillaStructures.h"
@@ -95,7 +96,7 @@ constexpr bool CanEliminate(const DocModification &mh) noexcept {
 	return whether this modification represents the FINAL step
 	in a [possibly lengthy] multi-step Undo/Redo sequence
 */
-constexpr bool IsLastStep(const DocModification &mh) noexcept {
+SCI_CONSTEXPR14 bool IsLastStep(const DocModification &mh) noexcept {
 	constexpr ModificationFlags finalMask = ModificationFlags::MultiStepUndoRedo
 		| ModificationFlags::LastStepInUndoRedo
 		| ModificationFlags::MultilineUndoRedo;
@@ -112,7 +113,7 @@ Timer::Timer() noexcept :
 Idler::Idler() noexcept :
 		state(false), idlerID(nullptr) {}
 
-static constexpr bool IsAllSpacesOrTabs(Sci::string_view sv) noexcept {
+static SCI_CONSTEXPR14 bool IsAllSpacesOrTabs(Sci::string_view sv) noexcept {
 	for (const char ch : sv) {
 		// This is safe because IsSpaceOrTab() will return false for null terminators
 		if (!IsSpaceOrTab(ch))
@@ -6088,7 +6089,7 @@ void Editor::SetSelectionNMessage(Message iMessage, uptr_t wParam, sptr_t lParam
 
 namespace {
 
-constexpr Selection::SelTypes SelTypeFromMode(SelectionMode mode) {
+SCI_CONSTEXPR14 Selection::SelTypes SelTypeFromMode(SelectionMode mode) {
 	switch (mode) {
 	case SelectionMode::Rectangle:
 		return Selection::SelTypes::rectangle;

@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "Compat.h"
 #include "ScintillaTypes.h"
 #include "ScintillaMessages.h"
 #include "ScintillaStructures.h"
@@ -256,7 +257,7 @@ LineMarker::FoldPart PartForFoldHighlight(const HighlightDelimiter &highlightDel
 	return LineMarker::FoldPart::undefined;
 }
 
-constexpr LineMarker::FoldPart PartForBar(bool markBefore, bool markAfter) {
+SCI_CONSTEXPR14 LineMarker::FoldPart PartForBar(bool markBefore, bool markAfter) {
 	if (markBefore) {
 		if (markAfter) {
 			return LineMarker::FoldPart::body;

@@ -39,6 +39,8 @@ struct Action {
 	Sci::Position position = 0;
 	const char *data = nullptr;
 	Sci::Position lenData = 0;
+
+	Action(ActionType at = ActionType::insert, bool mayCoalesce = false, Sci::Position position = 0, const char* data = nullptr, Sci::Position lenData = 0) : at(at), mayCoalesce(mayCoalesce), position(position), data(data), lenData(lenData) { }
 };
 
 struct SplitView {
@@ -46,6 +48,8 @@ struct SplitView {
 	size_t length1 = 0;
 	const char *segment2 = nullptr;
 	size_t length = 0;
+
+	SplitView(const char* s1 = nullptr, size_t l1 = 0, const char* s2 = nullptr, size_t l = 0) : segment1(s1), length1(l1), segment2(s2), length(l) { }
 
 	bool operator==(const SplitView &other) const noexcept {
 		return segment1 == other.segment1 && length1 == other.length1 &&

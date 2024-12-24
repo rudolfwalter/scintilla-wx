@@ -21,6 +21,7 @@
 #include <memory>
 #include <mutex>
 
+#include "Compat.h"
 #include "ScintillaTypes.h"
 #include "ScintillaMessages.h"
 #include "ILoader.h"
@@ -648,7 +649,7 @@ std::shared_ptr<LineLayout> LineLayoutCache::Retrieve(Sci::Line lineNumber, Sci:
 namespace {
 
 // Simply pack the (maximum 4) character bytes into an int
-constexpr unsigned int KeyFromString(Sci::string_view charBytes) noexcept {
+SCI_CONSTEXPR14 unsigned int KeyFromString(Sci::string_view charBytes) noexcept {
 	PLATFORM_ASSERT(charBytes.length() <= 4);
 	unsigned int k=0;
 	for (const unsigned char uc : charBytes) {
@@ -657,7 +658,7 @@ constexpr unsigned int KeyFromString(Sci::string_view charBytes) noexcept {
 	return k;
 }
 
-constexpr unsigned int representationKeyCrLf = KeyFromString("\r\n");
+SCI_CONSTEXPR14 const unsigned int representationKeyCrLf = KeyFromString("\r\n");
 
 const char *const repsC0[] = {
 	"NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL",
@@ -698,8 +699,9 @@ void Hexits(char *hexits, int ch) noexcept {
 void SpecialRepresentations::SetRepresentation(Sci::string_view charBytes, Sci::string_view value) {
 	if ((charBytes.length() <= 4) && (value.length() <= Representation::maxLength)) {
 		const unsigned int key = KeyFromString(charBytes);
-		const bool inserted = mapReprs.insert_or_assign(key, Representation(value)).second;
-		if (inserted) {
+		if (mapReprs.find(key) == mapReprs.end()) {
+			mapReprs.insert(std::make_pair(key, Representation(value)));
+
 			// New entry so increment for first byte
 			const unsigned char ucStart = charBytes.empty() ? 0 : charBytes[0];
 			startByteHasReprs[ucStart]++;
@@ -709,6 +711,8 @@ void SpecialRepresentations::SetRepresentation(Sci::string_view charBytes, Sci::
 			if (key == representationKeyCrLf) {
 				crlf = true;
 			}
+		} else {
+			mapReprs[key] = Representation(value);
 		}
 	}
 }

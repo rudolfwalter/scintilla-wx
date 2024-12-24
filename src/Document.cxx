@@ -1719,7 +1719,7 @@ void Document::Indent(bool forwards, Sci::Line lineBottom, Sci::Line lineTop) {
 
 namespace {
 
-constexpr Sci::string_view EOLForMode(EndOfLine eolMode) noexcept {
+SCI_CONSTEXPR14 Sci::string_view EOLForMode(EndOfLine eolMode) noexcept {
 	switch (eolMode) {
 	case EndOfLine::CrLf:
 		return "\r\n";

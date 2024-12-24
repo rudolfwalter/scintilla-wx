@@ -76,7 +76,7 @@ constexpr bool IsAlphaNumeric(int ch) noexcept {
 		((ch >= 'A') && (ch <= 'Z'));
 }
 
-constexpr bool IsPunctuation(int ch) noexcept {
+SCI_CONSTEXPR14 inline bool IsPunctuation(int ch) noexcept {
 	switch (ch) {
 	case '!':
 	case '"':
