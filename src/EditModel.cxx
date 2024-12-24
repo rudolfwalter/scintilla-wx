@@ -76,7 +76,7 @@ EditModel::EditModel() : braces{} {
 	hotspotSingleLine = true;
 	hoverIndicatorPos = Sci::invalidPosition;
 	wrapWidth = LineLayout::wrapWidthInfinite;
-	reprs = std::make_unique<SpecialRepresentations>();
+	reprs = Sci::make_unique<SpecialRepresentations>();
 	pdoc = new Document(DocumentOption::Default);
 	pdoc->AddRef();
 	pcs = ContractionStateCreate(pdoc->IsLarge());

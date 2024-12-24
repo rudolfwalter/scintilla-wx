@@ -409,7 +409,7 @@ void SurfaceImpl::Init(SurfaceID sid, WindowID wid) {
 
 std::unique_ptr<Surface> SurfaceImpl::AllocatePixMap(int width, int height) {
 	// widSave must be alive now so safe for creating a PangoContext
-	return std::make_unique<SurfaceImpl>(context, width, height, mode, widSave);
+	return Sci::make_unique<SurfaceImpl>(context, width, height, mode, widSave);
 }
 
 void SurfaceImpl::SetMode(SurfaceMode mode_) {
@@ -1189,7 +1189,7 @@ void SurfaceImpl::FlushDrawing() {
 }
 
 std::unique_ptr<Surface> Surface::Allocate(Technology) {
-	return std::make_unique<SurfaceImpl>();
+	return Sci::make_unique<SurfaceImpl>();
 }
 
 Window::~Window() noexcept {}
@@ -1473,7 +1473,7 @@ public:
 };
 
 std::unique_ptr<ListBox> ListBox::Allocate() {
-	return std::make_unique<ListBoxX>();
+	return Sci::make_unique<ListBoxX>();
 }
 
 static int treeViewGetRowHeight(GtkTreeView *view) {
@@ -2075,11 +2075,11 @@ void ListBoxX::RegisterRGBA(int type, std::unique_ptr<RGBAImage> image) {
 void ListBoxX::RegisterImage(int type, const char *xpm_data) {
 	g_return_if_fail(xpm_data);
 	XPM xpmImage(xpm_data);
-	RegisterRGBA(type, std::make_unique<RGBAImage>(xpmImage));
+	RegisterRGBA(type, Sci::make_unique<RGBAImage>(xpmImage));
 }
 
 void ListBoxX::RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage) {
-	RegisterRGBA(type, std::make_unique<RGBAImage>(width, height, 1.0f, pixelsImage));
+	RegisterRGBA(type, Sci::make_unique<RGBAImage>(width, height, 1.0f, pixelsImage));
 }
 
 void ListBoxX::ClearRegisteredImages() {

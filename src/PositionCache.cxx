@@ -1188,5 +1188,5 @@ void PositionCache::MeasureWidths(Surface *surface, const ViewStyle &vstyle, uns
 }
 
 std::unique_ptr<IPositionCache> Scintilla::Internal::CreatePositionCache() {
-	return std::make_unique<PositionCache>();
+	return Sci::make_unique<PositionCache>();
 }

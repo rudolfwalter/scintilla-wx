@@ -144,7 +144,7 @@ public:
 	CharacterSet characterSet = CharacterSet::Ansi;
 	std::unique_ptr<QFont> pfont;
 	explicit FontAndCharacterSet(const FontParameters &fp) : characterSet(fp.characterSet) {
-		pfont = std::make_unique<QFont>();
+		pfont = Sci::make_unique<QFont>();
 		pfont->setStyleStrategy(ChooseStrategy(fp.extraFontFlag));
 		pfont->setFamily(QString::fromUtf8(fp.faceName));
 		pfont->setPointSizeF(fp.size);
@@ -224,7 +224,7 @@ void SurfaceImpl::Init(SurfaceID sid, WindowID /*wid*/)
 
 std::unique_ptr<Surface> SurfaceImpl::AllocatePixMap(int width, int height)
 {
-	return std::make_unique<SurfaceImpl>(width, height, mode);
+	return Sci::make_unique<SurfaceImpl>(width, height, mode);
 }
 
 void SurfaceImpl::SetMode(SurfaceMode mode_)
@@ -801,7 +801,7 @@ QPainter *SurfaceImpl::GetPainter()
 
 std::unique_ptr<Surface> Surface::Allocate(Technology)
 {
-	return std::make_unique<SurfaceImpl>();
+	return Sci::make_unique<SurfaceImpl>();
 }
 
 
@@ -1239,7 +1239,7 @@ ListBox::~ListBox() noexcept = default;
 
 std::unique_ptr<ListBox> ListBox::Allocate()
 {
-	return std::make_unique<ListBoxImpl>();
+	return Sci::make_unique<ListBoxImpl>();
 }
 ListWidget::ListWidget(QWidget *parent)
 : QListWidget(parent), delegate(nullptr)

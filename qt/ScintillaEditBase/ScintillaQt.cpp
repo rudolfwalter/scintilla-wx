@@ -583,12 +583,12 @@ public:
 std::unique_ptr<CaseFolder> ScintillaQt::CaseFolderForEncoding()
 {
 	if (pdoc->dbcsCodePage == SC_CP_UTF8) {
-		return std::make_unique<CaseFolderUnicode>();
+		return Sci::make_unique<CaseFolderUnicode>();
 	} else {
 		const char *charSetBuffer = CharacterSetIDOfDocument();
 		if (charSetBuffer) {
 			if (pdoc->dbcsCodePage == 0) {
-				std::unique_ptr<CaseFolderTable> pcf = std::make_unique<CaseFolderTable>();
+				std::unique_ptr<CaseFolderTable> pcf = Sci::make_unique<CaseFolderTable>();
 				QTextCodec *codec = QTextCodec::codecForName(charSetBuffer);
 				// Only for single byte encodings
 				for (int i=0x80; i<0x100; i++) {
@@ -605,7 +605,7 @@ std::unique_ptr<CaseFolder> ScintillaQt::CaseFolderForEncoding()
 				}
 				return pcf;
 			} else {
-				return std::make_unique<CaseFolderDBCS>(QTextCodec::codecForName(charSetBuffer));
+				return Sci::make_unique<CaseFolderDBCS>(QTextCodec::codecForName(charSetBuffer));
 			}
 		}
 		return nullptr;

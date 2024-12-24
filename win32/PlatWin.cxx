@@ -707,7 +707,7 @@ void SurfaceGDI::Init(SurfaceID sid, WindowID wid) {
 }
 
 std::unique_ptr<Surface> SurfaceGDI::AllocatePixMap(int width, int height) {
-	return std::make_unique<SurfaceGDI>(hdc, width, height, mode, logPixelsY);
+	return Sci::make_unique<SurfaceGDI>(hdc, width, height, mode, logPixelsY);
 }
 
 void SurfaceGDI::SetMode(SurfaceMode mode_) {
@@ -1533,7 +1533,7 @@ void SurfaceD2D::Init(SurfaceID sid, WindowID wid) {
 }
 
 std::unique_ptr<Surface> SurfaceD2D::AllocatePixMap(int width, int height) {
-	std::unique_ptr<SurfaceD2D> surf = std::make_unique<SurfaceD2D>(pRenderTarget, width, height, mode, logPixelsY);
+	std::unique_ptr<SurfaceD2D> surf = Sci::make_unique<SurfaceD2D>(pRenderTarget, width, height, mode, logPixelsY);
 	surf->SetRenderingParams(renderingParams);
 	return surf;
 }
@@ -2372,7 +2372,7 @@ std::vector<Interval> ScreenLineLayout::FindRangeIntervals(size_t start, size_t 
 }
 
 std::unique_ptr<IScreenLineLayout> SurfaceD2D::Layout(const IScreenLine *screenLine) {
-	return std::make_unique<ScreenLineLayout>(screenLine);
+	return Sci::make_unique<ScreenLineLayout>(screenLine);
 }
 
 void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, Sci::string_view text, int codePageOverride, UINT fuOptions) {
@@ -2702,11 +2702,11 @@ void SurfaceD2D::SetRenderingParams(std::shared_ptr<RenderingParams> renderingPa
 std::unique_ptr<Surface> Surface::Allocate(SCI_MAYBE_UNUSED Technology technology) {
 #if defined(USE_D2D)
 	if (technology == Technology::Default)
-		return std::make_unique<SurfaceGDI>();
+		return Sci::make_unique<SurfaceGDI>();
 	else
-		return std::make_unique<SurfaceD2D>();
+		return Sci::make_unique<SurfaceD2D>();
 #else
-	return std::make_unique<SurfaceGDI>();
+	return Sci::make_unique<SurfaceGDI>();
 #endif
 }
 
@@ -3267,7 +3267,7 @@ public:
 };
 
 std::unique_ptr<ListBox> ListBox::Allocate() {
-	return std::make_unique<ListBoxX>();
+	return Sci::make_unique<ListBoxX>();
 }
 
 void ListBoxX::Create(Window &parent_, int ctrlID_, Point location_, int lineHeight_, bool unicodeMode_, Technology technology_) {
@@ -3416,11 +3416,11 @@ std::string ListBoxX::GetValue(int n) {
 
 void ListBoxX::RegisterImage(int type, const char *xpm_data) {
 	XPM xpmImage(xpm_data);
-	images.AddImage(type, std::make_unique<RGBAImage>(xpmImage));
+	images.AddImage(type, Sci::make_unique<RGBAImage>(xpmImage));
 }
 
 void ListBoxX::RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage) {
-	images.AddImage(type, std::make_unique<RGBAImage>(width, height, 1.0f, pixelsImage));
+	images.AddImage(type, Sci::make_unique<RGBAImage>(width, height, 1.0f, pixelsImage));
 }
 
 void ListBoxX::ClearRegisteredImages() {

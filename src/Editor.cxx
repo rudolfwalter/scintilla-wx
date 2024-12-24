@@ -4136,7 +4136,7 @@ void Editor::Indent(bool forwards, bool lineIndent) {
 
 std::unique_ptr<CaseFolder> Editor::CaseFolderForEncoding() {
 	// Simple default that only maps ASCII upper case to lower case.
-	return std::make_unique<CaseFolderTable>();
+	return Sci::make_unique<CaseFolderTable>();
 }
 
 /**

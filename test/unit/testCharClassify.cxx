@@ -22,7 +22,7 @@ using namespace Scintilla::Internal;
 class CharClassifyTest {
 protected:
 	CharClassifyTest() {
-		pcc = std::make_unique<CharClassify>();
+		pcc = Sci::make_unique<CharClassify>();
 		for (int ch = 0; ch < 256; ch++) {
 			if (ch == '\r' || ch == '\n')
 				charClass[ch] = CharacterClass::newLine;

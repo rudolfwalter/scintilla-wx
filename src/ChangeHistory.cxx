@@ -126,7 +126,7 @@ void ChangeLog::DeleteRange(Sci::Position position, Sci::Position deleteLength) 
 	if (editions) {
 		const EditionSet savedEditions = *editions;
 		deleteEdition.DeleteRange(position, deleteLength);
-		EditionSetOwned reset = std::make_unique<EditionSet>(savedEditions);
+		EditionSetOwned reset = Sci::make_unique<EditionSet>(savedEditions);
 		deleteEdition.SetValueAt(position, std::move(reset));
 	} else {
 		deleteEdition.DeleteRange(position, deleteLength);
@@ -187,14 +187,14 @@ int EditionSetCount(const EditionSet &set) noexcept {
 
 void ChangeLog::PushDeletionAt(Sci::Position position, EditionCount ec) {
 	if (!deleteEdition.ValueAt(position)) {
-		deleteEdition.SetValueAt(position, std::make_unique<EditionSet>());
+		deleteEdition.SetValueAt(position, Sci::make_unique<EditionSet>());
 	}
 	EditionSetPush(*deleteEdition.ValueAt(position), ec);
 }
 
 void ChangeLog::InsertFrontDeletionAt(Sci::Position position, EditionCount ec) {
 	if (!deleteEdition.ValueAt(position)) {
-		deleteEdition.SetValueAt(position, std::make_unique<EditionSet>());
+		deleteEdition.SetValueAt(position, Sci::make_unique<EditionSet>());
 	}
 	const EditionSetOwned &editions = deleteEdition.ValueAt(position);
 	editions->insert(editions->begin(), ec);
@@ -369,7 +369,7 @@ void ChangeHistory::DeleteRangeSavingHistory(Sci::Position position, Sci::Positi
 
 void ChangeHistory::StartReversion() {
 	if (!changeLogReversions) {
-		changeLogReversions = std::make_unique<ChangeLog>();
+		changeLogReversions = Sci::make_unique<ChangeLog>();
 		changeLogReversions->Clear(changeLog.Length());
 	}
 	Check();

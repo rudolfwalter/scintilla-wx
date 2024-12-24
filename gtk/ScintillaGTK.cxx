@@ -1259,12 +1259,12 @@ public:
 
 std::unique_ptr<CaseFolder> ScintillaGTK::CaseFolderForEncoding() {
 	if (pdoc->dbcsCodePage == SC_CP_UTF8) {
-		return std::make_unique<CaseFolderUnicode>();
+		return Sci::make_unique<CaseFolderUnicode>();
 	} else {
 		const char *charSetBuffer = CharacterSetID();
 		if (charSetBuffer) {
 			if (pdoc->dbcsCodePage == 0) {
-				std::unique_ptr<CaseFolderTable> pcf = std::make_unique<CaseFolderTable>();
+				std::unique_ptr<CaseFolderTable> pcf = Sci::make_unique<CaseFolderTable>();
 				// Only for single byte encodings
 				for (int i=0x80; i<0x100; i++) {
 					char sCharacter[2] = "A";
@@ -1285,7 +1285,7 @@ std::unique_ptr<CaseFolder> ScintillaGTK::CaseFolderForEncoding() {
 				}
 				return pcf;
 			} else {
-				return std::make_unique<CaseFolderDBCS>(charSetBuffer);
+				return Sci::make_unique<CaseFolderDBCS>(charSetBuffer);
 			}
 		}
 		return nullptr;
@@ -1665,7 +1665,7 @@ void ScintillaGTK::GetSelection(GtkSelectionData *selection_data, guint info, Se
 	std::unique_ptr<SelectionText> newline_normalized;
 	{
 		std::string tmpstr = Document::TransformLineEnds(text->Data(), text->Length(), EndOfLine::Lf);
-		newline_normalized = std::make_unique<SelectionText>();
+		newline_normalized = Sci::make_unique<SelectionText>();
 		newline_normalized->Copy(tmpstr, CpUtf8, CharacterSet::Ansi, text->rectangular, false);
 		text = newline_normalized.get();
 	}
@@ -1677,7 +1677,7 @@ void ScintillaGTK::GetSelection(GtkSelectionData *selection_data, guint info, Se
 		const char *charSet = ::CharacterSetID(text->characterSet);
 		if (*charSet) {
 			std::string tmputf = ConvertText(text->Data(), text->Length(), "UTF-8", charSet, false);
-			converted = std::make_unique<SelectionText>();
+			converted = Sci::make_unique<SelectionText>();
 			converted->Copy(tmputf, CpUtf8, CharacterSet::Ansi, text->rectangular, false);
 			text = converted.get();
 		}

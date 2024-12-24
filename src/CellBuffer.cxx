@@ -339,7 +339,7 @@ CellBuffer::CellBuffer(bool hasStyles_, bool largeDocument_) :
 	utf8Substance = false;
 	utf8LineEnds = LineEndType::Default;
 	collectingUndo = true;
-	uh = std::make_unique<UndoHistory>();
+	uh = Sci::make_unique<UndoHistory>();
 	if (largeDocument)
 		plv = Sci::make_unique<LineVector<Sci::Position>>();
 	else
@@ -1250,7 +1250,7 @@ void CellBuffer::SetUndoCurrent(int action) {
 		const intptr_t sizeChange = uh->Delta(action);
 		const intptr_t lengthOriginal = Length() - sizeChange;
 		// Recreate empty change history
-		changeHistory = std::make_unique<ChangeHistory>(lengthOriginal);
+		changeHistory = Sci::make_unique<ChangeHistory>(lengthOriginal);
 		RestoreChangeHistory(uh.get(), changeHistory.get());
 		if (Length() != changeHistory->Length()) {
 			uh->DeleteUndoHistory();
@@ -1287,7 +1287,7 @@ void CellBuffer::ChangeLastUndoActionText(size_t length, const char *text) {
 void CellBuffer::ChangeHistorySet(bool set) {
 	if (set) {
 		if (!changeHistory && !uh->CanUndo()) {
-			changeHistory = std::make_unique<ChangeHistory>(Length());
+			changeHistory = Sci::make_unique<ChangeHistory>(Length());
 		}
 	} else {
 		changeHistory.reset();
